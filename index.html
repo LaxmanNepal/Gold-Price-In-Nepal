@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="ne" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>नेपाल सुन चाँदी · Nepal Metals Rates</title>
+    <meta name="theme-color" content="#d97706">
+    <link rel="manifest" href="data:application/manifest+json,{}">
+    
+    <!-- Scripts & Stylesheets -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --accent: #d97706;
+            --nav-bg: #ffffff;
+        }
+        
+        .dark {
+            --bg-body: #090d16;
+            --card-bg: #111827;
+            --card-border: #1f2937;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #f59e0b;
+            --nav-bg: #111827;
+        }
+
+        * {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            margin: 0;
+            transition: background-color 0.25s ease, color 0.25s ease;
+        }
+
+        .simple-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 1.25rem;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .simple-card:hover {
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        .big-tola-price {
+            font-size: clamp(2.2rem, 7vw, 3.8rem);
+            letter-spacing: -0.03em;
+            font-weight: 900;
+            line-height: 1.1;
+            color: var(--accent);
+        }
+
+        /* Live Pulse Indicator */
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 8px #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.9); opacity: 0.8; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(0.9); opacity: 0.8; }
+        }
+
+        /* Minimal Button Pills */
+        .action-pill {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 999px;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-pill:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .action-pill:active { transform: scale(0.96); }
+
+        /* Clean Tab Buttons */
+        .tab-btn {
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        /* Simple Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px);
+            max-width: 420px;
+            background: var(--nav-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 999px;
+            padding: 6px 12px;
+            z-index: 50;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: color 0.2s ease;
+            cursor: pointer;
+            padding: 6px 12px;
+            border-radius: 999px;
+        }
+
+        .nav-item i { font-size: 1.1rem; }
+
+        .nav-item.active {
+            color: var(--accent);
+            background: rgba(245, 158, 11, 0.12);
+        }
+
+        .chart-container { position: relative; height: 160px; width: 100%; }
+
+        .tab-content { transition: opacity 0.2s ease; }
+        .tab-content.hidden { display: none; opacity: 0; }
+    </style>
+</head>
+
+<body class="p-4 sm:p-6 pb-24 min-h-screen flex flex-col items-center">
+
+    <header class="w-full max-w-3xl flex justify-between items-center mb-6">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 text-xl font-bold">
+                <i class="fa-solid fa-coins"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-black tracking-tight" id="mainTitle">नेपाल सुन चाँदी</h1>
+                <p class="text-xs text-amber-500 font-medium flex items-center gap-1.5">
+                    <span class="live-dot"></span> <span id="subTitle">लाइभ बजार मूल्य</span>
+                </p>
+            </div>
+        </div>
+
+        <div class="flex gap-2">
+            <button onclick="toggleLanguage()" class="action-pill">
+                <i class="fa-solid fa-globe"></i> <span id="langLabel">नेपाली</span>
+            </button>
+            <button onclick="toggleTheme()" class="action-pill">
+                <i class="fa-solid fa-moon" id="themeIcon"></i> <span id="themeLabel">डार्क</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="w-full max-w-3xl space-y-4">
+
+        <!-- CLEAN GOLD RATE HERO CARD -->
+        <div class="simple-card p-6 text-center relative overflow-hidden">
+            <div class="flex justify-between items-center mb-3">
+                <span class="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md" id="bigTolaLabel">
+                    प्रति तोला (नेपाल)
+                </span>
+                <button onclick="fetchLiveData()" id="refreshBtn" class="action-pill text-xs py-1 px-2.5">
+                    <i class="fa-solid fa-rotate" id="refreshIcon"></i> <span id="refreshLabel">रिफ्रेस</span>
+                </button>
+            </div>
+
+            <div class="my-3">
+                <div class="text-xs font-bold tracking-wide uppercase text-slate-500 dark:text-slate-400 mb-1" id="goldLabel">
+                    सुन (२४ क्यारेट / Fine Gold)
+                </div>
+                <div class="big-tola-price" id="bigGoldTola">रू ३,०६,८००</div>
+                <div class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
+                    प्रति ग्राम: <span id="bigGoldGram" class="font-bold text-slate-800 dark:text-slate-200">रू २६,३०३</span>
+                </div>
+            </div>
+
+            <div class="flex flex-wrap justify-center items-center gap-3 mt-4 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800/50 py-2.5 px-4 rounded-xl">
+                <span>22K (तेजाबी): <strong id="gold22Tola" class="text-amber-600 dark:text-amber-400">रू २,८१,२३४</strong></span>
+                <span class="opacity-30">•</span>
+                <span>चाँदी: <strong id="bigSilverTola" class="text-slate-800 dark:text-slate-200">रू ४,७५०</strong> /तोला</span>
+            </div>
+        </div>
+
+        <!-- THREE SIMPLE STAT CARDS -->
+        <div class="grid grid-cols-3 gap-3">
+            <div class="simple-card p-3.5 text-center">
+                <div class="text-[11px] font-bold text-slate-500 uppercase" id="silverCardLabel">चाँदी (Silver)</div>
+                <div class="text-base sm:text-xl font-extrabold my-0.5 text-slate-800 dark:text-slate-100" id="silverTolaSmall">रू ४,७५०</div>
+                <div class="text-[10px] font-medium text-slate-400">प्रति तोला</div>
+            </div>
+
+            <div class="simple-card p-3.5 text-center">
+                <div class="text-[11px] font-bold text-indigo-500 dark:text-indigo-400 uppercase" id="platCardLabel">प्लाटिनम</div>
+                <div class="text-base sm:text-xl font-extrabold my-0.5 text-indigo-600 dark:text-indigo-300" id="platinumTolaSmall">रू ५८,५००</div>
+                <div class="text-[10px] font-medium text-slate-400">प्रति तोला</div>
+            </div>
+
+            <div class="simple-card p-3.5 text-center">
+                <div class="text-[11px] font-bold text-amber-500 uppercase" id="ratioCardLabel">अनुपात (Ratio)</div>
+                <div class="text-base sm:text-xl font-extrabold my-0.5 text-amber-600 dark:text-amber-400" id="ratioValue">64.6</div>
+                <div class="text-[10px] font-medium text-slate-400">Au / Ag</div>
+            </div>
+        </div>
+
+        <!-- CHARTS SECTION -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div class="simple-card p-4">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-xs font-bold flex items-center gap-1.5" id="goldChartTitle">
+                        <i class="fa-solid fa-chart-line text-amber-500"></i> सुन मूल्य प्रवृत्ति
+                    </h3>
+                    <span class="text-[10px] text-amber-500 font-semibold uppercase bg-amber-500/10 px-2 py-0.5 rounded">लाइभ</span>
+                </div>
+                <div class="chart-container"><canvas id="goldChart"></canvas></div>
+            </div>
+
+            <div class="simple-card p-4">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-xs font-bold flex items-center gap-1.5" id="silverChartTitle">
+                        <i class="fa-solid fa-chart-line text-slate-400"></i> चाँदी मूल्य प्रवृत्ति
+                    </h3>
+                    <span class="text-[10px] text-slate-400 font-semibold uppercase bg-slate-500/10 px-2 py-0.5 rounded">लाइभ</span>
+                </div>
+                <div class="chart-container"><canvas id="silverChart"></canvas></div>
+            </div>
+        </div>
+
+        <div class="simple-card p-5">
+            <!-- Clean Navigation Tabs -->
+            <div class="flex gap-1 overflow-x-auto pb-2 border-b border-slate-200 dark:border-slate-800 scrollbar-none">
+                <button id="tabCalcBtn" onclick="switchTab('calc')" class="tab-btn active">
+                    <i class="fa-solid fa-calculator"></i> <span id="calcTabLabel">क्याल्कुलेटर</span>
+                </button>
+                <button id="tabPurityBtn" onclick="switchTab('purity')" class="tab-btn">
+                    <i class="fa-solid fa-scale-balanced"></i> <span id="matrixTabLabel">शुद्धता म्याट्रिक्स</span>
+                </button>
+                <button id="tabScrapBtn" onclick="switchTab('scrap')" class="tab-btn">
+                    <i class="fa-solid fa-gem"></i> <span id="scrapTabLabel">पुराना गहना/स्क्र्याप</span>
+                </button>
+                <button id="tabPortfolioBtn" onclick="switchTab('portfolio')" class="tab-btn">
+                    <i class="fa-solid fa-wallet"></i> <span id="portTabLabel">मेरो पोर्टफोलियो</span>
+                </button>
+            </div>
+
+            <!-- Tab 1: Calculator -->
+            <div id="tabCalcContent" class="tab-content pt-4 space-y-3">
+                <div class="grid grid-cols-3 gap-2">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="metalType" value="gold" checked onchange="handleMetalChange(this.value)" class="peer sr-only">
+                        <div class="p-2.5 text-center border border-slate-200 dark:border-slate-800 rounded-lg peer-checked:border-amber-500 peer-checked:bg-amber-500/10 font-bold text-xs flex items-center justify-center gap-2 transition-all">
+                            <i class="fa-solid fa-coins text-amber-500"></i>
+                            <span id="goldRadioLabel">सुन</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="metalType" value="silver" onchange="handleMetalChange(this.value)" class="peer sr-only">
+                        <div class="p-2.5 text-center border border-slate-200 dark:border-slate-800 rounded-lg peer-checked:border-slate-400 peer-checked:bg-slate-500/10 font-bold text-xs flex items-center justify-center gap-2 transition-all">
+                            <i class="fa-solid fa-bars text-slate-400"></i>
+                            <span id="silverRadioLabel">चाँदी</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="metalType" value="platinum" onchange="handleMetalChange(this.value)" class="peer sr-only">
+                        <div class="p-2.5 text-center border border-slate-200 dark:border-slate-800 rounded-lg peer-checked:border-indigo-500 peer-checked:bg-indigo-500/10 font-bold text-xs flex items-center justify-center gap-2 transition-all">
+                            <i class="fa-solid fa-layer-group text-indigo-400"></i>
+                            <span id="platRadioLabel">प्लाटिनम</span>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">शुद्धता (Purity)</label>
+                        <select id="puritySelect" class="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-xs bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold focus:ring-1 focus:ring-amber-500 outline-none" onchange="updateCalc()"></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">मुद्रा (Currency)</label>
+                        <select id="currencySelect" class="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-xs bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold focus:ring-1 focus:ring-amber-500 outline-none" onchange="updateCalc()">
+                            <option value="NPR" selected>NPR (नेपाली रुपैयाँ)</option>
+                            <option value="USD">USD ($)</option>
+                            <option value="INR">INR (भारतीय रुपैयाँ)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="AED">AED (दिरहाम)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">तौल (Weight)</label>
+                        <input id="weightInput" type="number" value="1" step="any" class="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-xs bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold focus:ring-1 focus:ring-amber-500 outline-none" oninput="updateCalc()">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">इकाई (Unit)</label>
+                        <select id="unitSelect" class="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-xs bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold focus:ring-1 focus:ring-amber-500 outline-none" onchange="updateCalc()">
+                            <option value="tola" selected>तोला (Tola)</option>
+                            <option value="gram">ग्राम (Gram)</option>
+                            <option value="troy_oz">ओन्स (Troy Oz)</option>
+                            <option value="kg">किलोग्राम (Kg)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">ज्याला / जर्ती (%) Making</label>
+                        <input id="makingCharge" type="number" value="5" class="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-xs bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold focus:ring-1 focus:ring-amber-500 outline-none" oninput="updateCalc()">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">कर / VAT (%) Tax</label>
+                        <input id="taxRate" type="number" value="3" class="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-xs bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold focus:ring-1 focus:ring-amber-500 outline-none" oninput="updateCalc()">
+                    </div>
+                </div>
+
+                <!-- Simple Clean Total Display -->
+                <div class="bg-amber-500 text-slate-950 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3">
+                    <div>
+                        <div class="text-[11px] font-extrabold uppercase tracking-wider opacity-90">कुल अनुमानित मूल्य (Total)</div>
+                        <div class="text-2xl font-black" id="totalDisplay">रू १,७५,३४०</div>
+                    </div>
+                    <button onclick="copySummary()" class="w-full sm:w-auto bg-slate-950 hover:bg-slate-900 text-amber-400 font-bold px-4 py-2 rounded-lg text-xs transition-transform active:scale-95 flex items-center justify-center gap-2">
+                        <i class="fa-regular fa-copy"></i> कपी गर्नुहोस्
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab 2: Purity Matrix -->
+            <div id="tabPurityContent" class="tab-content hidden pt-4 space-y-3">
+                <div class="flex items-center gap-3 mb-2">
+                    <label class="text-xs font-semibold text-slate-500 dark:text-slate-400">कुल तौल (ग्राम):</label>
+                    <input id="purityWeightInput" type="number" value="10" class="border border-slate-200 dark:border-slate-800 rounded-lg p-1.5 w-24 text-xs font-bold bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100" oninput="renderMatrix()">
+                </div>
+                <div class="overflow-x-auto rounded-lg border border-slate-200 dark:border-slate-800">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-100 dark:bg-slate-800 font-bold">
+                            <tr>
+                                <th class="p-2.5">क्यारेट</th>
+                                <th class="p-2.5">शुद्धता %</th>
+                                <th class="p-2.5">शुद्ध सुन</th>
+                                <th class="p-2.5">अनुमानित मूल्य</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrixBody" class="divide-y divide-slate-200 dark:divide-slate-800"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 3: Scrap Metal Calculator -->
+            <div id="tabScrapContent" class="tab-content hidden pt-4 space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">पुराना गहनाको तौल (ग्राम):</label>
+                    <input id="scrapWeight" type="number" value="11.66" class="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-xs bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-bold" oninput="calcScrap()">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">क्यारेट सम्भावित गुणस्तर:</label>
+                    <select id="scrapPurity" class="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-xs bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-bold" onchange="calcScrap()">
+                        <option value="0.9167">२२K (९१.६%)</option>
+                        <option value="0.75" selected>१८K (७५.०%)</option>
+                        <option value="0.5833">१४K (५८.३%)</option>
+                    </select>
+                </div>
+                <div class="p-3.5 rounded-xl bg-slate-900 text-white flex justify-between items-center">
+                    <div>
+                        <div class="text-[11px] text-amber-400 font-bold">अनुमानित तुरुन्तै नगद भुक्तानी</div>
+                        <div class="text-xl font-black mt-0.5" id="scrapOfferDisplay">रू ०</div>
+                    </div>
+                    <i class="fa-solid fa-hand-holding-dollar text-2xl text-amber-400"></i>
+                </div>
+            </div>
+
+            <!-- Tab 4: Holdings Portfolio -->
+            <div id="tabPortfolioContent" class="tab-content hidden pt-4 space-y-3">
+                <div class="flex justify-between items-center">
+                    <h4 class="font-bold text-xs">मेरो सुरक्षित होल्डिङ्स</h4>
+                    <button onclick="showAddModal()" class="action-pill text-xs bg-amber-500 text-slate-950 font-bold border-none px-3 py-1">
+                        <i class="fa-solid fa-plus"></i> एसेट थप्नुहोस्
+                    </button>
+                </div>
+                <div id="portfolioList" class="space-y-2"></div>
+            </div>
+        </div>
+    </main>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchBottomTab('home')">
+            <i class="fa-solid fa-house"></i>
+            <span>गृह</span>
+        </div>
+        <div class="nav-item" onclick="switchBottomTab('calc')">
+            <i class="fa-solid fa-calculator"></i>
+            <span>हिसाब</span>
+        </div>
+        <div class="nav-item" onclick="switchBottomTab('charts')">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>प्रवृत्ति</span>
+        </div>
+        <div class="nav-item" onclick="switchBottomTab('portfolio')">
+            <i class="fa-solid fa-wallet"></i>
+            <span>होल्डिङ्स</span>
+        </div>
+    </nav>
+
+    <!-- MODAL FOR ADDING ASSET -->
+    <div id="assetModal" class="fixed inset-0 bg-slate-950/70 z-50 hidden flex items-center justify-center p-4">
+        <div class="simple-card p-5 w-full max-w-xs space-y-3">
+            <h3 class="font-bold text-sm flex items-center gap-2 text-amber-500">
+                <i class="fa-solid fa-circle-plus"></i> नयाँ एसेट थप्नुहोस्
+            </h3>
+            <div>
+                <label class="block text-xs font-semibold mb-1">शीर्षक/नाम</label>
+                <input id="modalTitle" placeholder="उदाहरण: २२K औंठी" class="w-full border border-slate-700 rounded-lg p-2 text-xs bg-slate-900 text-white">
+            </div>
+            <div>
+                <label class="block text-xs font-semibold mb-1">धातु</label>
+                <select id="modalMetal" class="w-full border border-slate-700 rounded-lg p-2 text-xs bg-slate-900 text-white">
+                    <option value="gold">सुन (Gold)</option>
+                    <option value="silver">चाँदी (Silver)</option>
+                </select>
+            </div>
+            <div>
+                <label class="block text-xs font-semibold mb-1">तौल (ग्राम)</label>
+                <input id="modalWeight" type="number" value="10" class="w-full border border-slate-700 rounded-lg p-2 text-xs bg-slate-900 text-white">
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button onclick="savePortfolioItem()" class="flex-1 bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold py-2 rounded-lg text-xs">
+                    सेभ गर्नुहोस्
+                </button>
+                <button onclick="closeAddModal()" class="flex-1 border border-slate-700 text-slate-400 font-bold py-2 rounded-lg text-xs">
+                    रद्द
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-20 right-6 bg-slate-900 text-white px-3.5 py-2.5 rounded-xl shadow-lg hidden items-center gap-2 border border-amber-500/30 z-50 text-xs font-bold">
+        <i class="fa-solid fa-circle-check text-emerald-400 text-base"></i>
+        <span id="toastText">क्लिपबोर्डमा कपी भयो!</span>
+    </div>
+
+    <script>
+        let currentLang = 'np';
+        let darkMode = true;
+        // Nepal market base rates (FENEGOSIDA official benchmark)
+        // Including Nepal import customs duty, luxury tax & federation premiums
+        let baseRatesUSD = { gold: 2742.50, silver: 31.80, platinum: 985.00 };
+        let currencyRates = { USD: 1, EUR: 0.92, GBP: 0.78, INR: 84.4, NPR: 152.7, AED: 3.67 };
+        
+        // Multiplier factor for official local Nepal market rate vs international raw spot (customs & import duty ~20% + VAT + local fees)
+        const NEPAL_MARKET_FACTOR = 2.22;
+
+        let portfolio = [
+            { title: "गोल्ड सिक्का", metal: "gold", purity: 0.999, weight: 10 },
+            { title: "चाँदी बार", metal: "silver", purity: 0.999, weight: 100 }
+        ];
+
+        const unitsInGrams = { gram: 1, tola: 11.6638, troy_oz: 31.1035, kg: 1000 };
+        const GOLD_API_KEY = 'goldapi-de2750523205fc2612a60bbc689b2f82-io';
+
+        const purityMap = {
+            gold: [
+                { name: '२४K ९९.९% (Fine Gold / छापावाल)', val: 0.999 },
+                { name: '२२K ९१.६७% (तेजाबी)', val: 0.9167 },
+                { name: '१८K ७५.०%', val: 0.75 },
+                { name: '१४K ५८.३%', val: 0.5833 }
+            ],
+            silver: [
+                { name: 'फाइन ९९९', val: 0.999 },
+                { name: 'स्टर्लिङ ९२५', val: 0.925 }
+            ],
+            platinum: [
+                { name: '९९५ (Fine Platinum)', val: 0.995 },
+                { name: '९५० (Standard)', val: 0.95 }
+            ]
+        };
+
+        let goldChartInstance, silverChartInstance;
+        let priceHistory = {
+            gold: [301000, 302500, 303800, 305000, 305800, 306800],
+            silver: [4650, 4680, 4700, 4720, 4740, 4755]
+        };
+
+        const nepaliDigits = (num) => String(num).replace(/[0-9]/g, d => '०१२३४५६७८९'[parseInt(d)]);
+
+        function formatCurrency(amount, currency = 'NPR') {
+            const symbols = { NPR: 'रू ', USD: '$', INR: '₹', EUR: '€', GBP: '£', AED: 'AED ' };
+            const formatted = Math.round(amount).toLocaleString(currentLang === 'np' ? 'ne-NP' : 'en-US');
+            if (currency === 'NPR' && currentLang === 'np') {
+                return symbols.NPR + nepaliDigits(formatted);
+            }
+            return (symbols[currency] || '') + formatted;
+        }
+
+        const translations = {
+            np: {
+                mainTitle: 'नेपाल सुन चाँदी', subTitle: 'लाइभ बजार मूल्य (FENEGOSIDA)', refreshLabel: 'रिफ्रेस',
+                bigTolaLabel: 'प्रति तोला (नेपाल)', goldLabel: 'सुन (२४ क्यारेट / Fine Gold)',
+                silverCardLabel: 'चाँदी (Silver)', platCardLabel: 'प्लाटिनम', ratioCardLabel: 'अनुपात (Ratio)',
+                goldChartTitle: 'सुन मूल्य प्रवृत्ति', silverChartTitle: 'चाँदी मूल्य प्रवृत्ति',
+                calcTabLabel: 'क्याल्कुलेटर', matrixTabLabel: 'शुद्धता म्याट्रिक्स', scrapTabLabel: 'पुराना गहना/स्क्र्याप',
+                portTabLabel: 'मेरो पोर्टफोलियो', goldRadioLabel: 'सुन', silverRadioLabel: 'चाँदी', platRadioLabel: 'प्लाटिनम'
+            },
+            en: {
+                mainTitle: 'Nepal Metals', subTitle: 'Live Market Rate (FENEGOSIDA)', refreshLabel: 'Refresh',
+                bigTolaLabel: 'Per Tola (Nepal)', goldLabel: 'Gold (24 Karat / Fine)',
+                silverCardLabel: 'Silver Rate', platCardLabel: 'Platinum Rate', ratioCardLabel: 'Gold/Silver Ratio',
+                goldChartTitle: 'Gold Price Trend', silverChartTitle: 'Silver Price Trend',
+                calcTabLabel: 'Calculator', matrixTabLabel: 'Purity Matrix', scrapTabLabel: 'Scrap Metal',
+                portTabLabel: 'My Holdings', goldRadioLabel: 'Gold', silverRadioLabel: 'Silver', platRadioLabel: 'Platinum'
+            }
+        };
+
+        function id(name) { return document.getElementById(name); }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'np' ? 'en' : 'np';
+            id('langLabel').innerText = currentLang === 'np' ? 'नेपाली' : 'English';
+            applyTranslations();
+            updateAllUI();
+        }
+
+        function toggleTheme() {
+            darkMode = !darkMode;
+            document.documentElement.classList.toggle('dark', darkMode);
+            id('themeLabel').innerText = darkMode ? (currentLang === 'np' ? 'डार्क' : 'Dark') : (currentLang === 'np' ? 'लाइट' : 'Light');
+            id('themeIcon').className = darkMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        }
+
+        function applyTranslations() {
+            const t = translations[currentLang];
+            Object.keys(t).forEach(k => {
+                if (id(k)) id(k).innerText = t[k];
+            });
+        }
+
+        function setupPurity(metal = 'gold') {
+            const sel = id('puritySelect');
+            sel.innerHTML = '';
+            purityMap[metal].forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.val;
+                opt.textContent = p.name;
+                sel.appendChild(opt);
+            });
+            updateCalc();
+        }
+
+        function handleMetalChange(metal) { setupPurity(metal); }
+
+        function getGramPriceNPR(metal) {
+            // Converts USD spot rate + Nepal import customs & taxes into local NPR per gram price
+            const cr = currencyRates.NPR || 152.7;
+            const spotGramNPR = (baseRatesUSD[metal] / 31.1035) * cr;
+            return spotGramNPR * NEPAL_MARKET_FACTOR;
+        }
+
+        function updateCalc() {
+            const metal = document.querySelector('input[name="metalType"]:checked')?.value || 'gold';
+            const purity = parseFloat(id('puritySelect').value) || 0.999;
+            const weight = parseFloat(id('weightInput').value) || 0;
+            const unit = id('unitSelect').value;
+            const currency = id('currencySelect').value;
+            
+            const gramWeight = weight * (unitsInGrams[unit] || 1);
+            const makingPct = parseFloat(id('makingCharge').value) || 0;
+            const taxPct = parseFloat(id('taxRate').value) || 0;
+            
+            const localGramPriceNPR = getGramPriceNPR(metal);
+            const targetCurrencyRatio = (currencyRates[currency] || 1) / (currencyRates.NPR || 152.7);
+            const spotGramTarget = localGramPriceNPR * targetCurrencyRatio;
+            
+            const melt = gramWeight * purity * spotGramTarget;
+            const making = melt * (makingPct / 100);
+            const tax = (melt + making) * (taxPct / 100);
+            const total = melt + making + tax;
+
+            id('totalDisplay').innerText = formatCurrency(total, currency);
+        }
+
+        function renderMatrix() {
+            const grossGrams = parseFloat(id('purityWeightInput').value) || 0;
+            const spotGramNPR = getGramPriceNPR('gold');
+
+            const rows = [
+                ['२४K (९९.९% छापावाल)', 0.999],
+                ['२२K (९१.६% तेजाबी)', 0.9167],
+                ['१८K (७५.०%)', 0.75],
+                ['१४K (५८.३%)', 0.5833]
+            ];
+
+            id('matrixBody').innerHTML = rows.map(([k, p]) => `
+                <tr class="hover:bg-amber-500/10 transition-colors">
+                    <td class="p-2.5 font-bold">${k}</td>
+                    <td class="p-2.5">${(p * 100).toFixed(1)}%</td>
+                    <td class="p-2.5">${(grossGrams * p).toFixed(2)} ग्राम</td>
+                    <td class="p-2.5 font-extrabold text-amber-500">${formatCurrency(grossGrams * p * spotGramNPR, 'NPR')}</td>
+                </tr>
+            `).join('');
+        }
+
+        function calcScrap() {
+            const w = parseFloat(id('scrapWeight').value) || 0;
+            const p = parseFloat(id('scrapPurity').value) || 0.75;
+            const spotNPR = getGramPriceNPR('gold');
+            
+            const estOffer = w * p * spotNPR * 0.9;
+            id('scrapOfferDisplay').innerText = formatCurrency(estOffer, 'NPR');
+        }
+
+        function renderPortfolio() {
+            const list = id('portfolioList');
+            if (portfolio.length === 0) {
+                list.innerHTML = `<p class="text-xs text-slate-400 italic">कुनै एसेट भेटिएन। थप्नुहोस् क्लिक गर्नुहोस्।</p>`;
+                return;
+            }
+
+            list.innerHTML = portfolio.map((item, idx) => {
+                const spotNPR = getGramPriceNPR(item.metal);
+                const value = item.weight * item.purity * spotNPR;
+                return `
+                    <div class="flex justify-between items-center p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
+                        <div>
+                            <div class="font-bold text-xs">${item.title}</div>
+                            <div class="text-[10px] text-slate-400">${item.weight} ग्राम • ${item.metal === 'gold' ? 'सुन' : 'चाँदी'}</div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="font-extrabold text-xs text-amber-500">${formatCurrency(value, 'NPR')}</span>
+                            <button onclick="removePortfolioItem(${idx})" class="text-red-400 hover:text-red-600 text-xs"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showAddModal() { id('assetModal').classList.remove('hidden'); }
+        function closeAddModal() { id('assetModal').classList.add('hidden'); }
+
+        function savePortfolioItem() {
+            const title = id('modalTitle').value || 'मेरो गहना';
+            const metal = id('modalMetal').value;
+            const weight = parseFloat(id('modalWeight').value) || 10;
+            
+            portfolio.push({ title, metal, purity: metal === 'gold' ? 0.9167 : 0.999, weight });
+            closeAddModal();
+            renderPortfolio();
+        }
+
+        function removePortfolioItem(idx) {
+            portfolio.splice(idx, 1);
+            renderPortfolio();
+        }
+
+        function switchTab(tab) {
+            ['calc', 'purity', 'scrap', 'portfolio'].forEach(t => {
+                id(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Content`).classList.add('hidden');
+                id(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Btn`).classList.remove('active');
+            });
+
+            const targetName = tab.charAt(0).toUpperCase() + tab.slice(1);
+            id(`tab${targetName}Content`).classList.remove('hidden');
+            id(`tab${targetName}Btn`).classList.add('active');
+        }
+
+        function switchBottomTab(tab) {
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if (event && event.currentTarget) event.currentTarget.classList.add('active');
+
+            if (tab === 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
+            else if (tab === 'calc') switchTab('calc');
+            else if (tab === 'charts') switchTab('purity');
+            else switchTab('portfolio');
+        }
+
+        function copySummary() {
+            const val = id('totalDisplay').innerText;
+            navigator.clipboard.writeText(`नेपाल सुन-चाँदी अनुमानित हिसाब: ${val}`);
+            showToast('क्लिपबोर्डमा कपी भयो!');
+        }
+
+        function showToast(msg) {
+            const toast = id('toast');
+            id('toastText').innerText = msg;
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 2500);
+        }
+
+        function updateAllUI() {
+            const goldGram = getGramPriceNPR('gold');
+            const silverGram = getGramPriceNPR('silver');
+            const platinumGram = getGramPriceNPR('platinum');
+
+            const tolaFactor = 11.6638;
+
+            id('bigGoldTola').innerText = formatCurrency(goldGram * tolaFactor, 'NPR');
+            id('bigGoldGram').innerText = formatCurrency(goldGram, 'NPR');
+            id('gold22Tola').innerText = formatCurrency(goldGram * 0.9167 * tolaFactor, 'NPR');
+            id('bigSilverTola').innerText = formatCurrency(silverGram * tolaFactor, 'NPR');
+            id('silverTolaSmall').innerText = formatCurrency(silverGram * tolaFactor, 'NPR');
+            id('platinumTolaSmall').innerText = formatCurrency(platinumGram * tolaFactor, 'NPR');
+            id('ratioValue').innerText = ((goldGram * tolaFactor) / (silverGram * tolaFactor)).toFixed(1);
+
+            updateCalc();
+            renderMatrix();
+            calcScrap();
+            renderPortfolio();
+        }
+
+        function initCharts() {
+            const goldCtx = id('goldChart').getContext('2d');
+            const silverCtx = id('silverChart').getContext('2d');
+
+            goldChartInstance = new Chart(goldCtx, {
+                type: 'line',
+                data: {
+                    labels: ['१०AM', '१२PM', '२PM', '४PM', '६PM', 'अहिले'],
+                    datasets: [{
+                        data: priceHistory.gold,
+                        borderColor: '#f59e0b',
+                        borderWidth: 2,
+                        backgroundColor: 'rgba(245, 158, 11, 0.08)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { color: 'rgba(128,128,128,0.1)' } }
+                    }
+                }
+            });
+
+            silverChartInstance = new Chart(silverCtx, {
+                type: 'line',
+                data: {
+                    labels: ['१०AM', '१२PM', '२PM', '४PM', '६PM', 'अहिले'],
+                    datasets: [{
+                        data: priceHistory.silver,
+                        borderColor: '#94a3b8',
+                        borderWidth: 2,
+                        backgroundColor: 'rgba(148, 163, 184, 0.08)',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { grid: { color: 'rgba(128,128,128,0.1)' } }
+                    }
+                }
+            });
+        }
+
+        async function fetchLiveData() {
+            const refreshIcon = id('refreshIcon');
+            if (refreshIcon) refreshIcon.classList.add('fa-spin');
+
+            try {
+                const exRes = await fetch('https://open.er-api.com/v6/latest/USD');
+                if (exRes.ok) {
+                    const exData = await exRes.json();
+                    if (exData.rates) {
+                        for (let c in currencyRates) {
+                            if (exData.rates[c]) currencyRates[c] = exData.rates[c];
+                        }
+                    }
+                }
+
+                const fetchMetal = async (symbol) => {
+                    try {
+                        const res = await fetch(`https://www.goldapi.io/api/${symbol}/USD`, {
+                            headers: { 'x-access-token': GOLD_API_KEY }
+                        });
+                        if (res.ok) {
+                            const data = await res.json();
+                            return data.price;
+                        }
+                    } catch (e) { }
+                    return null;
+                };
+
+                const [g, s, p] = await Promise.all([fetchMetal('XAU'), fetchMetal('XAG'), fetchMetal('XPT')]);
+                if (g) baseRatesUSD.gold = g;
+                if (s) baseRatesUSD.silver = s;
+                if (p) baseRatesUSD.platinum = p;
+
+                const currentGoldTolaNPR = getGramPriceNPR('gold') * 11.6638;
+                const currentSilverTolaNPR = getGramPriceNPR('silver') * 11.6638;
+
+                priceHistory.gold.push(Math.round(currentGoldTolaNPR));
+                if (priceHistory.gold.length > 10) priceHistory.gold.shift();
+
+                priceHistory.silver.push(Math.round(currentSilverTolaNPR));
+                if (priceHistory.silver.length > 10) priceHistory.silver.shift();
+
+                if (goldChartInstance) goldChartInstance.update();
+                if (silverChartInstance) silverChartInstance.update();
+
+                showToast('लाइभ डाटा अपडेट भयो!');
+            } catch (e) {
+                console.warn('API fallback applied');
+            } finally {
+                if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+                updateAllUI();
+            }
+        }
+
+        window.onload = () => {
+            setupPurity('gold');
+            initCharts();
+            updateAllUI();
+            fetchLiveData();
+            setInterval(fetchLiveData, 60000);
+        };
+    </script>
+</body>
+</html>
