@@ -21,7 +21,7 @@
 {"@context":"https://schema.org","@type":"WebApplication","name":"Gold Price in Nepal Today","url":"https://laxmannepal.com.np/gold-price-in-nepal-today/","applicationCategory":"FinanceApplication","operatingSystem":"Web","description":"Nepal gold and silver rates, price history and calculators using FENEGOSIDA published local reference rates.","inLanguage":["ne","en"],"publisher":{"@type":"Person","name":"Laxman Nepal","url":"https://laxmannepal.com.np/"}}
 </script>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -57,10 +57,22 @@ button,input,select{font:inherit}
 .faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.faq{background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:15px}.faq h3{font-size:12px;margin:0 0 6px;font-weight:900}.faq p{font-size:10px;line-height:1.7;color:var(--muted);margin:0}
 .seo-copy{background:var(--surface);border:1px solid var(--line);border-radius:19px;padding:20px;line-height:1.8;color:var(--muted);font-size:11px}.seo-copy strong{color:var(--text)}.seo-copy h2{color:var(--text);font-size:17px;margin:0 0 8px}.seo-copy h3{color:var(--text);font-size:13px;margin:15px 0 4px}
 .footer{margin:30px 0 100px;padding:22px 0;border-top:1px solid var(--line);color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:15px}
-.bottom-nav{position:fixed;z-index:30;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(17,19,22,.93);backdrop-filter:blur(18px);border:1px solid #303238;border-radius:18px;padding:6px;display:flex;gap:3px;box-shadow:0 18px 50px rgba(0,0,0,.35)}.nav-item{min-width:68px;padding:8px 10px;border-radius:12px;text-align:center;color:#a1a1aa;font-size:9px;font-weight:900;cursor:pointer}.nav-item i{display:block;font-size:15px;margin-bottom:3px}.nav-item.active{background:rgba(244,181,43,.13);color:#ffd66b}
+
 @media(max-width:850px){.hero-grid,.dashboard{grid-template-columns:1fr}.hero{padding:21px}.rate-grid{grid-template-columns:1fr 1fr}.chart-container{height:230px}}
 @media(max-width:560px){.container{width:min(100% - 20px,1180px)}.topbar{height:60px}.brand h1{font-size:13px}.brand-mark{width:38px;height:38px}.actions .action-pill{width:38px;height:38px;padding:0;justify-content:center}.actions .action-pill span{display:none}.hero{margin-top:12px;border-radius:21px;padding:17px}.hero-price{font-size:clamp(2.75rem,14vw,4rem)}.rate-grid{gap:8px}.rate-card{padding:13px}.rate-card .value{font-size:16px}.mini-board{margin-top:2px}.trust{align-items:flex-start;flex-direction:column}.faq-grid{grid-template-columns:1fr}.calc-grid{grid-template-columns:1fr}.metal-grid{grid-template-columns:1fr 1fr}.metal-option:last-child{grid-column:1/-1}.footer{flex-direction:column}.bottom-nav{bottom:7px;width:calc(100% - 18px);justify-content:space-around}.nav-item{flex:1;min-width:0}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* Premium glass layer */
+.glass{background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 55px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.07);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.glass:hover{transform:translateY(-2px);border-color:rgba(244,181,43,.28);box-shadow:0 22px 65px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.09)}
+.reveal{opacity:0;transform:translateY(14px);animation:reveal .65s cubic-bezier(.2,.7,.2,1) forwards}.reveal:nth-child(2){animation-delay:.05s}.reveal:nth-child(3){animation-delay:.1s}.reveal:nth-child(4){animation-delay:.15s}@keyframes reveal{to{opacity:1;transform:none}}
+.glow{position:absolute;inset:auto -80px -120px auto;width:260px;height:260px;border-radius:50%;background:rgba(244,181,43,.12);filter:blur(35px);pointer-events:none}
+.related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.related-card{overflow:hidden;border-radius:20px;position:relative;transition:.28s ease}.related-card img{width:100%;height:145px;display:block;object-fit:cover}.related-body{padding:14px}.related-body h3{margin:0 0 5px;font-size:13px}.related-body p{margin:0;color:var(--muted);font-size:10px;line-height:1.65}.related-badge{position:absolute;top:10px;left:10px;padding:6px 9px;border-radius:999px;background:rgba(10,10,10,.6);color:#ffe08a;font-size:9px;font-weight:900;backdrop-filter:blur(10px)}
+.skeleton{background:linear-gradient(90deg,var(--surface2) 25%,rgba(255,255,255,.08) 37%,var(--surface2) 63%);background-size:400% 100%;animation:shine 1.4s ease infinite}@keyframes shine{0%{background-position:100% 0}100%{background-position:-100% 0}}
+.chart-container{min-height:240px}.chart-container canvas{display:block!important;width:100%!important;height:100%!important}
+@media(max-width:850px){.related-grid{grid-template-columns:1fr 1fr}.hero-grid{gap:18px}}
+@media(max-width:560px){.related-grid{grid-template-columns:1fr}.related-card img{height:170px}.section{margin-top:17px}.section-head{align-items:flex-start;flex-direction:column}.dashboard{gap:10px}.panel{padding:14px}.chart-container{height:220px;min-height:220px}.rate-grid{grid-template-columns:1fr 1fr}.hero-grid{display:block}.hero-main{padding-top:8px}.mini-board{margin-top:14px}.topbar{position:relative}.glass{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}}
+@media(prefers-reduced-motion:reduce){.reveal{animation:none;opacity:1;transform:none}.glass,.related-card{transition:none}}
 </style>
 </head>
 <body>
@@ -76,7 +88,7 @@ button,input,select{font:inherit}
 </header>
 
 <main class="container">
-<section class="hero" aria-labelledby="goldLabel">
+<section class="hero reveal glass" aria-labelledby="goldLabel">
   <div class="hero-grid">
     <div class="hero-main">
       <span class="eyebrow"><span class="live-dot"></span> <span id="sourceStatus">FENEGOSIDA बाट प्रकाशित दर</span></span>
@@ -98,7 +110,7 @@ button,input,select{font:inherit}
   <div class="trust"><span>✓ स्रोत: <strong>Federation of Nepal Gold & Silver Dealers' Association (FENEGOSIDA)</strong></span><span>मिति: <strong id="rateDate2">—</strong></span></div>
 </section>
 
-<section class="section" aria-labelledby="todayRates">
+<section class="section reveal glass" aria-labelledby="todayRates">
  <div class="section-head"><div><h2 id="todayRates">आजको सुन चाँदीको भाउ</h2><p>एक नजरमै नेपालका मुख्य धातु दर — तोला र १० ग्राम</p></div><a class="section-link" href="#history">इतिहास हेर्नुहोस् →</a></div>
  <div class="rate-grid">
   <article class="rate-card"><div class="label">छापावाल सुन · 24K</div><div id="gold24Card" class="value">रू २,९९,५००</div><small>प्रति तोला</small></article>
@@ -108,11 +120,11 @@ button,input,select{font:inherit}
  </div>
 </section>
 
-<section id="history" class="section">
+<section id="history" class="section reveal">
  <div class="section-head"><div><h2>नेपाल सुन मूल्य प्रवृत्ति</h2><p>दैनिक प्रकाशित दरबाट trend बुझ्नुहोस्</p></div><div class="range-tabs"><button class="active">7D</button><button>30D</button><button>6M</button><button>1Y</button></div></div>
  <div class="dashboard">
-  <div class="panel"><div class="panel-title"><h3 id="goldChartTitle"><i class="fa-solid fa-chart-line" style="color:var(--gold)"></i> सुन मूल्य प्रवृत्ति</h3><span class="subtle">FENEGOSIDA history</span></div><div class="chart-container"><canvas id="goldChart"></canvas></div></div>
-  <div class="panel"><div class="panel-title"><h3 id="silverChartTitle"><i class="fa-solid fa-chart-line"></i> चाँदी मूल्य प्रवृत्ति</h3><span class="subtle">प्रति तोला</span></div><div class="chart-container"><canvas id="silverChart"></canvas></div></div>
+  <div class="panel glass"><div class="panel-title"><h3 id="goldChartTitle"><i class="fa-solid fa-chart-line" style="color:var(--gold)"></i> सुन मूल्य प्रवृत्ति</h3><span class="subtle">FENEGOSIDA history</span></div><div class="chart-container"><canvas id="goldChart"></canvas></div></div>
+  <div class="panel glass"><div class="panel-title"><h3 id="silverChartTitle"><i class="fa-solid fa-chart-line"></i> चाँदी मूल्य प्रवृत्ति</h3><span class="subtle">प्रति तोला</span></div><div class="chart-container"><canvas id="silverChart"></canvas></div></div>
  </div>
 </section>
 
@@ -128,7 +140,7 @@ button,input,select{font:inherit}
 
 <section class="section">
  <div class="section-head"><div><h2>सुन हिसाब गर्ने स्मार्ट टूल्स</h2><p>किन्ने, बेच्ने वा आफ्नो गहना मूल्याङ्कन गर्न एउटै ठाउँ</p></div></div>
- <div class="panel tools">
+ <div id="calc" class="panel tools glass">
   <div class="tool-tabs">
    <button id="tabCalcBtn" onclick="switchTab('calc')" class="tab-btn active"><i class="fa-solid fa-calculator"></i> <span id="calcTabLabel">क्यालकुलेटर</span></button>
    <button id="tabPurityBtn" onclick="switchTab('purity')" class="tab-btn"><i class="fa-solid fa-scale-balanced"></i> <span id="matrixTabLabel">शुद्धता</span></button>
@@ -152,7 +164,7 @@ button,input,select{font:inherit}
    <div class="total-box"><div><small style="font-size:10px;font-weight:900">अनुमानित कुल मूल्य</small><br><b id="totalDisplay">रू ०</b></div><button onclick="copySummary()"><i class="fa-regular fa-copy"></i> कपी गर्नुहोस्</button></div>
   </div>
 
-  <div id="tabPurityContent" class="tab-content hidden">
+  <div id="tabPurityContent" class="tab-content hidden" id="purity">
    <div class="field" style="max-width:170px"><label>कुल तौल (ग्राम)</label><input id="purityWeightInput" type="number" value="10" oninput="renderMatrix()"></div>
    <div class="table-wrap" style="margin-top:12px"><table><thead><tr><th>क्यारेट</th><th>शुद्धता</th><th>शुद्ध सुन</th><th>अनुमानित मूल्य</th></tr></thead><tbody id="matrixBody"></tbody></table></div>
   </div>
@@ -200,13 +212,6 @@ button,input,select{font:inherit}
 </main>
 
 <footer class="container footer"><div><strong>Gold Price in Nepal Today</strong><br>नेपाल सुन चाँदी दर · FENEGOSIDA reference</div><div>© 2026 Laxman Nepal · Data source: FENEGOSIDA</div></footer>
-
-<nav class="bottom-nav">
- <div class="nav-item active" onclick="switchBottomTab('home')"><i class="fa-solid fa-house"></i>गृह</div>
- <div class="nav-item" onclick="switchBottomTab('calc')"><i class="fa-solid fa-calculator"></i>हिसाब</div>
- <div class="nav-item" onclick="switchBottomTab('charts')"><i class="fa-solid fa-chart-line"></i>प्रवृत्ति</div>
- <div class="nav-item" onclick="switchBottomTab('portfolio')"><i class="fa-solid fa-wallet"></i>होल्डिङ्स</div>
-</nav>
 
 <div id="assetModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
  <div class="panel" style="width:min(100%,360px)">
