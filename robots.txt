@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://laxmannepal.com.np/gold-price-in-nepal-today/sitemap.xml
+Sitemap: https://laxmannepal.com.np/gold-price-in-nepal-today/sitemap-index.xml
