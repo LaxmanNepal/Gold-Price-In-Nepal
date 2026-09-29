@@ -244,6 +244,8 @@ let lastLiveFetch = null;
 const FENEGOSIDA_API = 'https://api.fenegosida.org/api/website/v1/Dashboard/today';
 const FENEGOSIDA_HISTORY_API = 'https://api.fenegosida.org/api/website/v1/Dashboard/WeeklyChartRate?weekmonthyear=7';
 const FENEGOSIDA_SOURCE = 'https://www.fenegosida.org';
+const unitsInGrams = { gram:1, tola:11.664, troy_oz:31.1034768, kg:1000 };
+let portfolio = JSON.parse(localStorage.getItem('goldNepalPortfolio') || '[]');
 
         const purityMap = {
             gold: [
@@ -257,8 +259,8 @@ const FENEGOSIDA_SOURCE = 'https://www.fenegosida.org';
                 { name: 'स्टर्लिङ ९२५', val: 0.925 }
             ],
             tejabi: [
-                { name: '९९५ (Fine Platinum)', val: 0.995 },
-                { name: '९५० (Standard)', val: 0.95 }
+                { name: '२२K (९१.६७% तेजाबी)', val: 0.9167 },
+                { name: '२४K (९९.९% तुलना)', val: 0.999 }
             ]
         };
 
@@ -427,12 +429,14 @@ const FENEGOSIDA_SOURCE = 'https://www.fenegosida.org';
             const weight = parseFloat(id('modalWeight').value) || 10;
             
             portfolio.push({ title, metal, purity: metal === 'gold' ? 0.9167 : 0.999, weight });
+            localStorage.setItem('goldNepalPortfolio', JSON.stringify(portfolio));
             closeAddModal();
             renderPortfolio();
         }
 
         function removePortfolioItem(idx) {
             portfolio.splice(idx, 1);
+            localStorage.setItem('goldNepalPortfolio', JSON.stringify(portfolio));
             renderPortfolio();
         }
 
