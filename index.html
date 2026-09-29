@@ -20,7 +20,7 @@
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebApplication","name":"Gold Price in Nepal Today","url":"https://laxmannepal.com.np/gold-price-in-nepal-today/","applicationCategory":"FinanceApplication","operatingSystem":"Web","description":"Nepal gold and silver rates, price history and calculators using FENEGOSIDA published local reference rates.","inLanguage":["ne","en"],"publisher":{"@type":"Person","name":"Laxman Nepal","url":"https://laxmannepal.com.np/"}}
 </script>
-<script src="https://cdn.tailwindcss.com"></script>
+
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -69,7 +69,7 @@ button,input,select{font:inherit}
 .glow{position:absolute;inset:auto -80px -120px auto;width:260px;height:260px;border-radius:50%;background:rgba(244,181,43,.12);filter:blur(35px);pointer-events:none}
 .related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.related-card{overflow:hidden;border-radius:20px;position:relative;transition:.28s ease}.related-card img{width:100%;height:145px;display:block;object-fit:cover}.related-body{padding:14px}.related-body h3{margin:0 0 5px;font-size:13px}.related-body p{margin:0;color:var(--muted);font-size:10px;line-height:1.65}.related-badge{position:absolute;top:10px;left:10px;padding:6px 9px;border-radius:999px;background:rgba(10,10,10,.6);color:#ffe08a;font-size:9px;font-weight:900;backdrop-filter:blur(10px)}
 .skeleton{background:linear-gradient(90deg,var(--surface2) 25%,rgba(255,255,255,.08) 37%,var(--surface2) 63%);background-size:400% 100%;animation:shine 1.4s ease infinite}@keyframes shine{0%{background-position:100% 0}100%{background-position:-100% 0}}
-.chart-container{min-height:240px}.chart-container canvas{display:block!important;width:100%!important;height:100%!important}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}.modal-backdrop.hidden{display:none}.toast{position:fixed;right:18px;bottom:22px;background:#111316;color:#fff;padding:12px 15px;border-radius:13px;box-shadow:0 15px 45px rgba(0,0,0,.35);display:flex;align-items:center;gap:8px;border:1px solid rgba(244,181,43,.3);z-index:50;font-size:11px;font-weight:800}.toast.hidden{display:none}.portfolio-empty{font-size:11px;color:var(--muted);font-style:italic}.portfolio-item{display:flex;justify-content:space-between;align-items:center;padding:11px;border-radius:12px;background:var(--surface2);border:1px solid var(--line)}.portfolio-title{font-size:11px;font-weight:900}.portfolio-meta{font-size:9px;color:var(--muted);margin-top:3px}.portfolio-value{font-size:11px;font-weight:900;color:var(--gold)}.delete-btn{border:0;background:transparent;color:#f87171;font-size:12px;cursor:pointer}.chart-container{min-height:240px}.chart-container canvas{display:block!important;width:100%!important;height:100%!important}
 @media(max-width:850px){.related-grid{grid-template-columns:1fr 1fr}.hero-grid{gap:18px}}
 @media(max-width:560px){.related-grid{grid-template-columns:1fr}.related-card img{height:170px}.section{margin-top:17px}.section-head{align-items:flex-start;flex-direction:column}.dashboard{gap:10px}.panel{padding:14px}.chart-container{height:220px;min-height:220px}.rate-grid{grid-template-columns:1fr 1fr}.hero-grid{display:block}.hero-main{padding-top:8px}.mini-board{margin-top:14px}.topbar{position:relative}.glass{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}}
 @media(prefers-reduced-motion:reduce){.reveal{animation:none;opacity:1;transform:none}.glass,.related-card{transition:none}}
@@ -213,7 +213,7 @@ button,input,select{font:inherit}
 
 <footer class="container footer"><div><strong>Gold Price in Nepal Today</strong><br>नेपाल सुन चाँदी दर · FENEGOSIDA reference</div><div>© 2026 Laxman Nepal · Data source: FENEGOSIDA</div></footer>
 
-<div id="assetModal" class="fixed inset-0 bg-black/70 z-50 hidden flex items-center justify-center p-4">
+<div id="assetModal" class="modal-backdrop hidden">
  <div class="panel" style="width:min(100%,360px)">
   <h3 style="margin-top:0">नयाँ एसेट थप्नुहोस्</h3>
   <div class="field" style="margin:10px 0"><label>नाम</label><input id="modalTitle" placeholder="उदाहरण: २२K औंठी"></div>
@@ -222,7 +222,7 @@ button,input,select{font:inherit}
   <div style="display:flex;gap:8px;margin-top:14px"><button onclick="savePortfolioItem()" class="action-pill" style="background:var(--gold);color:#171717;border:0;flex:1">सेभ</button><button onclick="closeAddModal()" class="action-pill" style="flex:1">रद्द</button></div>
  </div>
 </div>
-<div id="toast" class="fixed bottom-24 right-5 bg-neutral-900 text-white px-4 py-3 rounded-xl shadow-xl hidden items-center gap-2 border border-amber-500/30 z-50 text-xs font-bold"><i class="fa-solid fa-circle-check text-emerald-400"></i><span id="toastText">सफल भयो</span></div>
+<div id="toast" class="toast hidden"><i class="fa-solid fa-circle-check" style="color:#34d399"></i><span id="toastText">सफल भयो</span></div>
 
 <script>
         let currentLang = 'np';
@@ -384,11 +384,11 @@ let activeRange = 30;
             ];
 
             id('matrixBody').innerHTML = rows.map(([k, p]) => `
-                <tr class="hover:bg-amber-500/10 transition-colors">
-                    <td class="p-2.5 font-bold">${k}</td>
-                    <td class="p-2.5">${(p * 100).toFixed(1)}%</td>
+                <tr>
+                    <td>${k}</td>
+                    <td>${(p * 100).toFixed(1)}%</td>
                     <td class="p-2.5">${(grossGrams * p).toFixed(2)} ग्राम</td>
-                    <td class="p-2.5 font-extrabold text-amber-500">${formatCurrency(grossGrams * p * spotGramNPR, 'NPR')}</td>
+                    <td style="font-weight:900;color:var(--gold)">${formatCurrency(grossGrams * p * spotGramNPR, 'NPR')}</td>
                 </tr>
             `).join('');
         }
@@ -405,7 +405,7 @@ let activeRange = 30;
         function renderPortfolio() {
             const list = id('portfolioList');
             if (portfolio.length === 0) {
-                list.innerHTML = `<p class="text-xs text-slate-400 italic">कुनै एसेट भेटिएन। थप्नुहोस् क्लिक गर्नुहोस्।</p>`;
+                list.innerHTML = `<p class="portfolio-empty">कुनै एसेट भेटिएन। थप्नुहोस् क्लिक गर्नुहोस्।</p>`;
                 return;
             }
 
@@ -413,14 +413,14 @@ let activeRange = 30;
                 const spotNPR = getGramPriceNPR(item.metal);
                 const value = item.weight * item.purity * spotNPR;
                 return `
-                    <div class="flex justify-between items-center p-2.5 rounded-lg bg-slate-100 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800">
+                    <div class="portfolio-item">
                         <div>
-                            <div class="font-bold text-xs">${item.title}</div>
-                            <div class="text-[10px] text-slate-400">${item.weight} ग्राम • ${item.metal === 'gold' ? 'सुन' : 'चाँदी'}</div>
+                            <div class="portfolio-title">${item.title}</div>
+                            <div class="portfolio-meta">${item.weight} ग्राम • ${item.metal === 'gold' ? 'सुन' : 'चाँदी'}</div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <span class="font-extrabold text-xs text-amber-500">${formatCurrency(value, 'NPR')}</span>
-                            <button onclick="removePortfolioItem(${idx})" class="text-red-400 hover:text-red-600 text-xs"><i class="fa-solid fa-trash"></i></button>
+                        <div style="display:flex;align-items:center;gap:12px">
+                            <span class="portfolio-value">${formatCurrency(value, 'NPR')}</span>
+                            <button onclick="removePortfolioItem(${idx})" class="delete-btn"><i class="fa-solid fa-trash"></i></button>
                         </div>
                     </div>
                 `;
