@@ -42,7 +42,7 @@ button,input,select{font:inherit}
 .hero:after{content:"";position:absolute;width:240px;height:240px;border-radius:50%;right:-100px;top:-110px;background:rgba(244,181,43,.12);filter:blur(4px)}
 .eyebrow{display:inline-flex;align-items:center;gap:7px;background:rgba(244,181,43,.1);border:1px solid rgba(244,181,43,.2);color:var(--gold);border-radius:999px;padding:7px 11px;font-size:11px;font-weight:900}
 .live-dot{width:8px;height:8px;border-radius:50%;background:#22c55e;box-shadow:0 0 12px #22c55e;display:inline-block;animation:pulse 2s infinite}@keyframes pulse{50%{transform:scale(1.2);opacity:.55}}
-.hero-grid{display:grid;grid-template-columns:1.45fr .75fr;gap:26px;align-items:end}.hero-main{padding-top:18px}.hero-kicker{font-size:13px;color:var(--muted);font-weight:800}.hero-price{font-size:clamp(3rem,8vw,6.5rem);line-height:.98;letter-spacing:-.06em;color:var(--gold);font-weight:900;font-variant-numeric:tabular-nums;margin:8px 0}.hero-unit{font-size:12px;color:var(--muted)}.change-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:rgba(34,197,94,.1);color:#22c55e;font-size:11px;font-weight:900;margin-top:10px}
+.hero-grid{display:grid;grid-template-columns:1.45fr .75fr;gap:26px;align-items:end}.hero-main{padding-top:18px}.hero-kicker{font-size:13px;color:var(--muted);font-weight:800}.hero-price{transition:opacity .2s ease;font-size:clamp(3rem,8vw,6.5rem);line-height:.98;letter-spacing:-.06em;color:var(--gold);font-weight:900;font-variant-numeric:tabular-nums;margin:8px 0}.hero-unit{font-size:12px;color:var(--muted)}.change-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 9px;border-radius:999px;background:rgba(34,197,94,.1);color:#22c55e;font-size:11px;font-weight:900;margin-top:10px}
 .mini-board{background:var(--surface2);border:1px solid var(--line);border-radius:20px;padding:16px}.mini-row{display:flex;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);font-size:12px}.mini-row:last-child{border:0}.mini-row span{color:var(--muted)}.mini-row strong{font-variant-numeric:tabular-nums}
 .trust{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:14px;color:var(--muted);font-size:10px}.trust strong{color:var(--text)}
 .section{margin-top:22px}.section-head{display:flex;justify-content:space-between;gap:15px;align-items:end;margin-bottom:12px}.section-head h2{margin:0;font-size:19px;font-weight:900;letter-spacing:-.03em}.section-head p{margin:4px 0 0;color:var(--muted);font-size:11px}.section-link{color:var(--gold);font-size:11px;font-weight:900}
@@ -176,14 +176,6 @@ button,input,select{font:inherit}
  </div>
 </section>
 
-<section class="section">
- <div class="section-head"><div><h2>आजको बजार snapshot</h2><p>दैनिक परिवर्तन र quick reference</p></div></div>
- <div class="rate-grid">
-  <div class="rate-card"><div id="silverCardLabel" class="label">चाँदी</div><div id="silverTolaSmall" class="value">रू ४,६२५</div><small>प्रति तोला</small></div>
-  <div class="rate-card"><div id="platCardLabel" class="label">तेजाबी सुन · 22K</div><div id="platinumTolaSmall" class="value">रू २,७४,३४५</div><small>प्रति तोला</small></div>
-  <div class="rate-card"><div id="ratioCardLabel" class="label">Gold / Silver ratio</div><div id="ratioValue" class="value">64.7</div><small>अनुपात</small></div>
-  <div class="rate-card"><div class="label">दर स्थिति</div><div id="statusCard" class="value" style="color:#22c55e">जाँच हुँदैछ</div><small>source connection</small></div>
- </div>
 </section>
 
 <section class="section">
@@ -552,7 +544,7 @@ let activeRange = 30;
             calcScrap();
             renderPortfolio();
 
-            if (id('rateDate')) id('rateDate').innerText = fenegosidaRates.rateDate || '—'; if (id('rateDate2')) id('rateDate2').innerText = fenegosidaRates.rateDate || '—'; if (id('gold24Card')) id('gold24Card').innerText = formatCurrency(fenegosidaRates.goldTola,'NPR'); if (id('gold10Card')) id('gold10Card').innerText = formatCurrency(fenegosidaRates.gold10g,'NPR'); if (id('tejabiCard')) id('tejabiCard').innerText = formatCurrency(fenegosidaRates.tejabiTola,'NPR'); if (id('silverCard')) id('silverCard').innerText = formatCurrency(fenegosidaRates.silverTola,'NPR'); if (id('statusCard')) id('statusCard').innerText = fenegosidaRates.status === 'live' ? 'LIVE' : 'Fallback'; if (id('changeValue')) {
+            if (id('rateDate')) id('rateDate').innerText = fenegosidaRates.rateDate || '—'; if (id('rateDate2')) id('rateDate2').innerText = fenegosidaRates.rateDate || '—'; if (id('gold24Card')) id('gold24Card').innerText = formatCurrency(fenegosidaRates.goldTola,'NPR'); if (id('gold10Card')) id('gold10Card').innerText = formatCurrency(fenegosidaRates.gold10g,'NPR'); if (id('tejabiCard')) id('tejabiCard').innerText = formatCurrency(fenegosidaRates.tejabiTola,'NPR'); if (id('silverCard')) id('silverCard').innerText = formatCurrency(fenegosidaRates.silverTola,'NPR'); if (id('statusCard')) id('statusCard').innerText = (fenegosidaRates.status === 'live' || fenegosidaRates.status === 'verified') ? 'LIVE' : 'Fallback'; if (id('changeValue')) {
                 const c = fenegosidaRates.goldYesterday ? fenegosidaRates.goldTola - fenegosidaRates.goldYesterday : 0;
                 const badge = id('dailyChange');
                 const icon = badge ? badge.querySelector('i') : null;
@@ -561,8 +553,8 @@ let activeRange = 30;
                 if (icon) icon.className = c > 0 ? 'fa-solid fa-arrow-trend-up' : c < 0 ? 'fa-solid fa-arrow-trend-down' : 'fa-solid fa-minus';
             }
             if (id('sourceStatus')) {
-                id('sourceStatus').innerText = fenegosidaRates.status === 'live' ? 'LIVE · FENEGOSIDA' : 'FENEGOSIDA fallback';
-                id('sourceStatus').className = fenegosidaRates.status === 'live'
+                id('sourceStatus').innerText = (fenegosidaRates.status === 'live' || fenegosidaRates.status === 'verified') ? 'LIVE · FENEGOSIDA' : 'FENEGOSIDA fallback';
+                id('sourceStatus').className = (fenegosidaRates.status === 'live' || fenegosidaRates.status === 'verified')
                     ? 'source-live' : 'source-fallback';
             }
             if (id('lastFetched')) {
@@ -631,6 +623,8 @@ let activeRange = 30;
         }
 
         async function fetchLiveData() {
+            const heroPrice = id('bigGoldTola');
+            if (heroPrice) heroPrice.style.opacity = '.55';
             const refreshIcon = id('refreshIcon');
             if (refreshIcon) refreshIcon.classList.add('fa-spin');
 
@@ -670,8 +664,11 @@ let activeRange = 30;
                 lastLiveFetch = fenegosidaRates.fetchedAt;
 
                 // Add a point only when the published date is new; 5-minute polling must not duplicate the same rate.
-                const liveLabel = fenegosidaRates.rateDate || 'Today';
-                if (priceHistory.labels[priceHistory.labels.length - 1] !== liveLabel) {
+                const liveDate = fenegosidaRates.rateDate || '';
+                const liveLabel = liveDate ? new Date(liveDate + 'T00:00:00').toLocaleDateString(currentLang === 'np' ? 'ne-NP' : 'en-US', {day:'2-digit',month:'short'}) : 'Today';
+                const lastDate = priceHistory.labels[priceHistory.labels.length - 1] || '';
+                const normalizedLast = String(lastDate).replace(/\s+/g,' ').trim();
+                if (normalizedLast !== liveLabel) {
                     priceHistory.labels.push(liveLabel);
                     priceHistory.gold.push(fenegosidaRates.goldTola);
                     priceHistory.silver.push(fenegosidaRates.silverTola);
@@ -682,11 +679,12 @@ let activeRange = 30;
                 }
                 refreshCharts();
 
-                showToast('FENEGOSIDA बाट लाइभ दर अपडेट भयो!');
+                showToast('FENEGOSIDA को पछिल्लो प्रकाशित दर अपडेट भयो!');
             } catch (e) {
                 console.warn('FENEGOSIDA live fetch failed; using verified fallback.', e);
                 fenegosidaRates.status = 'fallback';
             } finally {
+                if (heroPrice) heroPrice.style.opacity = '1';
                 if (refreshIcon) refreshIcon.classList.remove('fa-spin');
                 updateAllUI();
             }
@@ -701,8 +699,14 @@ let activeRange = 30;
                     fenegosidaRates = { ...fenegosidaRates, ...saved };
                 }
                 if (Array.isArray(saved.history) && saved.history.length) {
-                    const history = saved.history.filter(x => Number(x.gold) && Number(x.silver)).slice(-365);
-                    priceHistory.labels = history.map(x => x.date || '');
+                    const history = saved.history
+                        .filter(x => Number(x.gold) && Number(x.silver) && x.date)
+                        .sort((a,b) => String(a.date).localeCompare(String(b.date)))
+                        .slice(-365);
+                    priceHistory.labels = history.map(x => {
+                        const d = new Date(String(x.date) + 'T00:00:00');
+                        return d.toLocaleDateString(currentLang === 'np' ? 'ne-NP' : 'en-US', {day:'2-digit',month:'short'});
+                    });
                     priceHistory.gold = history.map(x => Number(x.gold));
                     priceHistory.silver = history.map(x => Number(x.silver));
                 }
