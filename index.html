@@ -334,7 +334,6 @@
                         <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">मुद्रा (Currency)</label>
                         <select id="currencySelect" class="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-xs bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold focus:ring-1 focus:ring-amber-500 outline-none" onchange="updateCalc()">
                             <option value="NPR" selected>NPR (नेपाली रुपैयाँ)</option>
-                            <option value="NPR" selected>NPR (नेपाली रुपैयाँ)</option>
                         </select>
                     </div>
                 </div>
@@ -537,8 +536,8 @@ const FENEGOSIDA_SOURCE = 'https://www.fenegosida.org';
 
         let goldChartInstance, silverChartInstance;
         let priceHistory = {
-            gold: [301000, 302500, 303800, 305000, 305800, 306800],
-            silver: [4650, 4680, 4700, 4720, 4740, 4755]
+            gold: [301800, 300100, 302200, 303900, 305200, 302300, 299100, 298600, 299500],
+            silver: [4685, 4600, 4660, 4805, 4795, 4775, 4815, 4650, 4625]
         };
 
         const nepaliDigits = (num) => String(num).replace(/[0-9]/g, d => '०१२३४५६७८९'[parseInt(d)]);
@@ -913,6 +912,16 @@ const FENEGOSIDA_SOURCE = 'https://www.fenegosida.org';
                     priceHistory.silver = saved.history.map(x => Number(x.silver)).filter(Boolean).slice(-30);
                 }
                 updateAllUI();
+                if (goldChartInstance) {
+                    goldChartInstance.data.labels = priceHistory.gold.map((_, i) => i === priceHistory.gold.length - 1 ? 'अहिले' : '');
+                    goldChartInstance.data.datasets[0].data = priceHistory.gold;
+                    goldChartInstance.update();
+                }
+                if (silverChartInstance) {
+                    silverChartInstance.data.labels = priceHistory.silver.map((_, i) => i === priceHistory.silver.length - 1 ? 'अहिले' : '');
+                    silverChartInstance.data.datasets[0].data = priceHistory.silver;
+                    silverChartInstance.update();
+                }
             } catch (e) {
                 console.warn('Stored FENEGOSIDA fallback unavailable.');
             }
