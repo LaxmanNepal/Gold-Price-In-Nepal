@@ -58,10 +58,69 @@ button,input,select{font:inherit}
 .seo-copy{background:var(--surface);border:1px solid var(--line);border-radius:19px;padding:20px;line-height:1.8;color:var(--muted);font-size:11px}.seo-copy strong{color:var(--text)}.seo-copy h2{color:var(--text);font-size:17px;margin:0 0 8px}.seo-copy h3{color:var(--text);font-size:13px;margin:15px 0 4px}
 .footer{margin:30px 0 100px;padding:22px 0;border-top:1px solid var(--line);color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:15px}
 
-@media(max-width:850px){.hero-grid,.dashboard{grid-template-columns:1fr}.hero{padding:21px}.rate-grid{grid-template-columns:1fr 1fr}.chart-container{height:230px}}
-@media(max-width:560px){.container{width:min(100% - 20px,1180px)}.topbar{height:60px}.brand h1{font-size:13px}.brand-mark{width:38px;height:38px}.actions .action-pill{width:38px;height:38px;padding:0;justify-content:center}.actions .action-pill span{display:none}.hero{margin-top:12px;border-radius:21px;padding:17px}.hero-price{font-size:clamp(2.75rem,14vw,4rem)}.rate-grid{gap:8px}.rate-card{padding:13px}.rate-card .value{font-size:16px}.mini-board{margin-top:2px}.trust{align-items:flex-start;flex-direction:column}.faq-grid{grid-template-columns:1fr}.calc-grid{grid-template-columns:1fr}.metal-grid{grid-template-columns:1fr 1fr}.metal-option:last-child{grid-column:1/-1}.footer{flex-direction:column}@media(max-width:850px){.related-grid{grid-template-columns:1fr 1fr}.hero-grid{gap:18px}}
-@media(max-width:560px){.related-grid{grid-template-columns:1fr}.related-card img{height:170px}.section{margin-top:17px}.section-head{align-items:flex-start;flex-direction:column}.dashboard{gap:10px}.panel{padding:14px}.chart-container{height:220px;min-height:220px}.rate-grid{grid-template-columns:1fr 1fr}.hero-grid{display:block}.hero-main{padding-top:8px}.mini-board{margin-top:14px}.topbar{position:relative}.glass{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}}
-@media(prefers-reduced-motion:reduce){.reveal{animation:none;opacity:1;transform:none}.glass,.related-card{transition:none}}
+
+.glass{background:linear-gradient(145deg,rgba(255,255,255,.07),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.10);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 18px 55px rgba(0,0,0,.12);transition:transform .28s ease,border-color .28s ease,box-shadow .28s ease}
+.glass:hover{transform:translateY(-2px);border-color:rgba(244,181,43,.24);box-shadow:0 24px 70px rgba(0,0,0,.18)}
+.reveal{animation:riseIn .65s cubic-bezier(.2,.75,.2,1) both}
+@keyframes riseIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.related-card{display:block;overflow:hidden;min-width:0}
+.related-card img{display:block;width:100%;height:auto;aspect-ratio:800/360;object-fit:cover;background:#0d1413}
+.related-body{padding:14px 15px 16px}
+.related-body h3{margin:7px 0 5px;font-size:13px;font-weight:900}
+.related-body p{margin:0;color:var(--muted);font-size:10px;line-height:1.7}
+.related-badge{display:inline-flex;margin:14px 14px 0;padding:5px 8px;border-radius:999px;background:rgba(244,181,43,.11);border:1px solid rgba(244,181,43,.18);color:var(--gold);font-size:8px;font-weight:900;letter-spacing:.08em}
+.modal-backdrop{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:18px;background:rgba(0,0,0,.62);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.modal-backdrop.hidden{display:none}
+.toast{position:fixed;left:50%;bottom:22px;z-index:1100;transform:translateX(-50%);display:flex;align-items:center;gap:8px;padding:11px 14px;border:1px solid var(--line);border-radius:999px;background:rgba(20,22,25,.92);color:#fff;box-shadow:0 12px 35px rgba(0,0,0,.25);font-size:11px;font-weight:800}
+.toast.hidden{display:none}
+.portfolio-empty{margin:12px 0 0;padding:15px;border:1px dashed var(--line);border-radius:12px;color:var(--muted);font-size:11px;text-align:center}
+.portfolio-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--surface2)}
+.portfolio-title{font-size:11px;font-weight:900}.portfolio-meta{font-size:9px;color:var(--muted);margin-top:3px}.portfolio-value{font-size:11px;font-weight:900;white-space:nowrap}.delete-btn{border:0;background:transparent;color:#ef4444;cursor:pointer;padding:7px;border-radius:8px}.delete-btn:hover{background:rgba(239,68,68,.1)}
+.source-live{font-size:10px;font-weight:800;color:#22c55e}.source-fallback{font-size:10px;font-weight:800;color:#f59e0b}
+.change-badge.down{background:rgba(239,68,68,.10);color:#f87171}
+@media(max-width:850px){
+  .hero-grid,.dashboard{grid-template-columns:1fr}
+  .hero{padding:21px}
+  .rate-grid{grid-template-columns:1fr 1fr}
+  .chart-container{height:230px}
+  .related-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:560px){
+  .container{width:min(100% - 20px,1180px)}
+  .topbar{height:60px}
+  .brand h1{font-size:13px}
+  .brand-mark{width:38px;height:38px}
+  .actions .action-pill{width:38px;height:38px;padding:0;justify-content:center}
+  .actions .action-pill span{display:none}
+  .hero{margin-top:12px;border-radius:21px;padding:17px}
+  .hero-price{font-size:clamp(2.75rem,14vw,4rem)}
+  .rate-grid{gap:8px}
+  .rate-card{padding:13px}
+  .rate-card .value{font-size:16px}
+  .mini-board{margin-top:14px}
+  .trust{align-items:flex-start;flex-direction:column}
+  .faq-grid,.calc-grid{grid-template-columns:1fr}
+  .metal-grid{grid-template-columns:1fr 1fr}
+  .metal-option:last-child{grid-column:1/-1}
+  .footer{flex-direction:column;margin-bottom:30px}
+  .related-grid{grid-template-columns:1fr}
+  .related-card img{height:auto}
+  .section{margin-top:17px}
+  .section-head{align-items:flex-start;flex-direction:column}
+  .dashboard{gap:10px}
+  .panel{padding:14px}
+  .chart-container{height:220px;min-height:220px}
+  .hero-grid{display:block}
+  .hero-main{padding-top:8px}
+  .tool-tabs{scrollbar-width:none}
+  .tool-tabs::-webkit-scrollbar,.range-tabs::-webkit-scrollbar{display:none}
+}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .reveal{animation:none;opacity:1;transform:none}
+  .glass,.related-card{transition:none}
+}
 </style>
 </head>
 <body>
@@ -153,7 +212,7 @@ button,input,select{font:inherit}
    <div class="total-box"><div><small style="font-size:10px;font-weight:900">अनुमानित कुल मूल्य</small><br><b id="totalDisplay">रू ०</b></div><button onclick="copySummary()"><i class="fa-regular fa-copy"></i> कपी गर्नुहोस्</button></div>
   </div>
 
-  <div id="tabPurityContent" class="tab-content hidden" id="purity">
+  <div id="tabPurityContent" class="tab-content hidden">
    <div class="field" style="max-width:170px"><label>कुल तौल (ग्राम)</label><input id="purityWeightInput" type="number" value="10" oninput="renderMatrix()"></div>
    <div class="table-wrap" style="margin-top:12px"><table><thead><tr><th>क्यारेट</th><th>शुद्धता</th><th>शुद्ध सुन</th><th>अनुमानित मूल्य</th></tr></thead><tbody id="matrixBody"></tbody></table></div>
   </div>
@@ -175,7 +234,7 @@ button,input,select{font:inherit}
  <div class="related-grid">
   <a class="related-card glass" href="#calc"><span class="related-badge">CALCULATOR</span><img loading="lazy" decoding="async" width="800" height="360" src="assets/gold-calculator.svg" alt="नेपाल सुन मूल्य calculator illustration"><div class="related-body"><h3>सुन क्यालकुलेटर</h3><p>तौल, purity, ज्याला र कर राखेर अनुमानित कुल मूल्य निकाल्नुहोस्।</p></div></a>
   <a class="related-card glass" href="#history"><span class="related-badge">TREND</span><img loading="lazy" decoding="async" width="800" height="360" src="assets/gold-bars.svg" alt="Gold bars and Nepal gold price trend illustration"><div class="related-body"><h3>सुनको मूल्य इतिहास</h3><p>FENEGOSIDA बाट आएको historical rate हेरेर दैनिक trend बुझ्नुहोस्।</p></div></a>
-  <a class="related-card glass" href="#purity"><span class="related-badge">PURITY</span><img loading="lazy" decoding="async" width="800" height="360" src="assets/jewellery-purity.svg" alt="Nepali gold jewellery purity illustration"><div class="related-body"><h3>२२K र २४K शुद्धता</h3><p>क्यारेट, शुद्धता र pure-gold content बीचको फरक सजिलै बुझ्नुहोस्।</p></div></a>
+  <a class="related-card glass" href="#calc" onclick="switchTab('purity')"><span class="related-badge">PURITY</span><img loading="lazy" decoding="async" width="800" height="360" src="assets/jewellery-purity.svg" alt="Nepali gold jewellery purity illustration"><div class="related-body"><h3>२२K र २४K शुद्धता</h3><p>क्यारेट, शुद्धता र pure-gold content बीचको फरक सजिलै बुझ्नुहोस्।</p></div></a>
  </div>
 </section>
 
@@ -245,7 +304,6 @@ let fenegosidaRates = {
 };
 let lastLiveFetch = null;
 const FENEGOSIDA_API = 'https://api.fenegosida.org/api/website/v1/Dashboard/today';
-const FENEGOSIDA_HISTORY_API = 'https://api.fenegosida.org/api/website/v1/Dashboard/WeeklyChartRate?weekmonthyear=7';
 const FENEGOSIDA_SOURCE = 'https://www.fenegosida.org';
 const unitsInGrams = { gram:1, tola:11.664, troy_oz:31.1034768, kg:1000 };
 let portfolio = JSON.parse(localStorage.getItem('goldNepalPortfolio') || '[]');
@@ -458,8 +516,11 @@ let activeRange = 30;
 
         function copySummary() {
             const val = id('totalDisplay').innerText;
-            navigator.clipboard.writeText(`नेपाल सुन-चाँदी अनुमानित हिसाब: ${val}`);
-            showToast('क्लिपबोर्डमा कपी भयो!');
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(`नेपाल सुन-चाँदी अनुमानित हिसाब: ${val}`).then(() => showToast('क्लिपबोर्डमा कपी भयो!')).catch(() => showToast('कपी गर्न सकिएन'));
+            } else {
+                showToast('यस browser मा clipboard उपलब्ध छैन');
+            }
         }
 
         function showToast(msg) {
@@ -491,12 +552,18 @@ let activeRange = 30;
             calcScrap();
             renderPortfolio();
 
-            if (id('rateDate')) id('rateDate').innerText = fenegosidaRates.rateDate || '—'; if (id('rateDate2')) id('rateDate2').innerText = fenegosidaRates.rateDate || '—'; if (id('gold24Card')) id('gold24Card').innerText = formatCurrency(fenegosidaRates.goldTola,'NPR'); if (id('gold10Card')) id('gold10Card').innerText = formatCurrency(fenegosidaRates.gold10g,'NPR'); if (id('tejabiCard')) id('tejabiCard').innerText = formatCurrency(fenegosidaRates.tejabiTola,'NPR'); if (id('silverCard')) id('silverCard').innerText = formatCurrency(fenegosidaRates.silverTola,'NPR'); if (id('statusCard')) id('statusCard').innerText = fenegosidaRates.status === 'live' ? 'LIVE' : 'Fallback'; if (id('changeValue')) { const c = fenegosidaRates.goldYesterday ? fenegosidaRates.goldTola - fenegosidaRates.goldYesterday : 0; id('changeValue').innerText = c ? formatCurrency(c,'NPR') : 'उपलब्ध छैन'; }
+            if (id('rateDate')) id('rateDate').innerText = fenegosidaRates.rateDate || '—'; if (id('rateDate2')) id('rateDate2').innerText = fenegosidaRates.rateDate || '—'; if (id('gold24Card')) id('gold24Card').innerText = formatCurrency(fenegosidaRates.goldTola,'NPR'); if (id('gold10Card')) id('gold10Card').innerText = formatCurrency(fenegosidaRates.gold10g,'NPR'); if (id('tejabiCard')) id('tejabiCard').innerText = formatCurrency(fenegosidaRates.tejabiTola,'NPR'); if (id('silverCard')) id('silverCard').innerText = formatCurrency(fenegosidaRates.silverTola,'NPR'); if (id('statusCard')) id('statusCard').innerText = fenegosidaRates.status === 'live' ? 'LIVE' : 'Fallback'; if (id('changeValue')) {
+                const c = fenegosidaRates.goldYesterday ? fenegosidaRates.goldTola - fenegosidaRates.goldYesterday : 0;
+                const badge = id('dailyChange');
+                const icon = badge ? badge.querySelector('i') : null;
+                id('changeValue').innerText = c ? (c > 0 ? '+' : '') + formatCurrency(c,'NPR') : 'उपलब्ध छैन';
+                if (badge) badge.classList.toggle('down', c < 0);
+                if (icon) icon.className = c > 0 ? 'fa-solid fa-arrow-trend-up' : c < 0 ? 'fa-solid fa-arrow-trend-down' : 'fa-solid fa-minus';
+            }
             if (id('sourceStatus')) {
                 id('sourceStatus').innerText = fenegosidaRates.status === 'live' ? 'LIVE · FENEGOSIDA' : 'FENEGOSIDA fallback';
                 id('sourceStatus').className = fenegosidaRates.status === 'live'
-                    ? 'text-[10px] font-bold text-emerald-500'
-                    : 'text-[10px] font-bold text-amber-500';
+                    ? 'source-live' : 'source-fallback';
             }
             if (id('lastFetched')) {
                 id('lastFetched').innerText = lastLiveFetch
@@ -647,6 +714,13 @@ let activeRange = 30;
                 console.warn('Stored FENEGOSIDA fallback unavailable.');
             }
         }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && !id('assetModal').classList.contains('hidden')) closeAddModal();
+        });
+        id('assetModal').addEventListener('click', e => {
+            if (e.target === id('assetModal')) closeAddModal();
+        });
 
         window.onload = () => {
             setupPurity('gold');
