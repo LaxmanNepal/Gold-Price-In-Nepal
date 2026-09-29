@@ -317,10 +317,10 @@
                         </div>
                     </label>
                     <label class="cursor-pointer">
-                        <input type="radio" name="metalType" value="platinum" onchange="handleMetalChange(this.value)" class="peer sr-only">
+                        <input type="radio" name="metalType" value="tejabi" onchange="handleMetalChange(this.value)" class="peer sr-only">
                         <div class="p-2.5 text-center border border-slate-200 dark:border-slate-800 rounded-lg peer-checked:border-indigo-500 peer-checked:bg-indigo-500/10 font-bold text-xs flex items-center justify-center gap-2 transition-all">
                             <i class="fa-solid fa-layer-group text-indigo-400"></i>
-                            <span id="platRadioLabel">प्लाटिनम</span>
+                            <span id="platRadioLabel">तेजाबी सुन</span>
                         </div>
                     </label>
                 </div>
@@ -334,10 +334,7 @@
                         <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1">मुद्रा (Currency)</label>
                         <select id="currencySelect" class="w-full border border-slate-200 dark:border-slate-800 rounded-lg p-2.5 text-xs bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 font-semibold focus:ring-1 focus:ring-amber-500 outline-none" onchange="updateCalc()">
                             <option value="NPR" selected>NPR (नेपाली रुपैयाँ)</option>
-                            <option value="USD">USD ($)</option>
-                            <option value="INR">INR (भारतीय रुपैयाँ)</option>
-                            <option value="EUR">EUR (€)</option>
-                            <option value="AED">AED (दिरहाम)</option>
+                            <option value="NPR" selected>NPR (नेपाली रुपैयाँ)</option>
                         </select>
                     </div>
                 </div>
@@ -532,7 +529,7 @@ const FENEGOSIDA_SOURCE = 'https://www.fenegosida.org';
                 { name: 'फाइन ९९९', val: 0.999 },
                 { name: 'स्टर्लिङ ९२५', val: 0.925 }
             ],
-            platinum: [
+            tejabi: [
                 { name: '९९५ (Fine Platinum)', val: 0.995 },
                 { name: '९५० (Standard)', val: 0.95 }
             ]
@@ -559,18 +556,18 @@ const FENEGOSIDA_SOURCE = 'https://www.fenegosida.org';
             np: {
                 mainTitle: 'नेपाल सुन चाँदी', subTitle: 'लाइभ बजार मूल्य (FENEGOSIDA)', refreshLabel: 'रिफ्रेस',
                 bigTolaLabel: 'प्रति तोला (नेपाल)', goldLabel: 'सुन (२४ क्यारेट / Fine Gold)',
-                silverCardLabel: 'चाँदी (Silver)', platCardLabel: 'प्लाटिनम', ratioCardLabel: 'अनुपात (Ratio)',
+                silverCardLabel: 'चाँदी (Silver)', platCardLabel: 'तेजाबी सुन (22K)', ratioCardLabel: 'अनुपात (Ratio)',
                 goldChartTitle: 'सुन मूल्य प्रवृत्ति', silverChartTitle: 'चाँदी मूल्य प्रवृत्ति',
                 calcTabLabel: 'क्याल्कुलेटर', matrixTabLabel: 'शुद्धता म्याट्रिक्स', scrapTabLabel: 'पुराना गहना/स्क्र्याप',
-                portTabLabel: 'मेरो पोर्टफोलियो', goldRadioLabel: 'सुन', silverRadioLabel: 'चाँदी', platRadioLabel: 'प्लाटिनम'
+                portTabLabel: 'मेरो पोर्टफोलियो', goldRadioLabel: 'सुन', silverRadioLabel: 'चाँदी', platRadioLabel: 'तेजाबी सुन'
             },
             en: {
                 mainTitle: 'Nepal Metals', subTitle: 'Live Market Rate (FENEGOSIDA)', refreshLabel: 'Refresh',
                 bigTolaLabel: 'Per Tola (Nepal)', goldLabel: 'Gold (24 Karat / Fine)',
-                silverCardLabel: 'Silver Rate', platCardLabel: 'Platinum Rate', ratioCardLabel: 'Gold/Silver Ratio',
+                silverCardLabel: 'Silver Rate', platCardLabel: 'Tejabi Gold (22K)', ratioCardLabel: 'Gold/Silver Ratio',
                 goldChartTitle: 'Gold Price Trend', silverChartTitle: 'Silver Price Trend',
                 calcTabLabel: 'Calculator', matrixTabLabel: 'Purity Matrix', scrapTabLabel: 'Scrap Metal',
-                portTabLabel: 'My Holdings', goldRadioLabel: 'Gold', silverRadioLabel: 'Silver', platRadioLabel: 'Platinum'
+                portTabLabel: 'My Holdings', goldRadioLabel: 'Gold', silverRadioLabel: 'Silver', platRadioLabel: 'Tejabi Gold'
             }
         };
 
@@ -754,7 +751,6 @@ const FENEGOSIDA_SOURCE = 'https://www.fenegosida.org';
             const goldGram = getGramPriceNPR('gold');
             const silverGram = getGramPriceNPR('silver');
             const tejabiGram = getGramPriceNPR('tejabi');
-            const tolaFactor = unitsInGrams.tola;
 
             id('bigGoldTola').innerText = formatCurrency(fenegosidaRates.goldTola, 'NPR');
             id('bigGoldGram').innerText = formatCurrency(goldGram, 'NPR');
