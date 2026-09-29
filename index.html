@@ -271,9 +271,11 @@ let portfolio = JSON.parse(localStorage.getItem('goldNepalPortfolio') || '[]');
 
         let goldChartInstance, silverChartInstance;
         let priceHistory = {
-            gold: [301800, 300100, 302200, 303900, 305200, 302300, 299100, 298600, 299500],
-            silver: [4685, 4600, 4660, 4805, 4795, 4775, 4815, 4650, 4625]
+            labels: ['16 Sep','17 Sep','18 Sep','20 Sep','21 Sep','22 Sep','23 Sep','24 Sep','25 Sep','30 Sep'],
+            gold: [301800,299500,303100,305200,303900,302200,302300,299100,298600,299500],
+            silver: [4685,4625,4775,4795,4805,4775,4815,4650,4620,4625]
         };
+let activeRange = 30;
 
         const nepaliDigits = (num) => String(num).replace(/[0-9]/g, d => '०१२३४५६७८९'[parseInt(d)]);
 
@@ -515,58 +517,61 @@ let portfolio = JSON.parse(localStorage.getItem('goldNepalPortfolio') || '[]');
             }
         }
 
+        function chartSlice(days = activeRange) {
+            const total = priceHistory.gold.length;
+            const count = Math.min(days, total);
+            return {
+                labels: priceHistory.labels.slice(-count),
+                gold: priceHistory.gold.slice(-count),
+                silver: priceHistory.silver.slice(-count)
+            };
+        }
+
+        function refreshCharts() {
+            if (!goldChartInstance || !silverChartInstance) return;
+            const s = chartSlice();
+            goldChartInstance.data.labels = s.labels;
+            goldChartInstance.data.datasets[0].data = s.gold;
+            silverChartInstance.data.labels = s.labels;
+            silverChartInstance.data.datasets[0].data = s.silver;
+            goldChartInstance.update('none');
+            silverChartInstance.update('none');
+        }
+
         function initCharts() {
             const goldCtx = id('goldChart').getContext('2d');
             const silverCtx = id('silverChart').getContext('2d');
-
-            goldChartInstance = new Chart(goldCtx, {
-                type: 'line',
-                data: {
-                    labels: ['१०AM', '१२PM', '२PM', '४PM', '६PM', 'अहिले'],
-                    datasets: [{
-                        data: priceHistory.gold,
-                        borderColor: '#f59e0b',
-                        borderWidth: 2,
-                        backgroundColor: 'rgba(245, 158, 11, 0.08)',
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 2
-                    }]
+            const common = {
+                responsive:true,
+                maintainAspectRatio:false,
+                animation:{duration:500,easing:'easeOutQuart'},
+                interaction:{mode:'index',intersect:false},
+                plugins:{
+                    legend:{display:false},
+                    tooltip:{displayColors:false,callbacks:{label:(ctx)=>' रू '+Number(ctx.parsed.y).toLocaleString('ne-NP')}}
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { display: false } },
-                        y: { grid: { color: 'rgba(128,128,128,0.1)' } }
-                    }
+                scales:{
+                    x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:7,color:'#9ca3af',font:{size:9}}},
+                    y:{grid:{color:'rgba(148,163,184,.10)'},ticks:{color:'#9ca3af',font:{size:9},callback:v=>Number(v).toLocaleString('ne-NP')}}
                 }
+            };
+            goldChartInstance = new Chart(goldCtx,{
+                type:'line',
+                data:{labels:priceHistory.labels,datasets:[{data:priceHistory.gold,borderColor:'#f4b52b',borderWidth:2.5,backgroundColor:'rgba(244,181,43,.10)',fill:true,tension:.38,pointRadius:2.5,pointHoverRadius:5,pointBackgroundColor:'#f4b52b'}]},
+                options:{...common}
             });
-
-            silverChartInstance = new Chart(silverCtx, {
-                type: 'line',
-                data: {
-                    labels: ['१०AM', '१२PM', '२PM', '४PM', '६PM', 'अहिले'],
-                    datasets: [{
-                        data: priceHistory.silver,
-                        borderColor: '#94a3b8',
-                        borderWidth: 2,
-                        backgroundColor: 'rgba(148, 163, 184, 0.08)',
-                        fill: true,
-                        tension: 0.3,
-                        pointRadius: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { grid: { display: false } },
-                        y: { grid: { color: 'rgba(128,128,128,0.1)' } }
-                    }
-                }
+            silverChartInstance = new Chart(silverCtx,{
+                type:'line',
+                data:{labels:priceHistory.labels,datasets:[{data:priceHistory.silver,borderColor:'#aeb7c5',borderWidth:2.5,backgroundColor:'rgba(174,183,197,.09)',fill:true,tension:.38,pointRadius:2.5,pointHoverRadius:5,pointBackgroundColor:'#aeb7c5'}]},
+                options:{...common}
+            });
+            document.querySelectorAll('.range-tabs button').forEach(btn=>{
+                btn.addEventListener('click',()=>{
+                    document.querySelectorAll('.range-tabs button').forEach(b=>b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const n = btn.textContent.trim()==='7D' ? 7 : btn.textContent.trim()==='30D' ? 30 : btn.textContent.trim()==='6M' ? 180 : 365;
+                    activeRange=n; refreshCharts();
+                });
             });
         }
 
@@ -609,22 +614,18 @@ let portfolio = JSON.parse(localStorage.getItem('goldNepalPortfolio') || '[]');
                 fenegosidaRates.status = 'live';
                 lastLiveFetch = fenegosidaRates.fetchedAt;
 
-                // Add the live point to the in-page trend immediately.
-                priceHistory.gold.push(fenegosidaRates.goldTola);
-                priceHistory.silver.push(fenegosidaRates.silverTola);
-                if (priceHistory.gold.length > 30) priceHistory.gold.shift();
-                if (priceHistory.silver.length > 30) priceHistory.silver.shift();
-
-                if (goldChartInstance) {
-                    goldChartInstance.data.labels = priceHistory.gold.map((_, i) => i === priceHistory.gold.length - 1 ? 'अहिले' : '');
-                    goldChartInstance.data.datasets[0].data = priceHistory.gold;
-                    goldChartInstance.update();
+                // Add a point only when the published date is new; 5-minute polling must not duplicate the same rate.
+                const liveLabel = fenegosidaRates.rateDate || 'Today';
+                if (priceHistory.labels[priceHistory.labels.length - 1] !== liveLabel) {
+                    priceHistory.labels.push(liveLabel);
+                    priceHistory.gold.push(fenegosidaRates.goldTola);
+                    priceHistory.silver.push(fenegosidaRates.silverTola);
+                    if (priceHistory.gold.length > 365) { priceHistory.gold.shift(); priceHistory.silver.shift(); priceHistory.labels.shift(); }
+                } else {
+                    priceHistory.gold[priceHistory.gold.length - 1] = fenegosidaRates.goldTola;
+                    priceHistory.silver[priceHistory.silver.length - 1] = fenegosidaRates.silverTola;
                 }
-                if (silverChartInstance) {
-                    silverChartInstance.data.labels = priceHistory.silver.map((_, i) => i === priceHistory.silver.length - 1 ? 'अहिले' : '');
-                    silverChartInstance.data.datasets[0].data = priceHistory.silver;
-                    silverChartInstance.update();
-                }
+                refreshCharts();
 
                 showToast('FENEGOSIDA बाट लाइभ दर अपडेट भयो!');
             } catch (e) {
@@ -645,19 +646,14 @@ let portfolio = JSON.parse(localStorage.getItem('goldNepalPortfolio') || '[]');
                     fenegosidaRates = { ...fenegosidaRates, ...saved };
                 }
                 if (Array.isArray(saved.history) && saved.history.length) {
-                    priceHistory.gold = saved.history.map(x => Number(x.gold)).filter(Boolean).slice(-30);
-                    priceHistory.silver = saved.history.map(x => Number(x.silver)).filter(Boolean).slice(-30);
+                    const history = saved.history.filter(x => Number(x.gold) && Number(x.silver)).slice(-365);
+                    priceHistory.labels = history.map(x => x.date || '');
+                    priceHistory.gold = history.map(x => Number(x.gold));
+                    priceHistory.silver = history.map(x => Number(x.silver));
                 }
                 updateAllUI();
                 if (goldChartInstance) {
-                    goldChartInstance.data.labels = priceHistory.gold.map((_, i) => i === priceHistory.gold.length - 1 ? 'अहिले' : '');
-                    goldChartInstance.data.datasets[0].data = priceHistory.gold;
-                    goldChartInstance.update();
-                }
-                if (silverChartInstance) {
-                    silverChartInstance.data.labels = priceHistory.silver.map((_, i) => i === priceHistory.silver.length - 1 ? 'अहिले' : '');
-                    silverChartInstance.data.datasets[0].data = priceHistory.silver;
-                    silverChartInstance.update();
+                    refreshCharts();
                 }
             } catch (e) {
                 console.warn('Stored FENEGOSIDA fallback unavailable.');
