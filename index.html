@@ -212,18 +212,29 @@
 
             <div class="my-3">
                 <div class="text-xs font-bold tracking-wide uppercase text-slate-500 dark:text-slate-400 mb-1" id="goldLabel">
-                    सुन (२४ क्यारेट / Fine Gold)
+                    छापावाल सुन (Fine Gold / FENEGOSIDA)
                 </div>
                 <div class="big-tola-price" id="bigGoldTola">रू ३,०६,८००</div>
                 <div class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
-                    प्रति ग्राम: <span id="bigGoldGram" class="font-bold text-slate-800 dark:text-slate-200">रू २६,३०३</span>
+                    प्रति ग्राम (गणना): <span id="bigGoldGram" class="font-bold text-slate-800 dark:text-slate-200">रू २६,३०३</span>
                 </div>
             </div>
 
             <div class="flex flex-wrap justify-center items-center gap-3 mt-4 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800/50 py-2.5 px-4 rounded-xl">
-                <span>22K (तेजाबी): <strong id="gold22Tola" class="text-amber-600 dark:text-amber-400">रू २,८१,२३४</strong></span>
+                <span>तेजाबी सुन (22K): <strong id="gold22Tola" class="text-amber-600 dark:text-amber-400">रू २,८१,२३४</strong></span>
                 <span class="opacity-30">•</span>
                 <span>चाँदी: <strong id="bigSilverTola" class="text-slate-800 dark:text-slate-200">रू ४,७५०</strong> /तोला</span>
+            </div>
+        </div>
+
+        <div class="simple-card px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+                <span class="live-dot"></span>
+                <span id="sourceStatus" class="text-[10px] font-bold text-amber-500">FENEGOSIDA fallback</span>
+                <span class="text-[10px] text-slate-400">· दर मिति <strong id="rateDate">—</strong></span>
+            </div>
+            <div class="text-[10px] text-slate-400">
+                अन्तिम जाँच: <strong id="lastFetched">—</strong>
             </div>
         </div>
 
@@ -236,8 +247,8 @@
             </div>
 
             <div class="simple-card p-3.5 text-center">
-                <div class="text-[11px] font-bold text-indigo-500 dark:text-indigo-400 uppercase" id="platCardLabel">प्लाटिनम</div>
-                <div class="text-base sm:text-xl font-extrabold my-0.5 text-indigo-600 dark:text-indigo-300" id="platinumTolaSmall">रू ५८,५००</div>
+                <div class="text-[11px] font-bold text-indigo-500 dark:text-indigo-400 uppercase" id="platCardLabel">तेजाबी सुन (22K)</div>
+                <div class="text-base sm:text-xl font-extrabold my-0.5 text-indigo-600 dark:text-indigo-300" id="platinumTolaSmall">रू २,७४,३४५</div>
                 <div class="text-[10px] font-medium text-slate-400">प्रति तोला</div>
             </div>
 
@@ -489,19 +500,26 @@
         let darkMode = true;
         // Nepal market base rates (FENEGOSIDA official benchmark)
         // Including Nepal import customs duty, luxury tax & federation premiums
-        let baseRatesUSD = { gold: 2742.50, silver: 31.80, platinum: 985.00 };
-        let currencyRates = { USD: 1, EUR: 0.92, GBP: 0.78, INR: 84.4, NPR: 152.7, AED: 3.67 };
-        
-        // Multiplier factor for official local Nepal market rate vs international raw spot (customs & import duty ~20% + VAT + local fees)
-        const NEPAL_MARKET_FACTOR = 2.22;
-
-        let portfolio = [
-            { title: "गोल्ड सिक्का", metal: "gold", purity: 0.999, weight: 10 },
-            { title: "चाँदी बार", metal: "silver", purity: 0.999, weight: 100 }
-        ];
-
-        const unitsInGrams = { gram: 1, tola: 11.6638, troy_oz: 31.1035, kg: 1000 };
-        const GOLD_API_KEY = 'goldapi-de2750523205fc2612a60bbc689b2f82-io';
+        // FENEGOSIDA — official Nepal local reference rates.
+// The API field "todayBaseRatePerGram" is unfortunately named, but its value
+// is the rate for the unit written in rateType (e.g. 1 tola or 10 grams).
+let fenegosidaRates = {
+    goldTola: 299500,
+    gold10g: 256775,
+    tejabiTola: 274345,
+    silverTola: 4625,
+    silver10g: 3965,
+    goldYesterday: 0,
+    silverYesterday: 0,
+    rateDate: '2026-09-30',
+    publishedAt: null,
+    fetchedAt: null,
+    status: 'fallback'
+};
+let lastLiveFetch = null;
+const FENEGOSIDA_API = 'https://api.fenegosida.org/api/website/v1/Dashboard/today';
+const FENEGOSIDA_HISTORY_API = 'https://api.fenegosida.org/api/website/v1/Dashboard/WeeklyChartRate?weekmonthyear=7';
+const FENEGOSIDA_SOURCE = 'https://www.fenegosida.org';
 
         const purityMap = {
             gold: [
@@ -594,10 +612,13 @@
         function handleMetalChange(metal) { setupPurity(metal); }
 
         function getGramPriceNPR(metal) {
-            // Converts USD spot rate + Nepal import customs & taxes into local NPR per gram price
-            const cr = currencyRates.NPR || 152.7;
-            const spotGramNPR = (baseRatesUSD[metal] / 31.1035) * cr;
-            return spotGramNPR * NEPAL_MARKET_FACTOR;
+            const tolaRates = {
+                gold: fenegosidaRates.goldTola,
+                silver: fenegosidaRates.silverTola,
+                tejabi: fenegosidaRates.tejabiTola
+            };
+            const tola = tolaRates[metal] || fenegosidaRates.goldTola;
+            return tola / unitsInGrams.tola;
         }
 
         function updateCalc() {
@@ -605,22 +626,17 @@
             const purity = parseFloat(id('puritySelect').value) || 0.999;
             const weight = parseFloat(id('weightInput').value) || 0;
             const unit = id('unitSelect').value;
-            const currency = id('currencySelect').value;
-            
             const gramWeight = weight * (unitsInGrams[unit] || 1);
             const makingPct = parseFloat(id('makingCharge').value) || 0;
             const taxPct = parseFloat(id('taxRate').value) || 0;
-            
+
             const localGramPriceNPR = getGramPriceNPR(metal);
-            const targetCurrencyRatio = (currencyRates[currency] || 1) / (currencyRates.NPR || 152.7);
-            const spotGramTarget = localGramPriceNPR * targetCurrencyRatio;
-            
-            const melt = gramWeight * purity * spotGramTarget;
+            const melt = gramWeight * purity * localGramPriceNPR;
             const making = melt * (makingPct / 100);
             const tax = (melt + making) * (taxPct / 100);
             const total = melt + making + tax;
 
-            id('totalDisplay').innerText = formatCurrency(total, currency);
+            id('totalDisplay').innerText = formatCurrency(total, 'NPR');
         }
 
         function renderMatrix() {
@@ -737,22 +753,34 @@
         function updateAllUI() {
             const goldGram = getGramPriceNPR('gold');
             const silverGram = getGramPriceNPR('silver');
-            const platinumGram = getGramPriceNPR('platinum');
+            const tejabiGram = getGramPriceNPR('tejabi');
+            const tolaFactor = unitsInGrams.tola;
 
-            const tolaFactor = 11.6638;
-
-            id('bigGoldTola').innerText = formatCurrency(goldGram * tolaFactor, 'NPR');
+            id('bigGoldTola').innerText = formatCurrency(fenegosidaRates.goldTola, 'NPR');
             id('bigGoldGram').innerText = formatCurrency(goldGram, 'NPR');
-            id('gold22Tola').innerText = formatCurrency(goldGram * 0.9167 * tolaFactor, 'NPR');
-            id('bigSilverTola').innerText = formatCurrency(silverGram * tolaFactor, 'NPR');
-            id('silverTolaSmall').innerText = formatCurrency(silverGram * tolaFactor, 'NPR');
-            id('platinumTolaSmall').innerText = formatCurrency(platinumGram * tolaFactor, 'NPR');
-            id('ratioValue').innerText = ((goldGram * tolaFactor) / (silverGram * tolaFactor)).toFixed(1);
+            id('gold22Tola').innerText = formatCurrency(fenegosidaRates.tejabiTola, 'NPR');
+            id('bigSilverTola').innerText = formatCurrency(fenegosidaRates.silverTola, 'NPR');
+            id('silverTolaSmall').innerText = formatCurrency(fenegosidaRates.silverTola, 'NPR');
+            id('platinumTolaSmall').innerText = formatCurrency(fenegosidaRates.tejabiTola, 'NPR');
+            id('ratioValue').innerText = (fenegosidaRates.goldTola / fenegosidaRates.silverTola).toFixed(1);
 
             updateCalc();
             renderMatrix();
             calcScrap();
             renderPortfolio();
+
+            if (id('rateDate')) id('rateDate').innerText = fenegosidaRates.rateDate || '—';
+            if (id('sourceStatus')) {
+                id('sourceStatus').innerText = fenegosidaRates.status === 'live' ? 'LIVE · FENEGOSIDA' : 'FENEGOSIDA fallback';
+                id('sourceStatus').className = fenegosidaRates.status === 'live'
+                    ? 'text-[10px] font-bold text-emerald-500'
+                    : 'text-[10px] font-bold text-amber-500';
+            }
+            if (id('lastFetched')) {
+                id('lastFetched').innerText = lastLiveFetch
+                    ? new Date(lastLiveFetch).toLocaleTimeString(currentLang === 'np' ? 'ne-NP' : 'en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit'})
+                    : '—';
+            }
         }
 
         function initCharts() {
@@ -815,52 +843,82 @@
             if (refreshIcon) refreshIcon.classList.add('fa-spin');
 
             try {
-                const exRes = await fetch('https://open.er-api.com/v6/latest/USD');
-                if (exRes.ok) {
-                    const exData = await exRes.json();
-                    if (exData.rates) {
-                        for (let c in currencyRates) {
-                            if (exData.rates[c]) currencyRates[c] = exData.rates[c];
-                        }
+                const res = await fetch(FENEGOSIDA_API, {
+                    cache: 'no-store',
+                    headers: {
+                        'Accept': 'application/json'
                     }
+                });
+                if (!res.ok) throw new Error('FENEGOSIDA HTTP ' + res.status);
+
+                const data = await res.json();
+                if (!Array.isArray(data) || !data.length) throw new Error('Empty FENEGOSIDA response');
+
+                const find = (...labels) => data.find(item => labels.every(label => String(item.rateType || '').includes(label)));
+
+                const gold = find('छापावाल सुन', '१ तोला');
+                const gold10 = find('छापावाल सुन', '१० ग्राम');
+                const tejabi = find('तेजाबी सुन', '१ तोला');
+                const silver = find('असली चाँदी', '१ तोला');
+                const silver10 = find('असली चाँदी', '१० ग्राम');
+
+                if (!gold || !silver) throw new Error('Required FENEGOSIDA rates not found');
+
+                fenegosidaRates.goldTola = Number(gold.todayBaseRatePerGram);
+                fenegosidaRates.gold10g = Number(gold10?.todayBaseRatePerGram || Math.round(fenegosidaRates.goldTola / 1.16638));
+                fenegosidaRates.tejabiTola = Number(tejabi?.todayBaseRatePerGram || Math.round(fenegosidaRates.goldTola * 0.9167));
+                fenegosidaRates.silverTola = Number(silver.todayBaseRatePerGram);
+                fenegosidaRates.silver10g = Number(silver10?.todayBaseRatePerGram || Math.round(fenegosidaRates.silverTola / 1.16638));
+                fenegosidaRates.goldYesterday = Number(gold.yestardayBaseRatePerGram || 0);
+                fenegosidaRates.silverYesterday = Number(silver.yestardayBaseRatePerGram || 0);
+                fenegosidaRates.rateDate = String(gold.todayDate || '').split('T')[0] || fenegosidaRates.rateDate;
+                fenegosidaRates.publishedAt = gold.todayDate || null;
+                fenegosidaRates.fetchedAt = new Date().toISOString();
+                fenegosidaRates.status = 'live';
+                lastLiveFetch = fenegosidaRates.fetchedAt;
+
+                // Add the live point to the in-page trend immediately.
+                priceHistory.gold.push(fenegosidaRates.goldTola);
+                priceHistory.silver.push(fenegosidaRates.silverTola);
+                if (priceHistory.gold.length > 30) priceHistory.gold.shift();
+                if (priceHistory.silver.length > 30) priceHistory.silver.shift();
+
+                if (goldChartInstance) {
+                    goldChartInstance.data.labels = priceHistory.gold.map((_, i) => i === priceHistory.gold.length - 1 ? 'अहिले' : '');
+                    goldChartInstance.data.datasets[0].data = priceHistory.gold;
+                    goldChartInstance.update();
+                }
+                if (silverChartInstance) {
+                    silverChartInstance.data.labels = priceHistory.silver.map((_, i) => i === priceHistory.silver.length - 1 ? 'अहिले' : '');
+                    silverChartInstance.data.datasets[0].data = priceHistory.silver;
+                    silverChartInstance.update();
                 }
 
-                const fetchMetal = async (symbol) => {
-                    try {
-                        const res = await fetch(`https://www.goldapi.io/api/${symbol}/USD`, {
-                            headers: { 'x-access-token': GOLD_API_KEY }
-                        });
-                        if (res.ok) {
-                            const data = await res.json();
-                            return data.price;
-                        }
-                    } catch (e) { }
-                    return null;
-                };
-
-                const [g, s, p] = await Promise.all([fetchMetal('XAU'), fetchMetal('XAG'), fetchMetal('XPT')]);
-                if (g) baseRatesUSD.gold = g;
-                if (s) baseRatesUSD.silver = s;
-                if (p) baseRatesUSD.platinum = p;
-
-                const currentGoldTolaNPR = getGramPriceNPR('gold') * 11.6638;
-                const currentSilverTolaNPR = getGramPriceNPR('silver') * 11.6638;
-
-                priceHistory.gold.push(Math.round(currentGoldTolaNPR));
-                if (priceHistory.gold.length > 10) priceHistory.gold.shift();
-
-                priceHistory.silver.push(Math.round(currentSilverTolaNPR));
-                if (priceHistory.silver.length > 10) priceHistory.silver.shift();
-
-                if (goldChartInstance) goldChartInstance.update();
-                if (silverChartInstance) silverChartInstance.update();
-
-                showToast('लाइभ डाटा अपडेट भयो!');
+                showToast('FENEGOSIDA बाट लाइभ दर अपडेट भयो!');
             } catch (e) {
-                console.warn('API fallback applied');
+                console.warn('FENEGOSIDA live fetch failed; using verified fallback.', e);
+                fenegosidaRates.status = 'fallback';
             } finally {
                 if (refreshIcon) refreshIcon.classList.remove('fa-spin');
                 updateAllUI();
+            }
+        }
+
+        async function loadStoredRates() {
+            try {
+                const res = await fetch('./data/fenegosida.json', { cache: 'no-store' });
+                if (!res.ok) return;
+                const saved = await res.json();
+                if (!fenegosidaRates.status || fenegosidaRates.status === 'fallback') {
+                    fenegosidaRates = { ...fenegosidaRates, ...saved };
+                }
+                if (Array.isArray(saved.history) && saved.history.length) {
+                    priceHistory.gold = saved.history.map(x => Number(x.gold)).filter(Boolean).slice(-30);
+                    priceHistory.silver = saved.history.map(x => Number(x.silver)).filter(Boolean).slice(-30);
+                }
+                updateAllUI();
+            } catch (e) {
+                console.warn('Stored FENEGOSIDA fallback unavailable.');
             }
         }
 
@@ -868,8 +926,10 @@
             setupPurity('gold');
             initCharts();
             updateAllUI();
-            fetchLiveData();
-            setInterval(fetchLiveData, 60000);
+            loadStoredRates().finally(() => fetchLiveData());
+            // The federation publishes local rates, not a continuous spot feed.
+            // Polling keeps the page fresh without pretending the source changes every minute.
+            setInterval(fetchLiveData, 5 * 60 * 1000);
         };
     </script>
 </body>
