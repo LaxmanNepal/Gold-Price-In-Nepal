@@ -14,161 +14,60 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     <style>
-        :root {
-            --bg-body: #f8fafc;
-            --card-bg: #ffffff;
-            --card-border: #e2e8f0;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --accent: #d97706;
-            --nav-bg: #ffffff;
+        :root{--bg-body:#f5f7fb;--card-bg:#fff;--card-border:#e5e7eb;--text-main:#101828;--text-muted:#667085;--accent:#c98209;--nav-bg:#fff}
+        .dark{--bg-body:#070b12;--card-bg:#0f1622;--card-border:#1e293b;--text-main:#f8fafc;--text-muted:#94a3b8;--accent:#f5b21b;--nav-bg:#0f1622}
+        *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{scroll-behavior:smooth}
+        body{font-family:Inter,'Noto Sans Devanagari',sans-serif;background:var(--bg-body);color:var(--text-main);margin:0;min-height:100vh}
+        .simple-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;box-shadow:0 8px 30px -18px rgba(0,0,0,.28);transition:.2s}
+        .simple-card:hover{border-color:rgba(245,158,11,.4)}
+        .big-tola-price{font-size:clamp(2.1rem,8vw,4.5rem);letter-spacing:-.045em;font-weight:900;line-height:1.05;color:var(--accent);font-variant-numeric:tabular-nums}
+        .live-dot{width:8px;height:8px;background:#10b981;border-radius:50%;display:inline-block;box-shadow:0 0 9px #10b981;animation:pulse 2s infinite;flex:none}
+        @keyframes pulse{50%{transform:scale(1.25);opacity:.65}}
+        .action-pill{background:var(--card-bg);border:1px solid var(--card-border);border-radius:999px;padding:8px 14px;font-size:.8rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.2s;white-space:nowrap}
+        .action-pill:hover{border-color:var(--accent);color:var(--accent)}
+        .action-pill:active{transform:scale(.97)}
+        .tab-btn{padding:10px 15px;font-size:.82rem;font-weight:700;color:var(--text-muted);border-radius:12px;transition:.2s;cursor:pointer;white-space:nowrap}
+        .tab-btn.active{color:var(--accent);background:rgba(245,158,11,.1)}
+        .chart-container{position:relative;height:220px;width:100%}
+        .tab-content{transition:opacity .2s}.tab-content.hidden{display:none;opacity:0}
+        .rate-number{font-variant-numeric:tabular-nums}
+        @media(max-width:640px){
+          body{padding:12px!important;padding-bottom:92px!important}
+          header{margin-bottom:14px!important;align-items:flex-start!important}
+          header .flex.gap-2{gap:5px!important}
+          header .action-pill{width:38px;height:38px;padding:0;justify-content:center}
+          header .action-pill span{display:none}
+          header h1{font-size:1rem!important}
+          header p{font-size:10px!important}
+          header>div:first-child>div:first-child{width:38px;height:38px}
+          main{max-width:none!important}
+          .simple-card{border-radius:16px}
+          .hero-card{padding:16px!important}
+          .hero-card .top-actions{align-items:flex-start}
+          .hero-card .action-pill{padding:7px 10px}
+          .big-tola-price{font-size:clamp(2.15rem,12vw,3.25rem)}
+          .rate-strip{display:grid!important;grid-template-columns:1fr 1fr;gap:8px!important;padding:10px!important}
+          .rate-strip>span{font-size:11px}
+          .rate-strip>span:nth-child(2){display:none}
+          .stats-grid{grid-template-columns:1fr 1fr!important}
+          .stats-grid>div:last-child{grid-column:1/-1}
+          .chart-grid{grid-template-columns:1fr!important}
+          .chart-container{height:185px}
+          .tools-card{padding:12px!important}
+          .tab-btn{padding:9px 12px;font-size:11px}
+          .bottom-nav{bottom:8px;width:calc(100% - 16px);padding:5px 7px}
+          .nav-item{padding:6px 10px;font-size:10px}
+          .nav-item i{font-size:1rem}
         }
-        
-        .dark {
-            --bg-body: #090d16;
-            --card-bg: #111827;
-            --card-border: #1f2937;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent: #f59e0b;
-            --nav-bg: #111827;
+        @media(min-width:1100px){
+          body{padding-top:28px!important}
+          main{max-width:1100px!important}
+          header{max-width:1100px!important}
+          .hero-card{padding:34px!important}
+          .chart-container{height:250px}
+          .desktop-wide{display:grid;grid-template-columns:1.35fr .65fr;gap:16px}
         }
-
-        * {
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            min-height: 100vh;
-            margin: 0;
-            transition: background-color 0.25s ease, color 0.25s ease;
-        }
-
-        .simple-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 1.25rem;
-            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .simple-card:hover {
-            border-color: rgba(245, 158, 11, 0.4);
-        }
-
-        .big-tola-price {
-            font-size: clamp(2.2rem, 7vw, 3.8rem);
-            letter-spacing: -0.03em;
-            font-weight: 900;
-            line-height: 1.1;
-            color: var(--accent);
-        }
-
-        /* Live Pulse Indicator */
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: #10b981;
-            border-radius: 50%;
-            display: inline-block;
-            box-shadow: 0 0 8px #10b981;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.9); opacity: 0.8; }
-            50% { transform: scale(1.2); opacity: 1; }
-            100% { transform: scale(0.9); opacity: 0.8; }
-        }
-
-        /* Minimal Button Pills */
-        .action-pill {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 999px;
-            padding: 6px 14px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .action-pill:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .action-pill:active { transform: scale(0.96); }
-
-        /* Clean Tab Buttons */
-        .tab-btn {
-            padding: 8px 16px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            border-radius: 10px;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-
-        .tab-btn.active {
-            color: var(--accent);
-            background: rgba(245, 158, 11, 0.1);
-        }
-
-        /* Simple Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 16px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: calc(100% - 32px);
-            max-width: 420px;
-            background: var(--nav-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 999px;
-            padding: 6px 12px;
-            z-index: 50;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-
-        .nav-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-            transition: color 0.2s ease;
-            cursor: pointer;
-            padding: 6px 12px;
-            border-radius: 999px;
-        }
-
-        .nav-item i { font-size: 1.1rem; }
-
-        .nav-item.active {
-            color: var(--accent);
-            background: rgba(245, 158, 11, 0.12);
-        }
-
-        .chart-container { position: relative; height: 160px; width: 100%; }
-
-        .tab-content { transition: opacity 0.2s ease; }
-        .tab-content.hidden { display: none; opacity: 0; }
+        @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
     </style>
 </head>
 
@@ -200,8 +99,8 @@
     <main class="w-full max-w-3xl space-y-4">
 
         <!-- CLEAN GOLD RATE HERO CARD -->
-        <div class="simple-card p-6 text-center relative overflow-hidden">
-            <div class="flex justify-between items-center mb-3">
+        <div class="simple-card hero-card p-6 text-center relative overflow-hidden">
+            <div class="flex justify-between items-center mb-3 top-actions">
                 <span class="text-xs font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-md" id="bigTolaLabel">
                     प्रति तोला (नेपाल)
                 </span>
@@ -214,16 +113,16 @@
                 <div class="text-xs font-bold tracking-wide uppercase text-slate-500 dark:text-slate-400 mb-1" id="goldLabel">
                     छापावाल सुन (Fine Gold / FENEGOSIDA)
                 </div>
-                <div class="big-tola-price" id="bigGoldTola">रू ३,०६,८००</div>
+                <div class="big-tola-price" id="bigGoldTola">रू २,९९,५००</div>
                 <div class="text-xs text-slate-500 dark:text-slate-400 font-medium mt-1">
-                    प्रति ग्राम (गणना): <span id="bigGoldGram" class="font-bold text-slate-800 dark:text-slate-200">रू २६,३०३</span>
+                    प्रति ग्राम (गणना): <span id="bigGoldGram" class="font-bold text-slate-800 dark:text-slate-200">रू २५,६८३</span>
                 </div>
             </div>
 
-            <div class="flex flex-wrap justify-center items-center gap-3 mt-4 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800/50 py-2.5 px-4 rounded-xl">
-                <span>तेजाबी सुन (22K): <strong id="gold22Tola" class="text-amber-600 dark:text-amber-400">रू २,८१,२३४</strong></span>
+            <div class="flex flex-wrap justify-center items-center gap-3 mt-4 text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800/50 py-2.5 px-4 rounded-xl rate-strip">
+                <span>तेजाबी सुन (22K): <strong id="gold22Tola" class="text-amber-600 dark:text-amber-400">रू २,७४,३४५</strong></span>
                 <span class="opacity-30">•</span>
-                <span>चाँदी: <strong id="bigSilverTola" class="text-slate-800 dark:text-slate-200">रू ४,७५०</strong> /तोला</span>
+                <span>चाँदी: <strong id="bigSilverTola" class="text-slate-800 dark:text-slate-200">रू ४,६२५</strong> /तोला</span>
             </div>
         </div>
 
@@ -239,7 +138,7 @@
         </div>
 
         <!-- THREE SIMPLE STAT CARDS -->
-        <div class="grid grid-cols-3 gap-3">
+        <div class="grid grid-cols-3 gap-3 stats-grid">
             <div class="simple-card p-3.5 text-center">
                 <div class="text-[11px] font-bold text-slate-500 uppercase" id="silverCardLabel">चाँदी (Silver)</div>
                 <div class="text-base sm:text-xl font-extrabold my-0.5 text-slate-800 dark:text-slate-100" id="silverTolaSmall">रू ४,७५०</div>
@@ -260,7 +159,7 @@
         </div>
 
         <!-- CHARTS SECTION -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 chart-grid">
             <div class="simple-card p-4">
                 <div class="flex justify-between items-center mb-2">
                     <h3 class="text-xs font-bold flex items-center gap-1.5" id="goldChartTitle">
@@ -282,7 +181,7 @@
             </div>
         </div>
 
-        <div class="simple-card p-5">
+        <div class="simple-card p-5 tools-card">
             <!-- Clean Navigation Tabs -->
             <div class="flex gap-1 overflow-x-auto pb-2 border-b border-slate-200 dark:border-slate-800 scrollbar-none">
                 <button id="tabCalcBtn" onclick="switchTab('calc')" class="tab-btn active">
