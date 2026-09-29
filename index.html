@@ -59,18 +59,7 @@ button,input,select{font:inherit}
 .footer{margin:30px 0 100px;padding:22px 0;border-top:1px solid var(--line);color:var(--muted);font-size:10px;display:flex;justify-content:space-between;gap:15px}
 
 @media(max-width:850px){.hero-grid,.dashboard{grid-template-columns:1fr}.hero{padding:21px}.rate-grid{grid-template-columns:1fr 1fr}.chart-container{height:230px}}
-@media(max-width:560px){.container{width:min(100% - 20px,1180px)}.topbar{height:60px}.brand h1{font-size:13px}.brand-mark{width:38px;height:38px}.actions .action-pill{width:38px;height:38px;padding:0;justify-content:center}.actions .action-pill span{display:none}.hero{margin-top:12px;border-radius:21px;padding:17px}.hero-price{font-size:clamp(2.75rem,14vw,4rem)}.rate-grid{gap:8px}.rate-card{padding:13px}.rate-card .value{font-size:16px}.mini-board{margin-top:2px}.trust{align-items:flex-start;flex-direction:column}.faq-grid{grid-template-columns:1fr}.calc-grid{grid-template-columns:1fr}.metal-grid{grid-template-columns:1fr 1fr}.metal-option:last-child{grid-column:1/-1}.footer{flex-direction:column}.bottom-nav{bottom:7px;width:calc(100% - 18px);justify-content:space-around}.nav-item{flex:1;min-width:0}}
-@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
-
-/* Premium glass layer */
-.glass{background:linear-gradient(135deg,rgba(255,255,255,.085),rgba(255,255,255,.025));border:1px solid rgba(255,255,255,.12);box-shadow:0 18px 55px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.07);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
-.glass:hover{transform:translateY(-2px);border-color:rgba(244,181,43,.28);box-shadow:0 22px 65px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.09)}
-.reveal{opacity:0;transform:translateY(14px);animation:reveal .65s cubic-bezier(.2,.7,.2,1) forwards}.reveal:nth-child(2){animation-delay:.05s}.reveal:nth-child(3){animation-delay:.1s}.reveal:nth-child(4){animation-delay:.15s}@keyframes reveal{to{opacity:1;transform:none}}
-.glow{position:absolute;inset:auto -80px -120px auto;width:260px;height:260px;border-radius:50%;background:rgba(244,181,43,.12);filter:blur(35px);pointer-events:none}
-.related-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.related-card{overflow:hidden;border-radius:20px;position:relative;transition:.28s ease}.related-card img{width:100%;height:145px;display:block;object-fit:cover}.related-body{padding:14px}.related-body h3{margin:0 0 5px;font-size:13px}.related-body p{margin:0;color:var(--muted);font-size:10px;line-height:1.65}.related-badge{position:absolute;top:10px;left:10px;padding:6px 9px;border-radius:999px;background:rgba(10,10,10,.6);color:#ffe08a;font-size:9px;font-weight:900;backdrop-filter:blur(10px)}
-.skeleton{background:linear-gradient(90deg,var(--surface2) 25%,rgba(255,255,255,.08) 37%,var(--surface2) 63%);background-size:400% 100%;animation:shine 1.4s ease infinite}@keyframes shine{0%{background-position:100% 0}100%{background-position:-100% 0}}
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}.modal-backdrop.hidden{display:none}.toast{position:fixed;right:18px;bottom:22px;background:#111316;color:#fff;padding:12px 15px;border-radius:13px;box-shadow:0 15px 45px rgba(0,0,0,.35);display:flex;align-items:center;gap:8px;border:1px solid rgba(244,181,43,.3);z-index:50;font-size:11px;font-weight:800}.toast.hidden{display:none}.portfolio-empty{font-size:11px;color:var(--muted);font-style:italic}.portfolio-item{display:flex;justify-content:space-between;align-items:center;padding:11px;border-radius:12px;background:var(--surface2);border:1px solid var(--line)}.portfolio-title{font-size:11px;font-weight:900}.portfolio-meta{font-size:9px;color:var(--muted);margin-top:3px}.portfolio-value{font-size:11px;font-weight:900;color:var(--gold)}.delete-btn{border:0;background:transparent;color:#f87171;font-size:12px;cursor:pointer}.chart-container{min-height:240px}.chart-container canvas{display:block!important;width:100%!important;height:100%!important}
-@media(max-width:850px){.related-grid{grid-template-columns:1fr 1fr}.hero-grid{gap:18px}}
+@media(max-width:560px){.container{width:min(100% - 20px,1180px)}.topbar{height:60px}.brand h1{font-size:13px}.brand-mark{width:38px;height:38px}.actions .action-pill{width:38px;height:38px;padding:0;justify-content:center}.actions .action-pill span{display:none}.hero{margin-top:12px;border-radius:21px;padding:17px}.hero-price{font-size:clamp(2.75rem,14vw,4rem)}.rate-grid{gap:8px}.rate-card{padding:13px}.rate-card .value{font-size:16px}.mini-board{margin-top:2px}.trust{align-items:flex-start;flex-direction:column}.faq-grid{grid-template-columns:1fr}.calc-grid{grid-template-columns:1fr}.metal-grid{grid-template-columns:1fr 1fr}.metal-option:last-child{grid-column:1/-1}.footer{flex-direction:column}@media(max-width:850px){.related-grid{grid-template-columns:1fr 1fr}.hero-grid{gap:18px}}
 @media(max-width:560px){.related-grid{grid-template-columns:1fr}.related-card img{height:170px}.section{margin-top:17px}.section-head{align-items:flex-start;flex-direction:column}.dashboard{gap:10px}.panel{padding:14px}.chart-container{height:220px;min-height:220px}.rate-grid{grid-template-columns:1fr 1fr}.hero-grid{display:block}.hero-main{padding-top:8px}.mini-board{margin-top:14px}.topbar{position:relative}.glass{backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}}
 @media(prefers-reduced-motion:reduce){.reveal{animation:none;opacity:1;transform:none}.glass,.related-card{transition:none}}
 </style>
@@ -456,16 +445,6 @@ let activeRange = 30;
             const targetName = tab.charAt(0).toUpperCase() + tab.slice(1);
             id(`tab${targetName}Content`).classList.remove('hidden');
             id(`tab${targetName}Btn`).classList.add('active');
-        }
-
-        function switchBottomTab(tab) {
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            if (event && event.currentTarget) event.currentTarget.classList.add('active');
-
-            if (tab === 'home') window.scrollTo({ top: 0, behavior: 'smooth' });
-            else if (tab === 'calc') switchTab('calc');
-            else if (tab === 'charts') switchTab('purity');
-            else switchTab('portfolio');
         }
 
         function copySummary() {
