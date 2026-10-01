@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ne" class="dark">
+<html lang="ne">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -7,7 +7,7 @@
 <meta name="description" content="आजको नेपाल सुनको भाउ — छापावाल सुन, तेजाबी सुन र चाँदीको दर प्रति तोला, १० ग्राम र ग्राममा। FENEGOSIDA स्थानीय प्रकाशित दर, दैनिक इतिहास, मूल्य प्रवृत्ति, सुन क्यालकुलेटर र पुरानो गहनाको हिसाब एकै ठाउँमा।">
 <meta name="keywords" content="gold price in Nepal today,gold price Nepal today,नेपाल सुनको भाउ,आजको सुनको भाउ,सुन चाँदीको भाउ,छापावाल सुन,तेजाबी सुन,FENEGOSIDA,gold rate Nepal,silver rate Nepal,gold price per tola Nepal">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="theme-color" content="#09090b">
+<meta name="theme-color" content="#ffffff">
 <link rel="canonical" href="https://laxmannepal.com.np/gold-price-in-nepal-today/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://laxmannepal.com.np/gold-price-in-nepal-today/">
@@ -121,6 +121,29 @@ button,input,select{font:inherit}
   .reveal{animation:none;opacity:1;transform:none}
   .glass,.related-card{transition:none}
 }
+/* Premium light-first visual system */
+:root{--bg:#f5f7fb;--surface:#fff;--surface2:#f8fafc;--line:#e6eaf0;--text:#111827;--muted:#64748b;--gold:#b77908;--gold2:#f8d477;--green:#15803d;--danger:#dc2626;--shadow:0 14px 45px rgba(15,23,42,.07)}
+.dark{--bg:#08090b;--surface:#111316;--surface2:#17191d;--line:#292c31;--text:#fafafa;--muted:#a1a1aa;--gold:#f4b52b;--gold2:#ffe08a}
+body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transparent 30%),linear-gradient(180deg,#fff 0,#f7f8fb 58%,#f3f5f8 100%);background-attachment:fixed}
+.topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.86);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.brand-mark{background:linear-gradient(135deg,#ffe9a6,#e0a11b);box-shadow:0 8px 28px rgba(183,121,8,.18)}
+.hero{background:linear-gradient(135deg,rgba(255,255,255,.98),rgba(255,251,235,.98) 58%,rgba(255,255,255,.98));box-shadow:0 24px 70px rgba(15,23,42,.10)}
+.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 0 52%,rgba(234,179,8,.055) 72%,transparent);pointer-events:none}
+.hero-price{text-shadow:0 8px 28px rgba(183,121,8,.12)}
+.rate-card,.panel,.faq,.seo-copy{box-shadow:var(--shadow);transition:transform .22s ease,box-shadow .22s ease,border-color .22s ease}
+.rate-card:hover,.panel:hover,.faq:hover,.seo-copy:hover{transform:translateY(-3px);box-shadow:0 20px 55px rgba(15,23,42,.10);border-color:rgba(183,121,8,.24)}
+.rate-card{position:relative;overflow:hidden}.rate-card:before{content:"";position:absolute;left:0;top:0;right:0;height:3px;background:linear-gradient(90deg,#d69b20,#f5d47a,transparent)}
+.rate-card .value{font-size:clamp(19px,2vw,24px);letter-spacing:-.025em}
+.section-head h2{font-size:clamp(18px,2.2vw,23px)}.section-head p{font-size:12px}
+.mini-board{background:rgba(248,250,252,.9);box-shadow:inset 0 1px rgba(255,255,255,.9)}
+.action-pill{box-shadow:0 3px 12px rgba(15,23,42,.04)}.action-pill:hover{transform:translateY(-1px);box-shadow:0 7px 18px rgba(183,121,8,.10)}
+.range-tabs,.tool-tabs{background:#f1f5f9;border:1px solid #e5eaf0;border-radius:12px;padding:3px}.range-tabs button,.tab-btn{transition:all .18s ease}.range-tabs button.active,.tab-btn.active{box-shadow:0 2px 8px rgba(15,23,42,.08)}
+.total-box{box-shadow:0 14px 30px rgba(183,121,8,.18)}.related-card{box-shadow:var(--shadow)}.related-card img{transition:transform .35s ease}.related-card:hover img{transform:scale(1.025)}
+.faq-grid{grid-auto-rows:1fr}.faq h3:before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);margin:0 8px 2px 0}
+.source-verified{font-size:10px;font-weight:800;color:#2563eb}.source-fallback{font-size:10px;font-weight:800;color:#dc2626}
+.toast{background:rgba(17,24,39,.94);box-shadow:0 15px 40px rgba(15,23,42,.22)}
+.dark .topbar{background:rgba(8,9,11,.86)}.dark body{background:radial-gradient(circle at 50% -10%,rgba(244,181,43,.12),transparent 35%),var(--bg)}
+@media(max-width:560px){.topbar{margin-left:-10px;margin-right:-10px;padding:0 10px;width:calc(100% + 20px)}.hero-price{text-shadow:none}.rate-card:hover,.panel:hover,.faq:hover,.seo-copy:hover{transform:none}}
 </style>
 </head>
 <body>
@@ -142,14 +165,14 @@ button,input,select{font:inherit}
       <span class="eyebrow"><span class="live-dot"></span> <span id="sourceStatus">FENEGOSIDA बाट प्रकाशित दर</span></span>
       <div class="hero-kicker" id="bigTolaLabel">आजको छापावाल सुन · प्रति तोला</div>
       <div id="goldLabel" class="hero-kicker" style="margin-top:14px">Fine Gold / २४K</div>
-      <div id="bigGoldTola" class="hero-price">रू २,९९,५००</div>
-      <div class="hero-unit">प्रति ग्राम (गणना): <strong id="bigGoldGram">रू २५,६८३</strong> · १ तोला ≈ ११.६६४ ग्राम</div>
+      <div id="bigGoldTola" class="hero-price">लोड हुँदैछ…</div>
+      <div class="hero-unit">प्रति ग्राम (गणना): <strong id="bigGoldGram">—</strong> · १ तोला ≈ ११.६६४ ग्राम</div>
       <div class="change-badge" id="dailyChange"><i class="fa-solid fa-arrow-trend-up"></i> आजको परिवर्तन <strong id="changeValue">—</strong></div>
     </div>
     <div class="mini-board">
       <div class="panel-title"><h3>आजको दर बोर्ड</h3><button onclick="fetchLiveData()" id="refreshBtn" class="action-pill"><i class="fa-solid fa-rotate" id="refreshIcon"></i><span id="refreshLabel">रिफ्रेस</span></button></div>
-      <div class="mini-row"><span>तेजाबी सुन · २२K</span><strong id="gold22Tola">रू २,७४,३४५</strong></div>
-      <div class="mini-row"><span>चाँदी · प्रति तोला</span><strong id="bigSilverTola">रू ४,६२५</strong></div>
+      <div class="mini-row"><span>तेजाबी सुन · २२K</span><strong id="gold22Tola">—</strong></div>
+      <div class="mini-row"><span>चाँदी · प्रति तोला</span><strong id="bigSilverTola">—</strong></div>
       <div class="mini-row"><span>दर प्रकाशित मिति</span><strong id="rateDate">—</strong></div>
       <div class="mini-row"><span>अन्तिम जाँच</span><strong id="lastFetched">—</strong></div>
       <div class="subtle" style="margin-top:9px">यो FENEGOSIDA को प्रकाशित स्थानीय reference rate हो; पसलको अन्तिम बिलमा ज्याला, जर्ती, VAT वा अन्य शुल्क फरक हुन सक्छ।</div>
@@ -162,7 +185,7 @@ button,input,select{font:inherit}
  <div class="section-head"><div><h2 id="todayRates">आजको सुन चाँदीको भाउ</h2><p>एक नजरमै नेपालका मुख्य धातु दर — तोला र १० ग्राम</p></div><a class="section-link" href="#history">इतिहास हेर्नुहोस् →</a></div>
  <div class="rate-grid">
   <article class="rate-card"><div class="label">छापावाल सुन · 24K</div><div id="gold24Card" class="value">रू २,९९,५००</div><small>प्रति तोला</small></article>
-  <article class="rate-card"><div class="label">छापावाल सुन · 10g</div><div id="gold10Card" class="value">रू २,५६,७७५</div><small>प्रति १० ग्राम</small></article>
+  <article class="rate-card"><div class="label">छापावाल सुन · 10g</div><div id="gold10Card" class="value">—</div><small>प्रति १० ग्राम</small></article>
   <article class="rate-card"><div class="label">तेजाबी सुन · 22K</div><div id="tejabiCard" class="value">रू २,७४,३४५</div><small>प्रति तोला</small></article>
   <article class="rate-card"><div class="label">चाँदी · Silver</div><div id="silverCard" class="value">रू ४,६२५</div><small>प्रति तोला</small></article>
  </div>
@@ -174,8 +197,6 @@ button,input,select{font:inherit}
   <div class="panel glass"><div class="panel-title"><h3 id="goldChartTitle"><i class="fa-solid fa-chart-line" style="color:var(--gold)"></i> सुन मूल्य प्रवृत्ति</h3><span class="subtle">FENEGOSIDA history</span></div><div class="chart-container"><canvas id="goldChart"></canvas></div></div>
   <div class="panel glass"><div class="panel-title"><h3 id="silverChartTitle"><i class="fa-solid fa-chart-line"></i> चाँदी मूल्य प्रवृत्ति</h3><span class="subtle">प्रति तोला</span></div><div class="chart-container"><canvas id="silverChart"></canvas></div></div>
  </div>
-</section>
-
 </section>
 
 <section class="section">
@@ -275,24 +296,24 @@ button,input,select{font:inherit}
 
 <script>
         let currentLang = 'np';
-        let darkMode = true;
+        let darkMode = false;
         // Nepal market base rates (FENEGOSIDA official benchmark)
         // Including Nepal import customs duty, luxury tax & federation premiums
         // FENEGOSIDA — official Nepal local reference rates.
 // The API field "todayBaseRatePerGram" is unfortunately named, but its value
 // is the rate for the unit written in rateType (e.g. 1 tola or 10 grams).
 let fenegosidaRates = {
-    goldTola: 299500,
-    gold10g: 256775,
-    tejabiTola: 274345,
-    silverTola: 4625,
-    silver10g: 3965,
-    goldYesterday: 0,
-    silverYesterday: 0,
-    rateDate: '2026-09-30',
+    goldTola: null,
+    gold10g: null,
+    tejabiTola: null,
+    silverTola: null,
+    silver10g: null,
+    goldYesterday: null,
+    silverYesterday: null,
+    rateDate: null,
     publishedAt: null,
     fetchedAt: null,
-    status: 'fallback'
+    status: 'loading'
 };
 let lastLiveFetch = null;
 const FENEGOSIDA_API = 'https://api.fenegosida.org/api/website/v1/Dashboard/today';
@@ -338,7 +359,7 @@ let activeRange = 30;
 
         const translations = {
             np: {
-                mainTitle: 'नेपाल सुन चाँदी', subTitle: 'लाइभ बजार मूल्य (FENEGOSIDA)', refreshLabel: 'रिफ्रेस',
+                mainTitle: 'नेपाल सुन चाँदी', subTitle: 'FENEGOSIDA प्रकाशित स्थानीय दर', refreshLabel: 'रिफ्रेस',
                 bigTolaLabel: 'प्रति तोला (नेपाल)', goldLabel: 'सुन (२४ क्यारेट / Fine Gold)',
                 silverCardLabel: 'चाँदी (Silver)', platCardLabel: 'तेजाबी सुन (22K)', ratioCardLabel: 'अनुपात (Ratio)',
                 goldChartTitle: 'सुन मूल्य प्रवृत्ति', silverChartTitle: 'चाँदी मूल्य प्रवृत्ति',
@@ -346,7 +367,7 @@ let activeRange = 30;
                 portTabLabel: 'मेरो पोर्टफोलियो', goldRadioLabel: 'सुन', silverRadioLabel: 'चाँदी', platRadioLabel: 'तेजाबी सुन'
             },
             en: {
-                mainTitle: 'Nepal Metals', subTitle: 'Live Market Rate (FENEGOSIDA)', refreshLabel: 'Refresh',
+                mainTitle: 'Nepal Metals', subTitle: 'FENEGOSIDA published local rate', refreshLabel: 'Refresh',
                 bigTolaLabel: 'Per Tola (Nepal)', goldLabel: 'Gold (24 Karat / Fine)',
                 silverCardLabel: 'Silver Rate', platCardLabel: 'Tejabi Gold (22K)', ratioCardLabel: 'Gold/Silver Ratio',
                 goldChartTitle: 'Gold Price Trend', silverChartTitle: 'Silver Price Trend',
@@ -398,8 +419,8 @@ let activeRange = 30;
                 silver: fenegosidaRates.silverTola,
                 tejabi: fenegosidaRates.tejabiTola
             };
-            const tola = tolaRates[metal] || fenegosidaRates.goldTola;
-            return tola / unitsInGrams.tola;
+            const tola = tolaRates[metal];
+            return Number.isFinite(tola) ? tola / unitsInGrams.tola : 0;
         }
 
         function updateCalc() {
@@ -544,7 +565,7 @@ let activeRange = 30;
             calcScrap();
             renderPortfolio();
 
-            if (id('rateDate')) id('rateDate').innerText = fenegosidaRates.rateDate || '—'; if (id('rateDate2')) id('rateDate2').innerText = fenegosidaRates.rateDate || '—'; if (id('gold24Card')) id('gold24Card').innerText = formatCurrency(fenegosidaRates.goldTola,'NPR'); if (id('gold10Card')) id('gold10Card').innerText = formatCurrency(fenegosidaRates.gold10g,'NPR'); if (id('tejabiCard')) id('tejabiCard').innerText = formatCurrency(fenegosidaRates.tejabiTola,'NPR'); if (id('silverCard')) id('silverCard').innerText = formatCurrency(fenegosidaRates.silverTola,'NPR'); if (id('statusCard')) id('statusCard').innerText = (fenegosidaRates.status === 'live' || fenegosidaRates.status === 'verified') ? 'LIVE' : 'Fallback'; if (id('changeValue')) {
+            if (id('rateDate')) id('rateDate').innerText = fenegosidaRates.rateDate || '—'; if (id('rateDate2')) id('rateDate2').innerText = fenegosidaRates.rateDate || '—'; if (id('gold24Card')) id('gold24Card').innerText = formatCurrency(fenegosidaRates.goldTola,'NPR'); if (id('gold10Card')) id('gold10Card').innerText = formatCurrency(fenegosidaRates.gold10g,'NPR'); if (id('tejabiCard')) id('tejabiCard').innerText = formatCurrency(fenegosidaRates.tejabiTola,'NPR'); if (id('silverCard')) id('silverCard').innerText = formatCurrency(fenegosidaRates.silverTola,'NPR'); if (id('statusCard')) id('statusCard').innerText = fenegosidaRates.status === 'live' ? 'LIVE' : fenegosidaRates.status === 'verified' ? 'VERIFIED' : fenegosidaRates.status === 'loading' ? 'LOADING' : 'UNAVAILABLE'; if (id('changeValue')) {
                 const c = fenegosidaRates.goldYesterday ? fenegosidaRates.goldTola - fenegosidaRates.goldYesterday : 0;
                 const badge = id('dailyChange');
                 const icon = badge ? badge.querySelector('i') : null;
@@ -553,9 +574,8 @@ let activeRange = 30;
                 if (icon) icon.className = c > 0 ? 'fa-solid fa-arrow-trend-up' : c < 0 ? 'fa-solid fa-arrow-trend-down' : 'fa-solid fa-minus';
             }
             if (id('sourceStatus')) {
-                id('sourceStatus').innerText = (fenegosidaRates.status === 'live' || fenegosidaRates.status === 'verified') ? 'LIVE · FENEGOSIDA' : 'FENEGOSIDA fallback';
-                id('sourceStatus').className = (fenegosidaRates.status === 'live' || fenegosidaRates.status === 'verified')
-                    ? 'source-live' : 'source-fallback';
+                id('sourceStatus').innerText = fenegosidaRates.status === 'live' ? 'LIVE · FENEGOSIDA' : fenegosidaRates.status === 'verified' ? 'VERIFIED · FENEGOSIDA' : fenegosidaRates.status === 'loading' ? 'दर लोड हुँदैछ…' : 'दर उपलब्ध छैन';
+                id('sourceStatus').className = fenegosidaRates.status === 'live' ? 'source-live' : fenegosidaRates.status === 'verified' ? 'source-verified' : 'source-fallback';
             }
             if (id('lastFetched')) {
                 id('lastFetched').innerText = lastLiveFetch
@@ -648,13 +668,14 @@ let activeRange = 30;
                 const silver = find('असली चाँदी', '१ तोला');
                 const silver10 = find('असली चाँदी', '१० ग्राम');
 
-                if (!gold || !silver) throw new Error('Required FENEGOSIDA rates not found');
-
-                fenegosidaRates.goldTola = Number(gold.todayBaseRatePerGram);
-                fenegosidaRates.gold10g = Number(gold10?.todayBaseRatePerGram || Math.round(fenegosidaRates.goldTola / 1.16638));
-                fenegosidaRates.tejabiTola = Number(tejabi?.todayBaseRatePerGram || Math.round(fenegosidaRates.goldTola * 0.9167));
-                fenegosidaRates.silverTola = Number(silver.todayBaseRatePerGram);
-                fenegosidaRates.silver10g = Number(silver10?.todayBaseRatePerGram || Math.round(fenegosidaRates.silverTola / 1.16638));
+                if (!gold || !gold10 || !tejabi || !silver || !silver10) throw new Error('Complete FENEGOSIDA rate set not found');
+                const exactRates = [gold, gold10, tejabi, silver, silver10].map(x => Number(x.todayBaseRatePerGram));
+                if (exactRates.some(x => !Number.isFinite(x) || x <= 0)) throw new Error('Invalid FENEGOSIDA rate value');
+                fenegosidaRates.goldTola = exactRates[0];
+                fenegosidaRates.gold10g = exactRates[1];
+                fenegosidaRates.tejabiTola = exactRates[2];
+                fenegosidaRates.silverTola = exactRates[3];
+                fenegosidaRates.silver10g = exactRates[4];
                 fenegosidaRates.goldYesterday = Number(gold.yestardayBaseRatePerGram || 0);
                 fenegosidaRates.silverYesterday = Number(silver.yestardayBaseRatePerGram || 0);
                 fenegosidaRates.rateDate = String(gold.todayDate || '').split('T')[0] || fenegosidaRates.rateDate;
@@ -681,8 +702,8 @@ let activeRange = 30;
 
                 showToast('FENEGOSIDA को पछिल्लो प्रकाशित दर अपडेट भयो!');
             } catch (e) {
-                console.warn('FENEGOSIDA live fetch failed; using verified fallback.', e);
-                fenegosidaRates.status = 'fallback';
+                console.warn('FENEGOSIDA live fetch failed; no new rate was accepted.', e);
+                if (fenegosidaRates.status !== 'verified') fenegosidaRates.status = 'unavailable';
             } finally {
                 if (heroPrice) heroPrice.style.opacity = '1';
                 if (refreshIcon) refreshIcon.classList.remove('fa-spin');
@@ -695,7 +716,7 @@ let activeRange = 30;
                 const res = await fetch('./data/fenegosida.json', { cache: 'no-store' });
                 if (!res.ok) return;
                 const saved = await res.json();
-                if (!fenegosidaRates.status || fenegosidaRates.status === 'fallback') {
+                if (!fenegosidaRates.status || fenegosidaRates.status === 'loading' || fenegosidaRates.status === 'unavailable') {
                     fenegosidaRates = { ...fenegosidaRates, ...saved };
                 }
                 if (Array.isArray(saved.history) && saved.history.length) {
