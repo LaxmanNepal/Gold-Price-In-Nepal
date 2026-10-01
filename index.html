@@ -390,20 +390,53 @@ let activeRange = 30;
             if (id('todayBsDate') && id('todayBsDate').innerText.includes('लोड')) id('todayBsDate').innerText = 'नेपाली मिति लोड हुँदैछ…';
         }
         async function loadTodayNepaliDate() {
+            const renderDate = (bs, ad) => {
+                if (!bs) throw new Error('Invalid BS date');
+                const bsMonthsEn = ['Baishakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
+                const bsMonthsNp = ['बैशाख','जेठ','असार','श्रावण','भाद्र','आश्विन','कार्तिक','मंसिर','पौष','माघ','फाल्गुण','चैत्र'];
+                const adDate = ad && Number(ad.year) && Number(ad.month) && Number(ad.day)
+                    ? new Date(Number(ad.year), Number(ad.month)-1, Number(ad.day))
+                    : new Date();
+                const weekday = NEPALI_WEEKDAYS[adDate.getDay()];
+                const bsText = currentLang === 'np'
+                    ? `${nepaliDigits(bs.day)} ${bsMonthsNp[Number(bs.month)-1] || ''} ${nepaliDigits(bs.year)}, ${weekday}`
+                    : `${bs.day} ${bsMonthsEn[Number(bs.month)-1] || ''} ${bs.year}`;
+                id('todayBsDate').innerText = bsText;
+                if (ad) {
+                    id('todayAdDate').innerText = currentLang === 'np'
+                        ? `${nepaliDigits(ad.day)}-${nepaliDigits(ad.month)}-${nepaliDigits(ad.year)}`
+                        : `${ad.year}-${String(ad.month).padStart(2,'0')}-${String(ad.day).padStart(2,'0')}`;
+                }
+            };
+
             try {
-                const res = await fetch('https://usemiti.com/api/today', {cache:'no-store', headers:{'Accept':'application/json'}});
-                if (!res.ok) throw new Error('Nepali date API HTTP ' + res.status);
+                // Primary: Miti — Kathmandu civil date, CORS-enabled.
+                const res = await fetch('https://usemiti.com/api/today', {cache:'no-store'});
+                if (!res.ok) throw new Error('Miti API HTTP ' + res.status);
                 const payload = await res.json();
-                const bs = payload?.bs;
-                const ad = payload?.ad;
-                if (!bs || !Number(bs.year) || !Number(bs.month) || !Number(bs.day)) throw new Error('Invalid BS date');
-                const weekday = ad && Number.isInteger(Number(ad.year)) ? new Date(Number(ad.year), Number(ad.month)-1, Number(ad.day)).getDay() : new Date().getDay();
-                id('todayBsDate').innerText = currentLang === 'np' ? `${nepaliDigits(bs.day)} ${NEPALI_MONTHS[Number(bs.month)-1] || ''} ${nepaliDigits(bs.year)}, ${NEPALI_WEEKDAYS[weekday]}` : `${bs.day} ${['Baishakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'][Number(bs.month)-1] || ''} ${bs.year}`;
-                if (ad) id('todayAdDate').innerText = currentLang === 'np' ? `${nepaliDigits(ad.day)}-${nepaliDigits(ad.month)}-${nepaliDigits(ad.year)}` : `${ad.year}-${String(ad.month).padStart(2,'0')}-${String(ad.day).padStart(2,'0')}`;
+                renderDate(payload.bs, payload.ad);
+                return;
             } catch (e) {
-                console.warn('Nepali date API unavailable.', e);
-                updateTodayDateFallback();
+                console.warn('Primary Nepali date API unavailable.', e);
             }
+
+            try {
+                // Secondary fallback API.
+                const res = await fetch('https://api.aloks.com.np/api/today.json', {cache:'no-store'});
+                if (!res.ok) throw new Error('Fallback date API HTTP ' + res.status);
+                const payload = await res.json();
+                const data = payload?.data;
+                renderDate(data?.bs, data?.ad);
+                return;
+            } catch (e) {
+                console.warn('Secondary Nepali date API unavailable.', e);
+            }
+
+            // Never leave the UI stuck on a loading message.
+            const now = new Date();
+            const ad = now.toLocaleDateString(currentLang === 'np' ? 'ne-NP' : 'en-US', {year:'numeric',month:'long',day:'numeric',weekday:'long'});
+            id('todayBsDate').innerText = currentLang === 'np' ? 'नेपाली मिति उपलब्ध भएन' : 'BS date unavailable';
+            id('todayAdDate').innerText = ad;
         }
 
 
