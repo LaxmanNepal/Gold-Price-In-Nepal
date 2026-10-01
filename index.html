@@ -144,6 +144,7 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
 .toast{background:rgba(17,24,39,.94);box-shadow:0 15px 40px rgba(15,23,42,.22)}
 .dark .topbar{background:rgba(8,9,11,.86)}.dark body{background:radial-gradient(circle at 50% -10%,rgba(244,181,43,.12),transparent 35%),var(--bg)}
 @media(max-width:560px){.topbar{margin-left:-10px;margin-right:-10px;padding:0 10px;width:calc(100% + 20px)}.hero-price{text-shadow:none}.rate-card:hover,.panel:hover,.faq:hover,.seo-copy:hover{transform:none}}
+.today-date{display:flex;align-items:center;justify-content:center;gap:8px;min-height:38px;margin-top:8px;padding:8px 14px;border:1px solid rgba(183,121,8,.16);border-radius:999px;background:rgba(255,255,255,.72);box-shadow:0 8px 25px rgba(15,23,42,.04);color:var(--muted);font-size:11px;font-weight:800;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.today-date strong{color:var(--text)}.today-date .ad-date{font-weight:700;color:var(--muted)}.dark .today-date{background:rgba(17,19,22,.72)}@media(max-width:560px){.today-date{font-size:10px;margin-top:6px;gap:5px;white-space:nowrap;overflow:hidden}.today-date .ad-date{display:none}}
 </style>
 </head>
 <body>
@@ -157,6 +158,8 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
     <button onclick="toggleTheme()" class="action-pill" aria-label="Toggle theme"><i class="fa-solid fa-moon" id="themeIcon"></i><span id="themeLabel">डार्क</span></button>
   </div>
 </header>
+
+<div id="todayDate" class="today-date" aria-label="आजको नेपाली मिति"><i class="fa-regular fa-calendar"></i><strong id="todayBsDate">आजको मिति लोड हुँदैछ…</strong><span>·</span><span class="ad-date" id="todayAdDate">—</span></div>
 
 <main class="container">
 <section class="hero reveal glass" aria-labelledby="goldLabel">
@@ -377,6 +380,32 @@ let activeRange = 30;
         };
 
         function id(name) { return document.getElementById(name); }
+        const NEPALI_MONTHS = ['बैशाख','जेठ','असार','श्रावण','भाद्र','आश्विन','कार्तिक','मंसिर','पौष','माघ','फाल्गुण','चैत्र'];
+        const NEPALI_WEEKDAYS = ['आइतबार','सोमबार','मङ्गलबार','बुधबार','बिहीबार','शुक्रबार','शनिबार'];
+        const formatBsDate = (bs) => bs ? `${nepaliDigits(bs.day)} ${NEPALI_MONTHS[(Number(bs.month)||1)-1] || ''} ${nepaliDigits(bs.year)}, ${NEPALI_WEEKDAYS[new Date().getDay()]}` : '—';
+        function updateTodayDateFallback() {
+            const now = new Date();
+            const ad = now.toLocaleDateString(currentLang === 'np' ? 'ne-NP' : 'en-US', {year:'numeric',month:'long',day:'numeric',weekday:'long'});
+            if (id('todayAdDate')) id('todayAdDate').innerText = ad;
+            if (id('todayBsDate') && id('todayBsDate').innerText.includes('लोड')) id('todayBsDate').innerText = 'नेपाली मिति लोड हुँदैछ…';
+        }
+        async function loadTodayNepaliDate() {
+            try {
+                const res = await fetch('https://usemiti.com/api/today', {cache:'no-store', headers:{'Accept':'application/json'}});
+                if (!res.ok) throw new Error('Nepali date API HTTP ' + res.status);
+                const payload = await res.json();
+                const bs = payload?.bs;
+                const ad = payload?.ad;
+                if (!bs || !Number(bs.year) || !Number(bs.month) || !Number(bs.day)) throw new Error('Invalid BS date');
+                const weekday = ad && Number.isInteger(Number(ad.year)) ? new Date(Number(ad.year), Number(ad.month)-1, Number(ad.day)).getDay() : new Date().getDay();
+                id('todayBsDate').innerText = currentLang === 'np' ? `${nepaliDigits(bs.day)} ${NEPALI_MONTHS[Number(bs.month)-1] || ''} ${nepaliDigits(bs.year)}, ${NEPALI_WEEKDAYS[weekday]}` : `${bs.day} ${['Baishakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'][Number(bs.month)-1] || ''} ${bs.year}`;
+                if (ad) id('todayAdDate').innerText = currentLang === 'np' ? `${nepaliDigits(ad.day)}-${nepaliDigits(ad.month)}-${nepaliDigits(ad.year)}` : `${ad.year}-${String(ad.month).padStart(2,'0')}-${String(ad.day).padStart(2,'0')}`;
+            } catch (e) {
+                console.warn('Nepali date API unavailable.', e);
+                updateTodayDateFallback();
+            }
+        }
+
 
         function toggleLanguage() {
             currentLang = currentLang === 'np' ? 'en' : 'np';
@@ -698,64 +727,3 @@ let activeRange = 30;
                     priceHistory.gold[priceHistory.gold.length - 1] = fenegosidaRates.goldTola;
                     priceHistory.silver[priceHistory.silver.length - 1] = fenegosidaRates.silverTola;
                 }
-                refreshCharts();
-
-                showToast('FENEGOSIDA को पछिल्लो प्रकाशित दर अपडेट भयो!');
-            } catch (e) {
-                console.warn('FENEGOSIDA live fetch failed; no new rate was accepted.', e);
-                if (fenegosidaRates.status !== 'verified') fenegosidaRates.status = 'unavailable';
-            } finally {
-                if (heroPrice) heroPrice.style.opacity = '1';
-                if (refreshIcon) refreshIcon.classList.remove('fa-spin');
-                updateAllUI();
-            }
-        }
-
-        async function loadStoredRates() {
-            try {
-                const res = await fetch('./data/fenegosida.json', { cache: 'no-store' });
-                if (!res.ok) return;
-                const saved = await res.json();
-                if (!fenegosidaRates.status || fenegosidaRates.status === 'loading' || fenegosidaRates.status === 'unavailable') {
-                    fenegosidaRates = { ...fenegosidaRates, ...saved };
-                }
-                if (Array.isArray(saved.history) && saved.history.length) {
-                    const history = saved.history
-                        .filter(x => Number(x.gold) && Number(x.silver) && x.date)
-                        .sort((a,b) => String(a.date).localeCompare(String(b.date)))
-                        .slice(-365);
-                    priceHistory.labels = history.map(x => {
-                        const d = new Date(String(x.date) + 'T00:00:00');
-                        return d.toLocaleDateString(currentLang === 'np' ? 'ne-NP' : 'en-US', {day:'2-digit',month:'short'});
-                    });
-                    priceHistory.gold = history.map(x => Number(x.gold));
-                    priceHistory.silver = history.map(x => Number(x.silver));
-                }
-                updateAllUI();
-                if (goldChartInstance) {
-                    refreshCharts();
-                }
-            } catch (e) {
-                console.warn('Stored FENEGOSIDA fallback unavailable.');
-            }
-        }
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape' && !id('assetModal').classList.contains('hidden')) closeAddModal();
-        });
-        id('assetModal').addEventListener('click', e => {
-            if (e.target === id('assetModal')) closeAddModal();
-        });
-
-        window.onload = () => {
-            setupPurity('gold');
-            initCharts();
-            updateAllUI();
-            loadStoredRates().finally(() => fetchLiveData());
-            // The federation publishes local rates, not a continuous spot feed.
-            // Polling keeps the page fresh without pretending the source changes every minute.
-            setInterval(fetchLiveData, 5 * 60 * 1000);
-        };
-    </script>
-</body>
-</html>
