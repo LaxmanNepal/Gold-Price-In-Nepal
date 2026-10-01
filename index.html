@@ -760,3 +760,65 @@ let activeRange = 30;
                     priceHistory.gold[priceHistory.gold.length - 1] = fenegosidaRates.goldTola;
                     priceHistory.silver[priceHistory.silver.length - 1] = fenegosidaRates.silverTola;
                 }
+                refreshCharts();
+
+                showToast('FENEGOSIDA को पछिल्लो प्रकाशित दर अपडेट भयो!');
+            } catch (e) {
+                console.warn('FENEGOSIDA live fetch failed; no new rate was accepted.', e);
+                if (fenegosidaRates.status !== 'verified') fenegosidaRates.status = 'unavailable';
+            } finally {
+                if (heroPrice) heroPrice.style.opacity = '1';
+                if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+                updateAllUI();
+            }
+        }
+
+        async function loadStoredRates() {
+            try {
+                const res = await fetch('./data/fenegosida.json', { cache: 'no-store' });
+                if (!res.ok) return;
+                const saved = await res.json();
+                if (!fenegosidaRates.status || fenegosidaRates.status === 'loading' || fenegosidaRates.status === 'unavailable') {
+                    fenegosidaRates = { ...fenegosidaRates, ...saved };
+                }
+                if (Array.isArray(saved.history) && saved.history.length) {
+                    const history = saved.history
+                        .filter(x => Number(x.gold) && Number(x.silver) && x.date)
+                        .sort((a,b) => String(a.date).localeCompare(String(b.date)))
+                        .slice(-365);
+                    priceHistory.labels = history.map(x => {
+                        const d = new Date(String(x.date) + 'T00:00:00');
+                        return d.toLocaleDateString(currentLang === 'np' ? 'ne-NP' : 'en-US', {day:'2-digit',month:'short'});
+                    });
+                    priceHistory.gold = history.map(x => Number(x.gold));
+                    priceHistory.silver = history.map(x => Number(x.silver));
+                }
+                updateAllUI();
+                if (goldChartInstance) {
+                    refreshCharts();
+                }
+            } catch (e) {
+                console.warn('Stored FENEGOSIDA fallback unavailable.');
+            }
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && !id('assetModal').classList.contains('hidden')) closeAddModal();
+        });
+        id('assetModal').addEventListener('click', e => {
+            if (e.target === id('assetModal')) closeAddModal();
+        });
+
+        window.onload = () => {
+            setupPurity('gold');
+            loadTodayNepaliDate();
+            initCharts();
+            updateAllUI();
+            loadStoredRates().finally(() => fetchLiveData());
+            // The federation publishes local rates, not a continuous spot feed.
+            // Polling keeps the page fresh without pretending the source changes every minute.
+            setInterval(fetchLiveData, 5 * 60 * 1000);
+        };
+    </script>
+</body>
+</html>
