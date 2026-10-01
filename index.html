@@ -342,22 +342,492 @@ let portfolio = JSON.parse(localStorage.getItem('goldNepalPortfolio') || '[]');
         };
 
         let goldChartInstance, silverChartInstance;
-        let priceHistory = {
-            labels: ['16 Sep','17 Sep','18 Sep','20 Sep','21 Sep','22 Sep','23 Sep','24 Sep','25 Sep','30 Sep'],
-            gold: [301800,299500,303100,305200,303900,302200,302300,299100,298600,299500],
-            silver: [4685,4625,4775,4795,4805,4775,4815,4650,4620,4625]
-        };
+        let priceHistory = { labels: [], gold: [], silver: [] };
 let activeRange = 30;
 
         const nepaliDigits = (num) => String(num).replace(/[0-9]/g, d => '०१२३४५६७८९'[parseInt(d)]);
 
         function formatCurrency(amount, currency = 'NPR') {
-            const symbols = { NPR: 'रू ', USD: '$', INR: '₹', EUR: '€', GBP: '£', AED: 'AED ' };
-            const formatted = Math.round(amount).toLocaleString(currentLang === 'np' ? 'ne-NP' : 'en-US');
-            if (currency === 'NPR' && currentLang === 'np') {
-                return symbols.NPR + nepaliDigits(formatted);
+            const symbols = { NPR: 'रू ', USD: '
+
+        const translations = {
+            np: {
+                mainTitle: 'नेपाल सुन चाँदी', subTitle: 'FENEGOSIDA प्रकाशित स्थानीय दर', refreshLabel: 'रिफ्रेस',
+                bigTolaLabel: 'प्रति तोला (नेपाल)', goldLabel: 'सुन (२४ क्यारेट / Fine Gold)',
+                silverCardLabel: 'चाँदी (Silver)', platCardLabel: 'तेजाबी सुन (22K)', ratioCardLabel: 'अनुपात (Ratio)',
+                goldChartTitle: 'सुन मूल्य प्रवृत्ति', silverChartTitle: 'चाँदी मूल्य प्रवृत्ति',
+                calcTabLabel: 'क्याल्कुलेटर', matrixTabLabel: 'शुद्धता म्याट्रिक्स', scrapTabLabel: 'पुराना गहना/स्क्र्याप',
+                portTabLabel: 'मेरो पोर्टफोलियो', goldRadioLabel: 'सुन', silverRadioLabel: 'चाँदी', platRadioLabel: 'तेजाबी सुन'
+            },
+            en: {
+                mainTitle: 'Nepal Metals', subTitle: 'FENEGOSIDA published local rate', refreshLabel: 'Refresh',
+                bigTolaLabel: 'Per Tola (Nepal)', goldLabel: 'Gold (24 Karat / Fine)',
+                silverCardLabel: 'Silver Rate', platCardLabel: 'Tejabi Gold (22K)', ratioCardLabel: 'Gold/Silver Ratio',
+                goldChartTitle: 'Gold Price Trend', silverChartTitle: 'Silver Price Trend',
+                calcTabLabel: 'Calculator', matrixTabLabel: 'Purity Matrix', scrapTabLabel: 'Scrap Metal',
+                portTabLabel: 'My Holdings', goldRadioLabel: 'Gold', silverRadioLabel: 'Silver', platRadioLabel: 'Tejabi Gold'
             }
+        };
+
+        function id(name) { return document.getElementById(name); }
+        const NEPALI_MONTHS = ['बैशाख','जेठ','असार','श्रावण','भाद्र','आश्विन','कार्तिक','मंसिर','पौष','माघ','फाल्गुण','चैत्र'];
+        const NEPALI_WEEKDAYS = ['आइतबार','सोमबार','मङ्गलबार','बुधबार','बिहीबार','शुक्रबार','शनिबार'];
+        const formatBsDate = (bs) => bs ? `${nepaliDigits(bs.day)} ${NEPALI_MONTHS[(Number(bs.month)||1)-1] || ''} ${nepaliDigits(bs.year)}, ${NEPALI_WEEKDAYS[new Date().getDay()]}` : '—';
+        function updateTodayDateFallback() {
+            const now = new Date();
+            const ad = now.toLocaleDateString(currentLang === 'np' ? 'ne-NP' : 'en-US', {year:'numeric',month:'long',day:'numeric',weekday:'long'});
+            if (id('todayAdDate')) id('todayAdDate').innerText = ad;
+            if (id('todayBsDate') && id('todayBsDate').innerText.includes('लोड')) id('todayBsDate').innerText = 'नेपाली मिति लोड हुँदैछ…';
+        }
+        async function loadTodayNepaliDate() {
+            const renderDate = (bs, ad) => {
+                if (!bs) throw new Error('Invalid BS date');
+                const bsMonthsEn = ['Baishakh','Jestha','Ashadh','Shrawan','Bhadra','Ashwin','Kartik','Mangsir','Poush','Magh','Falgun','Chaitra'];
+                const bsMonthsNp = ['बैशाख','जेठ','असार','श्रावण','भाद्र','आश्विन','कार्तिक','मंसिर','पौष','माघ','फाल्गुण','चैत्र'];
+                const adDate = ad && Number(ad.year) && Number(ad.month) && Number(ad.day)
+                    ? new Date(Number(ad.year), Number(ad.month)-1, Number(ad.day))
+                    : new Date();
+                const weekday = NEPALI_WEEKDAYS[adDate.getDay()];
+                const bsText = currentLang === 'np'
+                    ? `${nepaliDigits(bs.day)} ${bsMonthsNp[Number(bs.month)-1] || ''} ${nepaliDigits(bs.year)}, ${weekday}`
+                    : `${bs.day} ${bsMonthsEn[Number(bs.month)-1] || ''} ${bs.year}`;
+                id('todayBsDate').innerText = bsText;
+                if (ad) {
+                    id('todayAdDate').innerText = currentLang === 'np'
+                        ? `${nepaliDigits(ad.day)}-${nepaliDigits(ad.month)}-${nepaliDigits(ad.year)}`
+                        : `${ad.year}-${String(ad.month).padStart(2,'0')}-${String(ad.day).padStart(2,'0')}`;
+                }
+            };
+
+            try {
+                // Primary: Miti — Kathmandu civil date, CORS-enabled.
+                const res = await fetch('https://usemiti.com/api/today', {cache:'no-store'});
+                if (!res.ok) throw new Error('Miti API HTTP ' + res.status);
+                const payload = await res.json();
+                renderDate(payload.bs, payload.ad);
+                return;
+            } catch (e) {
+                console.warn('Primary Nepali date API unavailable.', e);
+            }
+
+            try {
+                // Secondary fallback API.
+                const res = await fetch('https://api.aloks.com.np/api/today.json', {cache:'no-store'});
+                if (!res.ok) throw new Error('Fallback date API HTTP ' + res.status);
+                const payload = await res.json();
+                const data = payload?.data;
+                renderDate(data?.bs, data?.ad);
+                return;
+            } catch (e) {
+                console.warn('Secondary Nepali date API unavailable.', e);
+            }
+
+            // Never leave the UI stuck on a loading message.
+            const now = new Date();
+            const ad = now.toLocaleDateString(currentLang === 'np' ? 'ne-NP' : 'en-US', {year:'numeric',month:'long',day:'numeric',weekday:'long'});
+            id('todayBsDate').innerText = currentLang === 'np' ? 'नेपाली मिति उपलब्ध भएन' : 'BS date unavailable';
+            id('todayAdDate').innerText = ad;
+        }
+
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'np' ? 'en' : 'np';
+            id('langLabel').innerText = currentLang === 'np' ? 'नेपाली' : 'English';
+            applyTranslations();
+            updateAllUI();
+        }
+
+        function toggleTheme() {
+            darkMode = !darkMode;
+            document.documentElement.classList.toggle('dark', darkMode);
+            id('themeLabel').innerText = darkMode ? (currentLang === 'np' ? 'डार्क' : 'Dark') : (currentLang === 'np' ? 'लाइट' : 'Light');
+            id('themeIcon').className = darkMode ? 'fa-solid fa-moon' : 'fa-solid fa-sun';
+        }
+
+        function applyTranslations() {
+            const t = translations[currentLang];
+            Object.keys(t).forEach(k => {
+                if (id(k)) id(k).innerText = t[k];
+            });
+        }
+
+        function setupPurity(metal = 'gold') {
+            const sel = id('puritySelect');
+            sel.innerHTML = '';
+            purityMap[metal].forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.val;
+                opt.textContent = p.name;
+                sel.appendChild(opt);
+            });
+            updateCalc();
+        }
+
+        function handleMetalChange(metal) { setupPurity(metal); }
+
+        function getGramPriceNPR(metal) {
+            const tolaRates = {
+                gold: fenegosidaRates.goldTola,
+                silver: fenegosidaRates.silverTola,
+                tejabi: fenegosidaRates.tejabiTola
+            };
+            const tola = tolaRates[metal];
+            return Number.isFinite(tola) ? tola / unitsInGrams.tola : 0;
+        }
+
+        function updateCalc() {
+            const metal = document.querySelector('input[name="metalType"]:checked')?.value || 'gold';
+            const purity = parseFloat(id('puritySelect').value) || 0.999;
+            const weight = parseFloat(id('weightInput').value) || 0;
+            const unit = id('unitSelect').value;
+            const gramWeight = weight * (unitsInGrams[unit] || 1);
+            const makingPct = parseFloat(id('makingCharge').value) || 0;
+            const taxPct = parseFloat(id('taxRate').value) || 0;
+
+            const localGramPriceNPR = getGramPriceNPR(metal);
+            const melt = gramWeight * purity * localGramPriceNPR;
+            const making = melt * (makingPct / 100);
+            const tax = (melt + making) * (taxPct / 100);
+            const total = melt + making + tax;
+
+            id('totalDisplay').innerText = rateReady(localGramPriceNPR) ? formatCurrency(total, 'NPR') : (fenegosidaRates.status === 'loading' ? 'लोड हुँदैछ…' : 'दर उपलब्ध छैन');
+        }
+
+        function renderMatrix() {
+            const grossGrams = parseFloat(id('purityWeightInput').value) || 0;
+            const spotGramNPR = getGramPriceNPR('gold');
+
+            const rows = [
+                ['२४K (९९.९% छापावाल)', 0.999],
+                ['२२K (९१.६% तेजाबी)', 0.9167],
+                ['१८K (७५.०%)', 0.75],
+                ['१४K (५८.३%)', 0.5833]
+            ];
+
+            id('matrixBody').innerHTML = rows.map(([k, p]) => `
+                <tr>
+                    <td>${k}</td>
+                    <td>${(p * 100).toFixed(1)}%</td>
+                    <td class="p-2.5">${(grossGrams * p).toFixed(2)} ग्राम</td>
+                    <td style="font-weight:900;color:var(--gold)">${rateReady(spotGramNPR) ? formatCurrency(grossGrams * p * spotGramNPR, 'NPR') : (fenegosidaRates.status === 'loading' ? 'लोड हुँदैछ…' : 'दर उपलब्ध छैन')}</td>
+                </tr>
+            `).join('');
+        }
+
+        function calcScrap() {
+            const w = parseFloat(id('scrapWeight').value) || 0;
+            const p = parseFloat(id('scrapPurity').value) || 0.75;
+            const spotNPR = getGramPriceNPR('gold');
+            
+            const estOffer = w * p * spotNPR * 0.9;
+            id('scrapOfferDisplay').innerText = rateReady(spotNPR) ? formatCurrency(estOffer, 'NPR') : (fenegosidaRates.status === 'loading' ? 'लोड हुँदैछ…' : 'दर उपलब्ध छैन');
+        }
+
+        function renderPortfolio() {
+            const list = id('portfolioList');
+            if (portfolio.length === 0) {
+                list.innerHTML = `<p class="portfolio-empty">कुनै एसेट भेटिएन। थप्नुहोस् क्लिक गर्नुहोस्।</p>`;
+                return;
+            }
+
+            list.innerHTML = portfolio.map((item, idx) => {
+                const spotNPR = getGramPriceNPR(item.metal);
+                const value = item.weight * item.purity * spotNPR;
+                return `
+                    <div class="portfolio-item">
+                        <div>
+                            <div class="portfolio-title">${item.title}</div>
+                            <div class="portfolio-meta">${item.weight} ग्राम • ${item.metal === 'gold' ? 'सुन' : 'चाँदी'}</div>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:12px">
+                            <span class="portfolio-value">${rateReady(spotNPR) ? formatCurrency(value, 'NPR') : (fenegosidaRates.status === 'loading' ? 'लोड हुँदैछ…' : 'दर उपलब्ध छैन')}</span>
+                            <button onclick="removePortfolioItem(${idx})" class="delete-btn"><i class="fa-solid fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showAddModal() { id('assetModal').classList.remove('hidden'); }
+        function closeAddModal() { id('assetModal').classList.add('hidden'); }
+
+        function savePortfolioItem() {
+            const title = id('modalTitle').value || 'मेरो गहना';
+            const metal = id('modalMetal').value;
+            const weight = parseFloat(id('modalWeight').value) || 10;
+            
+            portfolio.push({ title, metal, purity: metal === 'gold' ? 0.9167 : 0.999, weight });
+            localStorage.setItem('goldNepalPortfolio', JSON.stringify(portfolio));
+            closeAddModal();
+            renderPortfolio();
+        }
+
+        function removePortfolioItem(idx) {
+            portfolio.splice(idx, 1);
+            localStorage.setItem('goldNepalPortfolio', JSON.stringify(portfolio));
+            renderPortfolio();
+        }
+
+        function switchTab(tab) {
+            ['calc', 'purity', 'scrap', 'portfolio'].forEach(t => {
+                id(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Content`).classList.add('hidden');
+                id(`tab${t.charAt(0).toUpperCase() + t.slice(1)}Btn`).classList.remove('active');
+            });
+
+            const targetName = tab.charAt(0).toUpperCase() + tab.slice(1);
+            id(`tab${targetName}Content`).classList.remove('hidden');
+            id(`tab${targetName}Btn`).classList.add('active');
+        }
+
+        function copySummary() {
+            const val = id('totalDisplay').innerText;
+            if (navigator.clipboard?.writeText) {
+                navigator.clipboard.writeText(`नेपाल सुन-चाँदी अनुमानित हिसाब: ${val}`).then(() => showToast('क्लिपबोर्डमा कपी भयो!')).catch(() => showToast('कपी गर्न सकिएन'));
+            } else {
+                showToast('यस browser मा clipboard उपलब्ध छैन');
+            }
+        }
+
+        function showToast(msg) {
+            const toast = id('toast');
+            id('toastText').innerText = msg;
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 2500);
+        }
+
+        function updateAllUI() {
+            const goldGram = getGramPriceNPR('gold');
+            const silverGram = getGramPriceNPR('silver');
+            const tejabiGram = getGramPriceNPR('tejabi');
+
+            id('bigGoldTola').innerText = rateText(fenegosidaRates.goldTola, fenegosidaRates.status === 'loading');
+            id('bigGoldGram').innerText = rateReady(goldGram) ? formatCurrency(goldGram, 'NPR') : (fenegosidaRates.status === 'loading' ? 'लोड हुँदैछ…' : 'दर उपलब्ध छैन');
+            id('gold22Tola').innerText = rateText(fenegosidaRates.tejabiTola, fenegosidaRates.status === 'loading');
+            id('bigSilverTola').innerText = rateText(fenegosidaRates.silverTola, fenegosidaRates.status === 'loading');
+            id('silverTolaSmall').innerText = rateText(fenegosidaRates.silverTola, fenegosidaRates.status === 'loading');
+            id('platinumTolaSmall').innerText = rateText(fenegosidaRates.tejabiTola, fenegosidaRates.status === 'loading');
+            id('ratioValue').innerText = rateReady(fenegosidaRates.goldTola) && rateReady(fenegosidaRates.silverTola) ? (fenegosidaRates.goldTola / fenegosidaRates.silverTola).toFixed(1) : '—';
+
+            updateCalc();
+            renderMatrix();
+            calcScrap();
+            renderPortfolio();
+
+            if (id('rateDate')) id('rateDate').innerText = fenegosidaRates.rateDate || '—'; if (id('rateDate2')) id('rateDate2').innerText = fenegosidaRates.rateDate || '—'; if (id('gold24Card')) id('gold24Card').innerText = rateText(fenegosidaRates.goldTola, fenegosidaRates.status === 'loading'); if (id('gold10Card')) id('gold10Card').innerText = rateText(fenegosidaRates.gold10g, fenegosidaRates.status === 'loading'); if (id('tejabiCard')) id('tejabiCard').innerText = rateText(fenegosidaRates.tejabiTola, fenegosidaRates.status === 'loading'); if (id('silverCard')) id('silverCard').innerText = rateText(fenegosidaRates.silverTola, fenegosidaRates.status === 'loading'); if (id('statusCard')) id('statusCard').innerText = fenegosidaRates.status === 'live' ? 'LIVE' : fenegosidaRates.status === 'verified' ? 'VERIFIED' : fenegosidaRates.status === 'loading' ? 'LOADING' : 'UNAVAILABLE'; if (id('changeValue')) {
+                const c = rateReady(fenegosidaRates.goldTola) && rateReady(fenegosidaRates.goldYesterday) ? fenegosidaRates.goldTola - fenegosidaRates.goldYesterday : null;
+                const badge = id('dailyChange');
+                const icon = badge ? badge.querySelector('i') : null;
+                id('changeValue').innerText = c !== null && c !== 0 ? (c > 0 ? '+' : '') + formatCurrency(Math.abs(c),'NPR') : 'उपलब्ध छैन';
+                if (badge) badge.classList.toggle('down', c !== null && c < 0);
+                if (icon) icon.className = c !== null && c > 0 ? 'fa-solid fa-arrow-trend-up' : c !== null && c < 0 ? 'fa-solid fa-arrow-trend-down' : 'fa-solid fa-minus';
+            }
+            if (id('sourceStatus')) {
+                id('sourceStatus').innerText = fenegosidaRates.status === 'live' ? 'LIVE · FENEGOSIDA' : fenegosidaRates.status === 'verified' ? 'VERIFIED · FENEGOSIDA' : fenegosidaRates.status === 'loading' ? 'दर लोड हुँदैछ…' : 'दर उपलब्ध छैन';
+                id('sourceStatus').className = fenegosidaRates.status === 'live' ? 'source-live' : fenegosidaRates.status === 'verified' ? 'source-verified' : 'source-fallback';
+            }
+            if (id('lastFetched')) {
+                id('lastFetched').innerText = lastLiveFetch
+                    ? new Date(lastLiveFetch).toLocaleTimeString(currentLang === 'np' ? 'ne-NP' : 'en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit'})
+                    : '—';
+            }
+        }
+
+        function chartSlice(days = activeRange) {
+            const total = priceHistory.gold.length;
+            const count = Math.min(days, total);
+            return {
+                labels: priceHistory.labels.slice(-count),
+                gold: priceHistory.gold.slice(-count),
+                silver: priceHistory.silver.slice(-count)
+            };
+        }
+
+        function refreshCharts() {
+            if (!goldChartInstance || !silverChartInstance) return;
+            const s = chartSlice();
+            goldChartInstance.data.labels = s.labels;
+            goldChartInstance.data.datasets[0].data = s.gold;
+            silverChartInstance.data.labels = s.labels;
+            silverChartInstance.data.datasets[0].data = s.silver;
+            goldChartInstance.update('none');
+            silverChartInstance.update('none');
+        }
+
+        function initCharts() {
+            const goldCtx = id('goldChart').getContext('2d');
+            const silverCtx = id('silverChart').getContext('2d');
+            const common = {
+                responsive:true,
+                maintainAspectRatio:false,
+                animation:{duration:500,easing:'easeOutQuart'},
+                interaction:{mode:'index',intersect:false},
+                plugins:{
+                    legend:{display:false},
+                    tooltip:{displayColors:false,callbacks:{label:(ctx)=>' रू '+Number(ctx.parsed.y).toLocaleString('ne-NP')}}
+                },
+                scales:{
+                    x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:7,color:'#9ca3af',font:{size:9}}},
+                    y:{grid:{color:'rgba(148,163,184,.10)'},ticks:{color:'#9ca3af',font:{size:9},callback:v=>Number(v).toLocaleString('ne-NP')}}
+                }
+            };
+            goldChartInstance = new Chart(goldCtx,{
+                type:'line',
+                data:{labels:priceHistory.labels,datasets:[{data:priceHistory.gold,borderColor:'#f4b52b',borderWidth:2.5,backgroundColor:'rgba(244,181,43,.10)',fill:true,tension:.38,pointRadius:2.5,pointHoverRadius:5,pointBackgroundColor:'#f4b52b'}]},
+                options:{...common}
+            });
+            silverChartInstance = new Chart(silverCtx,{
+                type:'line',
+                data:{labels:priceHistory.labels,datasets:[{data:priceHistory.silver,borderColor:'#aeb7c5',borderWidth:2.5,backgroundColor:'rgba(174,183,197,.09)',fill:true,tension:.38,pointRadius:2.5,pointHoverRadius:5,pointBackgroundColor:'#aeb7c5'}]},
+                options:{...common}
+            });
+            document.querySelectorAll('.range-tabs button').forEach(btn=>{
+                btn.addEventListener('click',()=>{
+                    document.querySelectorAll('.range-tabs button').forEach(b=>b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const n = btn.textContent.trim()==='7D' ? 7 : btn.textContent.trim()==='30D' ? 30 : btn.textContent.trim()==='6M' ? 180 : 365;
+                    activeRange=n; refreshCharts();
+                });
+            });
+        }
+
+        async function fetchLiveData() {
+            const heroPrice = id('bigGoldTola');
+            if (heroPrice) heroPrice.style.opacity = '.55';
+            const refreshIcon = id('refreshIcon');
+            if (refreshIcon) refreshIcon.classList.add('fa-spin');
+
+            try {
+                const res = await fetch(FENEGOSIDA_API, {
+                    cache: 'no-store',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                if (!res.ok) throw new Error('FENEGOSIDA HTTP ' + res.status);
+
+                const data = await res.json();
+                if (!Array.isArray(data) || !data.length) throw new Error('Empty FENEGOSIDA response');
+
+                const find = (...labels) => data.find(item => labels.every(label => String(item.rateType || '').includes(label)));
+
+                const gold = find('छापावाल सुन', '१ तोला');
+                const gold10 = find('छापावाल सुन', '१० ग्राम');
+                const tejabi = find('तेजाबी सुन', '१ तोला');
+                const silver = find('असली चाँदी', '१ तोला');
+                const silver10 = find('असली चाँदी', '१० ग्राम');
+
+                if (!gold || !gold10 || !tejabi || !silver || !silver10) throw new Error('Complete FENEGOSIDA rate set not found');
+                const exactRates = [gold, gold10, tejabi, silver, silver10].map(x => Number(x.todayBaseRatePerGram));
+                if (exactRates.some(x => !Number.isFinite(x) || x <= 0)) throw new Error('Invalid FENEGOSIDA rate value');
+                fenegosidaRates.goldTola = exactRates[0];
+                fenegosidaRates.gold10g = exactRates[1];
+                fenegosidaRates.tejabiTola = exactRates[2];
+                fenegosidaRates.silverTola = exactRates[3];
+                fenegosidaRates.silver10g = exactRates[4];
+                fenegosidaRates.goldYesterday = Number(gold.yestardayBaseRatePerGram || 0);
+                fenegosidaRates.silverYesterday = Number(silver.yestardayBaseRatePerGram || 0);
+                fenegosidaRates.rateDate = String(gold.todayDate || '').split('T')[0] || fenegosidaRates.rateDate;
+                fenegosidaRates.publishedAt = gold.todayDate || null;
+                fenegosidaRates.fetchedAt = new Date().toISOString();
+                fenegosidaRates.status = 'live';
+                lastLiveFetch = fenegosidaRates.fetchedAt;
+
+                // Add a point only when the published date is new; 5-minute polling must not duplicate the same rate.
+                const liveDate = fenegosidaRates.rateDate || '';
+                const liveLabel = liveDate ? new Date(liveDate + 'T00:00:00').toLocaleDateString(currentLang === 'np' ? 'ne-NP' : 'en-US', {day:'2-digit',month:'short'}) : 'Today';
+                const lastDate = priceHistory.labels[priceHistory.labels.length - 1] || '';
+                const normalizedLast = String(lastDate).replace(/\s+/g,' ').trim();
+                if (normalizedLast !== liveLabel) {
+                    priceHistory.labels.push(liveLabel);
+                    priceHistory.gold.push(fenegosidaRates.goldTola);
+                    priceHistory.silver.push(fenegosidaRates.silverTola);
+                    if (priceHistory.gold.length > 365) { priceHistory.gold.shift(); priceHistory.silver.shift(); priceHistory.labels.shift(); }
+                } else {
+                    priceHistory.gold[priceHistory.gold.length - 1] = fenegosidaRates.goldTola;
+                    priceHistory.silver[priceHistory.silver.length - 1] = fenegosidaRates.silverTola;
+                }
+                refreshCharts();
+
+                showToast('FENEGOSIDA को पछिल्लो प्रकाशित दर अपडेट भयो!');
+            } catch (e) {
+                console.warn('FENEGOSIDA live fetch failed; no new rate was accepted.', e);
+                if (fenegosidaRates.status !== 'verified') fenegosidaRates.status = 'unavailable';
+            } finally {
+                if (heroPrice) heroPrice.style.opacity = '1';
+                if (refreshIcon) refreshIcon.classList.remove('fa-spin');
+                updateAllUI();
+            }
+        }
+
+        async function loadStoredRates() {
+            try {
+                const res = await fetch('./data/fenegosida.json', { cache: 'no-store' });
+                if (!res.ok) return;
+                const saved = await res.json();
+                if (!fenegosidaRates.status || fenegosidaRates.status === 'loading' || fenegosidaRates.status === 'unavailable') {
+                    fenegosidaRates = { ...fenegosidaRates, ...saved };
+                }
+                if (Array.isArray(saved.history) && saved.history.length) {
+                    const history = saved.history
+                        .filter(x => Number(x.gold) && Number(x.silver) && x.date)
+                        .sort((a,b) => String(a.date).localeCompare(String(b.date)))
+                        .slice(-365);
+                    priceHistory.labels = history.map(x => {
+                        const d = new Date(String(x.date) + 'T00:00:00');
+                        return d.toLocaleDateString(currentLang === 'np' ? 'ne-NP' : 'en-US', {day:'2-digit',month:'short'});
+                    });
+                    priceHistory.gold = history.map(x => Number(x.gold));
+                    priceHistory.silver = history.map(x => Number(x.silver));
+                }
+                updateAllUI();
+                if (goldChartInstance) {
+                    refreshCharts();
+                }
+            } catch (e) {
+                console.warn('Stored FENEGOSIDA fallback unavailable.');
+            }
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape' && !id('assetModal').classList.contains('hidden')) closeAddModal();
+        });
+        id('assetModal').addEventListener('click', e => {
+            if (e.target === id('assetModal')) closeAddModal();
+        });
+
+        window.onload = () => {
+            setupPurity('gold');
+            loadTodayNepaliDate();
+            initCharts();
+            updateAllUI();
+            loadStoredRates().finally(() => fetchLiveData());
+            // The federation publishes local rates, not a continuous spot feed.
+            // Polling keeps the page fresh without pretending the source changes every minute.
+            setInterval(fetchLiveData, 5 * 60 * 1000);
+        };
+    </script>
+</body>
+</html>, INR: '₹', EUR: '€', GBP: '£', AED: 'AED ' };
+            const n = Number(amount);
+            if (!Number.isFinite(n) || n <= 0) return '—';
+            const formatted = Math.round(n).toLocaleString(currentLang === 'np' ? 'ne-NP' : 'en-US');
+            if (currency === 'NPR' && currentLang === 'np') return symbols.NPR + nepaliDigits(formatted);
             return (symbols[currency] || '') + formatted;
+        }
+
+        function rateText(value, loading = false) {
+            const n = Number(value);
+            if (Number.isFinite(n) && n > 0) return formatCurrency(n, 'NPR');
+            return loading ? (currentLang === 'np' ? 'लोड हुँदैछ…' : 'Loading…') : (currentLang === 'np' ? 'दर उपलब्ध छैन' : 'Rate unavailable');
+        }
+
+        function rateReady(value) {
+            const n = Number(value);
+            return Number.isFinite(n) && n > 0;
         }
 
         const translations = {
