@@ -144,7 +144,7 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
 .toast{background:rgba(17,24,39,.94);box-shadow:0 15px 40px rgba(15,23,42,.22)}
 .dark .topbar{background:rgba(8,9,11,.86)}.dark body{background:radial-gradient(circle at 50% -10%,rgba(244,181,43,.12),transparent 35%),var(--bg)}
 @media(max-width:560px){.topbar{margin-left:-10px;margin-right:-10px;padding:0 10px;width:calc(100% + 20px)}.hero-price{text-shadow:none}.rate-card:hover,.panel:hover,.faq:hover,.seo-copy:hover{transform:none}}
-.today-date{display:flex;align-items:center;justify-content:center;gap:8px;min-height:38px;margin-top:8px;padding:8px 14px;border:1px solid rgba(183,121,8,.16);border-radius:999px;background:rgba(255,255,255,.72);box-shadow:0 8px 25px rgba(15,23,42,.04);color:var(--muted);font-size:11px;font-weight:800;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.today-date strong{color:var(--text)}.today-date .ad-date{font-weight:700;color:var(--muted)}.dark .today-date{background:rgba(17,19,22,.72)}@media(max-width:560px){.today-date{font-size:10px;margin-top:6px;gap:5px;white-space:nowrap;overflow:hidden}.today-date .ad-date{display:none}}
+.chart-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:11px;font-weight:800;pointer-events:none}.chart-empty.hidden{display:none}\n.today-date{display:flex;align-items:center;justify-content:center;gap:8px;min-height:38px;margin-top:8px;padding:8px 14px;border:1px solid rgba(183,121,8,.16);border-radius:999px;background:rgba(255,255,255,.72);box-shadow:0 8px 25px rgba(15,23,42,.04);color:var(--muted);font-size:11px;font-weight:800;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.today-date strong{color:var(--text)}.today-date .ad-date{font-weight:700;color:var(--muted)}.dark .today-date{background:rgba(17,19,22,.72)}@media(max-width:560px){.today-date{font-size:10px;margin-top:6px;gap:5px;white-space:nowrap;overflow:hidden}.today-date .ad-date{display:none}}
 </style>
 </head>
 <body>
@@ -187,18 +187,18 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
 <section class="section reveal glass" aria-labelledby="todayRates">
  <div class="section-head"><div><h2 id="todayRates">आजको सुन चाँदीको भाउ</h2><p>एक नजरमै नेपालका मुख्य धातु दर — तोला र १० ग्राम</p></div><a class="section-link" href="#history">इतिहास हेर्नुहोस् →</a></div>
  <div class="rate-grid">
-  <article class="rate-card"><div class="label">छापावाल सुन · 24K</div><div id="gold24Card" class="value">रू २,९९,५००</div><small>प्रति तोला</small></article>
+  <article class="rate-card"><div class="label">छापावाल सुन · 24K</div><div id="gold24Card" class="value">लोड हुँदैछ…</div><small>प्रति तोला</small></article>
   <article class="rate-card"><div class="label">छापावाल सुन · 10g</div><div id="gold10Card" class="value">—</div><small>प्रति १० ग्राम</small></article>
-  <article class="rate-card"><div class="label">तेजाबी सुन · 22K</div><div id="tejabiCard" class="value">रू २,७४,३४५</div><small>प्रति तोला</small></article>
-  <article class="rate-card"><div class="label">चाँदी · Silver</div><div id="silverCard" class="value">रू ४,६२५</div><small>प्रति तोला</small></article>
+  <article class="rate-card"><div class="label">तेजाबी सुन · 22K</div><div id="tejabiCard" class="value">लोड हुँदैछ…</div><small>प्रति तोला</small></article>
+  <article class="rate-card"><div class="label">चाँदी · Silver</div><div id="silverCard" class="value">लोड हुँदैछ…</div><small>प्रति तोला</small></article>
  </div>
 </section>
 
 <section id="history" class="section reveal">
  <div class="section-head"><div><h2>नेपाल सुन मूल्य प्रवृत्ति</h2><p>दैनिक प्रकाशित दरबाट trend बुझ्नुहोस्</p></div><div class="range-tabs"><button class="active">7D</button><button>30D</button><button>6M</button><button>1Y</button></div></div>
  <div class="dashboard">
-  <div class="panel glass"><div class="panel-title"><h3 id="goldChartTitle"><i class="fa-solid fa-chart-line" style="color:var(--gold)"></i> सुन मूल्य प्रवृत्ति</h3><span class="subtle">FENEGOSIDA history</span></div><div class="chart-container"><canvas id="goldChart"></canvas></div></div>
-  <div class="panel glass"><div class="panel-title"><h3 id="silverChartTitle"><i class="fa-solid fa-chart-line"></i> चाँदी मूल्य प्रवृत्ति</h3><span class="subtle">प्रति तोला</span></div><div class="chart-container"><canvas id="silverChart"></canvas></div></div>
+  <div class="panel glass"><div class="panel-title"><h3 id="goldChartTitle"><i class="fa-solid fa-chart-line" style="color:var(--gold)"></i> सुन मूल्य प्रवृत्ति</h3><span class="subtle">FENEGOSIDA history</span></div><div class="chart-container"><canvas id="goldChart"></canvas><div id="goldChartEmpty" class="chart-empty">इतिहास लोड हुँदैछ…</div></div></div>
+  <div class="panel glass"><div class="panel-title"><h3 id="silverChartTitle"><i class="fa-solid fa-chart-line"></i> चाँदी मूल्य प्रवृत्ति</h3><span class="subtle">प्रति तोला</span></div><div class="chart-container"><canvas id="silverChart"></canvas><div id="silverChartEmpty" class="chart-empty">इतिहास लोड हुँदैछ…</div></div></div>
  </div>
 </section>
 
@@ -225,7 +225,7 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
     <div class="field"><label>VAT / कर (%)</label><input id="taxRate" type="number" value="3" oninput="updateCalc()"></div>
     <div class="field"><label>मुद्रा</label><select id="currencySelect" onchange="updateCalc()"><option value="NPR">NPR · नेपाली रुपैयाँ</option></select></div>
    </div>
-   <div class="total-box"><div><small style="font-size:10px;font-weight:900">अनुमानित कुल मूल्य</small><br><b id="totalDisplay">रू ०</b></div><button onclick="copySummary()"><i class="fa-regular fa-copy"></i> कपी गर्नुहोस्</button></div>
+   <div class="total-box"><div><small style="font-size:10px;font-weight:900">अनुमानित कुल मूल्य</small><br><b id="totalDisplay">लोड हुँदैछ…</b></div><button onclick="copySummary()"><i class="fa-regular fa-copy"></i> कपी गर्नुहोस्</button></div>
   </div>
 
   <div id="tabPurityContent" class="tab-content hidden">
@@ -235,7 +235,7 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
 
   <div id="tabScrapContent" class="tab-content hidden">
    <div class="calc-grid"><div class="field"><label>पुरानो गहनाको तौल (ग्राम)</label><input id="scrapWeight" type="number" value="11.66" oninput="calcScrap()"></div><div class="field"><label>सम्भावित गुणस्तर</label><select id="scrapPurity" onchange="calcScrap()"><option value="0.9167">२२K · 91.67%</option><option value="0.75" selected>१८K · 75%</option><option value="0.5833">१४K · 58.33%</option></select></div></div>
-   <div class="total-box"><div><small style="font-size:10px;font-weight:900">अनुमानित स्क्र्याप value</small><br><b id="scrapOfferDisplay">रू ०</b></div><i class="fa-solid fa-hand-holding-dollar"></i></div>
+   <div class="total-box"><div><small style="font-size:10px;font-weight:900">अनुमानित स्क्र्याप value</small><br><b id="scrapOfferDisplay">लोड हुँदैछ…</b></div><i class="fa-solid fa-hand-holding-dollar"></i></div>
   </div>
 
   <div id="tabPortfolioContent" class="tab-content hidden">
@@ -649,6 +649,8 @@ let activeRange = 30;
         function refreshCharts() {
             if (!goldChartInstance || !silverChartInstance) return;
             const s = chartSlice();
+            const hasData = s.gold.length > 0 && s.silver.length > 0;
+            ['goldChartEmpty','silverChartEmpty'].forEach((name) => { const el = id(name); if (el) { el.classList.toggle('hidden', hasData); el.innerText = hasData ? '' : (fenegosidaRates.status === 'loading' ? 'इतिहास लोड हुँदैछ…' : 'इतिहास उपलब्ध छैन'); } });
             goldChartInstance.data.labels = s.labels;
             goldChartInstance.data.datasets[0].data = s.gold;
             silverChartInstance.data.labels = s.labels;
