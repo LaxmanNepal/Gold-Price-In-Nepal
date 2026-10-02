@@ -320,8 +320,9 @@ let fenegosidaRates = {
 };
 let lastLiveFetch = null;
 const FENEGOSIDA_API = 'https://api.fenegosida.org/api/website/v1/Dashboard/today';
+const FENEGOSIDA_RATE_TIMEOUT = 12000;
 const FENEGOSIDA_SOURCE = 'https://www.fenegosida.org';
-const unitsInGrams = { gram:1, tola:11.664, troy_oz:31.1034768, kg:1000 };
+const unitsInGrams = { gram:1, tola:11.6638125, troy_oz:31.1034768, kg:1000 };
 let portfolio = JSON.parse(localStorage.getItem('goldNepalPortfolio') || '[]');
 
         const purityMap = {
@@ -708,13 +709,17 @@ let activeRange = 30;
             if (refreshIcon) refreshIcon.classList.add('fa-spin');
 
             try {
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), FENEGOSIDA_RATE_TIMEOUT);
                 const res = await fetch(FENEGOSIDA_API, {
                     cache: 'no-store',
+                    signal: controller.signal,
                     headers: {
                         'Accept': 'application/json'
                     }
                 });
                 if (!res.ok) throw new Error('FENEGOSIDA HTTP ' + res.status);
+                clearTimeout(timeout);
 
                 const data = await res.json();
                 if (!Array.isArray(data) || !data.length) throw new Error('Empty FENEGOSIDA response');
