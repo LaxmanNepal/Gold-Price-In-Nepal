@@ -93,9 +93,9 @@ jobs:
               units: ['१० ग्राम', '10 gram', '10g']
             });
 
-            if (!gold || !gold10 || !tejabi || !silver || !silver10) {
+            if (!gold || !gold10 || !silver || !silver10) {
               console.error('FENEGOSIDA rateType values received:', rows.map(x => x.rateType));
-              throw new Error('Complete FENEGOSIDA rate set missing');
+              throw new Error('Required FENEGOSIDA gold/silver rate set missing');
             }
             const values = [gold, gold10, tejabi, silver, silver10].map(x => Number(x.todayBaseRatePerGram));
             if (values.some(x => !Number.isFinite(x) || x <= 0)) throw new Error('Invalid FENEGOSIDA rate value');
@@ -114,7 +114,7 @@ jobs:
             const output = {
               goldTola: entry.gold,
               gold10g: values[1],
-              tejabiTola: values[2],
+              tejabiTola: tejabi ? values[2] : Number(existing.tejabiTola || 0),
               silverTola: entry.silver,
               silver10g: values[4],
               goldYesterday: Number(gold.yestardayBaseRatePerGram || 0),
@@ -125,7 +125,8 @@ jobs:
               status: 'verified',
               source: 'FENEGOSIDA',
               sourceUrl: 'https://api.fenegosida.org/api/website/v1/Dashboard/today',
-              history: history.slice(0,365)
+              history: history.slice(0,365),
+              tejabiStatus: tejabi ? 'verified' : 'carried-forward'
             };
 
             fs.mkdirSync('data', {recursive:true});
