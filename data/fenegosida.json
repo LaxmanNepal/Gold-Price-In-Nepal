@@ -7,8 +7,8 @@
   "goldYesterday": 293300,
   "silverYesterday": 4425,
   "rateDate": "2026-10-02",
-  "publishedAt": "2026-10-02",
-  "fetchedAt": "2026-10-02T17:01:49.939Z",
+  "publishedAt": "2026-10-02T04:52:13.759+00:00",
+  "fetchedAt": "2026-10-02T22:40:28.938Z",
   "status": "verified",
   "source": "FENEGOSIDA",
   "sourceUrl": "https://api.fenegosida.org/api/website/v1/Dashboard/today",
@@ -88,5 +88,6 @@
       "gold": 301800,
       "silver": 4685
     }
-  ]
-}
+  ],
+  "tejabiStatus": "carried-forward"
+}\n
