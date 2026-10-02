@@ -7,7 +7,6 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/update-fenegosida.yml"
-      - "data/fenegosida.json"
   workflow_dispatch:
 
 permissions:
@@ -142,4 +141,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/fenegosida.json
           git diff --cached --quiet || git commit -m "chore: update FENEGOSIDA gold and silver rates"
+          git pull --rebase origin main
           git push
