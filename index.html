@@ -761,15 +761,16 @@ let activeRange = 30;
                     units: ['१० ग्राम', '10 gram', '10g']
                 });
 
-                if (!gold || !gold10 || !tejabi || !silver || !silver10) {
+                if (!gold || !gold10 || !silver || !silver10) {
                     console.warn('FENEGOSIDA rateType values received:', data.map(item => item.rateType));
-                    throw new Error('Complete FENEGOSIDA rate set not found');
+                    throw new Error('Required FENEGOSIDA gold/silver rate set not found');
                 }
-                const exactRates = [gold, gold10, tejabi, silver, silver10].map(x => Number(x.todayBaseRatePerGram));
-                if (exactRates.some(x => !Number.isFinite(x) || x <= 0)) throw new Error('Invalid FENEGOSIDA rate value');
+                const exactRates = [gold, gold10, tejabi, silver, silver10].map(x => Number(x?.todayBaseRatePerGram));
+                const requiredRates = [exactRates[0], exactRates[1], exactRates[3], exactRates[4]];
+                if (requiredRates.some(x => !Number.isFinite(x) || x <= 0)) throw new Error('Invalid FENEGOSIDA rate value');
                 fenegosidaRates.goldTola = exactRates[0];
                 fenegosidaRates.gold10g = exactRates[1];
-                fenegosidaRates.tejabiTola = exactRates[2];
+                if (Number.isFinite(exactRates[2]) && exactRates[2] > 0) fenegosidaRates.tejabiTola = exactRates[2];
                 fenegosidaRates.silverTola = exactRates[3];
                 fenegosidaRates.silver10g = exactRates[4];
                 fenegosidaRates.goldYesterday = Number(gold.yestardayBaseRatePerGram || 0);
