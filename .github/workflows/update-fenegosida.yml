@@ -97,8 +97,9 @@ jobs:
               console.error('FENEGOSIDA rateType values received:', rows.map(x => x.rateType));
               throw new Error('Required FENEGOSIDA gold/silver rate set missing');
             }
-            const values = [gold, gold10, tejabi, silver, silver10].map(x => Number(x.todayBaseRatePerGram));
-            if (values.some(x => !Number.isFinite(x) || x <= 0)) throw new Error('Invalid FENEGOSIDA rate value');
+            const values = [gold, gold10, tejabi, silver, silver10].map(x => Number(x?.todayBaseRatePerGram));
+            const requiredValues = [values[0], values[1], values[3], values[4]];
+            if (requiredValues.some(x => !Number.isFinite(x) || x <= 0)) throw new Error('Invalid FENEGOSIDA rate value');
 
             const existing = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {history:[]};
             const rateDate = String(gold.todayDate || new Date().toISOString()).split('T')[0];
