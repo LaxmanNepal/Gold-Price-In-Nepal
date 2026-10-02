@@ -2,7 +2,7 @@ name: Update FENEGOSIDA Rates
 
 on:
   schedule:
-    - cron: "*/15 * * * *"
+    - cron: "17 * * * *"
   workflow_dispatch:
 
 permissions:
@@ -51,13 +51,47 @@ jobs:
             const rows = await getJson(api);
             if (!Array.isArray(rows)) throw new Error('Unexpected FENEGOSIDA response');
 
-            const find = (...labels) => rows.find(x => labels.every(label => String(x.rateType || '').includes(label)));
-            const gold = find('छापावाल सुन', '१ तोला');
-            const gold10 = find('छापावाल सुन', '१० ग्राम');
-            const tejabi = find('तेजाबी सुन', '१ तोला');
-            const silver = find('असली चाँदी', '१ तोला');
-            const silver10 = find('असली चाँदी', '१० ग्राम');
-            if (!gold || !gold10 || !tejabi || !silver || !silver10) throw new Error('Complete FENEGOSIDA rate set missing');
+            const normalizeDigits = value => String(value ?? '')
+              .normalize('NFKC')
+              .replace(/[०-९]/g, d => String('०१२३४५६७८९'.indexOf(d)))
+              .replace(/[\s._-]+/g, '')
+              .toLowerCase();
+
+            const findRate = ({metals, units}) => {
+              const metalTokens = metals.map(normalizeDigits);
+              const unitTokens = units.map(normalizeDigits);
+              return rows.find(item => {
+                const type = normalizeDigits(item.rateType);
+                return metalTokens.some(token => type.includes(token)) &&
+                       unitTokens.some(token => type.includes(token));
+              });
+            };
+
+            const gold = findRate({
+              metals: ['छापावाल सुन', 'fine gold', 'hallmark gold'],
+              units: ['१ तोला', '1 tola', 'tola']
+            });
+            const gold10 = findRate({
+              metals: ['छापावाल सुन', 'fine gold', 'hallmark gold'],
+              units: ['१० ग्राम', '10 gram', '10g']
+            });
+            const tejabi = findRate({
+              metals: ['तेजाबी सुन', 'tejabi gold', 'tejabi'],
+              units: ['१ तोला', '1 tola', 'tola']
+            });
+            const silver = findRate({
+              metals: ['असली चाँदी', 'चाँदी', 'silver'],
+              units: ['१ तोला', '1 tola', 'tola']
+            });
+            const silver10 = findRate({
+              metals: ['असली चाँदी', 'चाँदी', 'silver'],
+              units: ['१० ग्राम', '10 gram', '10g']
+            });
+
+            if (!gold || !gold10 || !tejabi || !silver || !silver10) {
+              console.error('FENEGOSIDA rateType values received:', rows.map(x => x.rateType));
+              throw new Error('Complete FENEGOSIDA rate set missing');
+            }
             const values = [gold, gold10, tejabi, silver, silver10].map(x => Number(x.todayBaseRatePerGram));
             if (values.some(x => !Number.isFinite(x) || x <= 0)) throw new Error('Invalid FENEGOSIDA rate value');
 
