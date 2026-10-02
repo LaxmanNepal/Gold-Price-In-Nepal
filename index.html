@@ -348,7 +348,12 @@ let activeRange = 30;
         const nepaliDigits = (num) => String(num).replace(/[0-9]/g, d => '०१२३४५६७८९'[parseInt(d)]);
 
         function formatCurrency(amount, currency = 'NPR') {
-            const symbols = { NPR: 'रू ', USD: '
+            const symbols = { NPR: 'रू ', USD: '$', INR: '₹', EUR: '€', GBP: '£', AED: 'AED ' };
+            const n = Number(amount);
+            if (!Number.isFinite(n) || n <= 0) return '—';
+            const formatted = Math.round(n).toLocaleString(currentLang === 'np' ? 'ne-NP' : 'en-US');
+            return (symbols[currency] || '') + formatted;
+        }
 
         const translations = {
             np: {
