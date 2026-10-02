@@ -57,7 +57,9 @@ jobs:
             const tejabi = find('तेजाबी सुन', '१ तोला');
             const silver = find('असली चाँदी', '१ तोला');
             const silver10 = find('असली चाँदी', '१० ग्राम');
-            if (!gold || !silver) throw new Error('Required FENEGOSIDA rows missing');
+            if (!gold || !gold10 || !tejabi || !silver || !silver10) throw new Error('Complete FENEGOSIDA rate set missing');
+            const values = [gold, gold10, tejabi, silver, silver10].map(x => Number(x.todayBaseRatePerGram));
+            if (values.some(x => !Number.isFinite(x) || x <= 0)) throw new Error('Invalid FENEGOSIDA rate value');
 
             const existing = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {history:[]};
             const rateDate = String(gold.todayDate || new Date().toISOString()).split('T')[0];
@@ -72,10 +74,10 @@ jobs:
 
             const output = {
               goldTola: entry.gold,
-              gold10g: Number(gold10?.todayBaseRatePerGram || Math.round(entry.gold / 1.16638)),
-              tejabiTola: Number(tejabi?.todayBaseRatePerGram || Math.round(entry.gold * 0.9167)),
+              gold10g: values[1],
+              tejabiTola: values[2],
               silverTola: entry.silver,
-              silver10g: Number(silver10?.todayBaseRatePerGram || Math.round(entry.silver / 1.16638)),
+              silver10g: values[4],
               goldYesterday: Number(gold.yestardayBaseRatePerGram || 0),
               silverYesterday: Number(silver.yestardayBaseRatePerGram || 0),
               rateDate,
