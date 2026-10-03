@@ -133,4 +133,5 @@ jobs:
             exit 0
           fi
           git commit -m "chore: update gold rate and WhatsApp post"
+          git pull --rebase origin main
           git push origin main
