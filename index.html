@@ -1282,7 +1282,7 @@ let activeRange = 30;
                 const data = await res.json();
                 if (!Array.isArray(data) || !data.length) throw new Error('Empty FENEGOSIDA response');
 
-                const normalize = value => String(value ?? '').normalize('NFKC').replace(/[०-९]/g, d => String('०१२३४५६७८९'.indexOf(d))).replace(/[\\s._-]+/g, '').toLowerCase();
+                const normalize = value => String(value ?? '').normalize('NFKC').replace(/[०-९]/g, d => String('०१२३४५६७८९'.indexOf(d))).replace(/[\s._-]+/g, '').toLowerCase();
                 const findRate = (metals, units) => data.find(item => {
                     const type = normalize(item.rateType);
                     return metals.map(normalize).some(m => type.includes(m)) && units.map(normalize).some(u => type.includes(u));
