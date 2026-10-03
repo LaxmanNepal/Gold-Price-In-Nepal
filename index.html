@@ -652,43 +652,29 @@ let activeRange = 30;
         async function loadWhatsappPost() {
             const status = id('whatsappStatus'), preview = id('whatsappPreview'), copyBtn = id('copyWhatsappPost');
             if (!status || !preview || !copyBtn) return;
-            status.className = 'wp-status pending'; status.innerText = 'प्रमाणित दर खोज्दै…';
+            status.className = 'wp-status pending'; status.innerText = 'लोड हुँदैछ…';
             copyBtn.disabled = true;
             try {
-                const [draftRes, rateRes] = await Promise.all([
-                  fetch('./data/whatsapp-latest.json?t=' + Date.now(), {cache:'no-store'}),
-                  fetch('./data/fenegosida.json?t=' + Date.now(), {cache:'no-store'})
-                ]);
-                const draft = draftRes.ok ? await draftRes.json() : null;
-                const stored = rateRes.ok ? await rateRes.json() : null;
-                if (!validVerifiedSnapshot(stored)) throw new Error('No verified rate snapshot');
-                const draftMatches = draft && draft.rateDate === stored.rateDate && draft.status !== 'unverified';
-                const best = validVerifiedSnapshot(fenegosidaRates) && snapshotTime(fenegosidaRates) >= snapshotTime(stored) ? fenegosidaRates : stored;
-                const useLive = best === fenegosidaRates && fenegosidaRates.status === 'live' && fenegosidaRates.rateDate === stored.rateDate;
-                if (draftMatches && best === stored) {
-                  whatsappPostText = String(draft.text || '');
-                  whatsappDraftMeta = draft;
-                } else {
-                  whatsappPostText = draftMatches ? String(draft.text || '') : '';
-                  if (!whatsappPostText) {
-                    whatsappPostText = '🪙 आजको सुनचाँदीको मूल्य\n\n📅 मिति: ' + formatWpDate(best.rateDate) + '\n\n🟡 छापावाल सुन: रु. ' + formatCurrency(Number(best.goldTola), 'NPR') + ' प्रति तोला\n🟡 छापावाल सुन: रु. ' + formatCurrency(Number(best.gold10g), 'NPR') + ' प्रति १० ग्राम\n' +
-                      (Number(best.tejabiTola) > 0 ? '🟠 तेजाबी सुन: रु. ' + formatCurrency(Number(best.tejabiTola), 'NPR') + ' प्रति तोला' + (best.tejabiStatus === 'carried-forward' ? ' (अन्तिम प्रमाणित दर)' : '') + '\n' : '') +
-                      '⚪ चाँदी: रु. ' + formatCurrency(Number(best.silverTola), 'NPR') + ' प्रति तोला\n⚪ चाँदी: रु. ' + formatCurrency(Number(best.silver10g), 'NPR') + ' प्रति १० ग्राम\n\n📌 स्रोत: नेपाल सुनचाँदी व्यवसायी महासंघ (FENEGOSIDA)\n🌐 https://laxmannepal.com.np/Gold-Price-In-Nepal/';
-                  }
-                  whatsappDraftMeta = {rateDate:best.rateDate,source:best.source,fetchedAt:best.fetchedAt,tejabiStatus:best.tejabiStatus};
-                }
-                if (!whatsappPostText) throw new Error('Empty WhatsApp post');
+                const draftRes = await fetch('./data/whatsapp-latest.json?t=' + Date.now(), {cache:'no-store'});
+                if (!draftRes.ok) throw new Error('WhatsApp draft HTTP ' + draftRes.status);
+                const draft = await draftRes.json();
+                if (!draft || draft.status !== 'verified' || !draft.text || !draft.rateDate) throw new Error('No verified WhatsApp draft');
+                whatsappPostText = String(draft.text);
+                whatsappDraftMeta = draft;
                 preview.innerText = whatsappPostText;
                 copyBtn.disabled = false;
                 status.className = 'wp-status';
-                status.innerText = useLive ? '✓ LIVE + VERIFIED' : '✓ VERIFIED';
-                updateWhatsappProof(best, useLive);
+                status.innerText = '✓ VERIFIED';
+                updateWhatsappProof(draft, false);
             } catch (e) {
                 whatsappPostText = ''; whatsappDraftMeta = null;
-                preview.innerText = 'प्रमाणित FENEGOSIDA snapshot उपलब्ध नभएसम्म पोस्ट तयार गरिँदैन।';
-                copyBtn.disabled = true; status.className = 'wp-status error'; status.innerText = 'NOT VERIFIED';
-                if (id('whatsappBest')) id('whatsappBest').innerText = '⚠️ प्रमाणित दर snapshot उपलब्ध छैन।';
+                preview.innerText = 'प्रमाणित FENEGOSIDA पोस्ट उपलब्ध छैन। GitHub Action ले नयाँ verified rate तयार गरेपछि यहाँ देखिन्छ।';
+                copyBtn.disabled = true;
+                status.className = 'wp-status error';
+                status.innerText = 'NOT VERIFIED';
+                if (id('whatsappBest')) id('whatsappBest').innerText = '⚠️ प्रमाणित पोस्ट उपलब्ध छैन।';
                 if (id('whatsappProof')) id('whatsappProof').innerHTML = '';
+                console.warn('WhatsApp verified draft load failed:', e);
             }
         }
         async function copyWhatsappPost() {
