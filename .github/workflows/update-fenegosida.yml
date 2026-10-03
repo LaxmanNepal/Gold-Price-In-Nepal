@@ -7,6 +7,7 @@ on:
     branches: [main]
     paths:
       - ".github/workflows/update-fenegosida.yml"
+      - "scripts/generate-whatsapp.js"
   workflow_dispatch:
 
 permissions:
@@ -46,7 +47,7 @@ jobs:
                   try { resolve(JSON.parse(body)); } catch (e) { reject(e); }
                 });
               });
-              req.setTimeout(20000, () => { req.destroy(new Error('timeout')); });
+              req.setTimeout(20000, () => req.destroy(new Error('timeout')));
               req.on('error', reject);
             });
           }
@@ -71,75 +72,126 @@ jobs:
               });
             };
 
-            const gold = findRate({
-              metals: ['छापावाल सुन', 'fine gold', 'hallmark gold'],
-              units: ['१ तोला', '1 tola', 'tola']
-            });
-            const gold10 = findRate({
-              metals: ['छापावाल सुन', 'fine gold', 'hallmark gold'],
-              units: ['१० ग्राम', '10 gram', '10g']
-            });
-            const tejabi = findRate({
-              metals: ['तेजाबी सुन', 'tejabi gold', 'tejabi'],
-              units: ['१ तोला', '1 tola', 'tola']
-            });
-            const silver = findRate({
-              metals: ['असली चाँदी', 'चाँदी', 'silver'],
-              units: ['१ तोला', '1 tola', 'tola']
-            });
-            const silver10 = findRate({
-              metals: ['असली चाँदी', 'चाँदी', 'silver'],
-              units: ['१० ग्राम', '10 gram', '10g']
-            });
+            const gold = findRate({metals:['छापावाल सुन','fine gold','hallmark gold'],units:['१ तोला','1 tola','tola']});
+            const gold10 = findRate({metals:['छापावाल सुन','fine gold','hallmark gold'],units:['१० ग्राम','10 gram','10g']});
+            const tejabi = findRate({metals:['तेजाबी सुन','tejabi gold','tejabi'],units:['१ तोला','1 tola','tola']});
+            const silver = findRate({metals:['असली चाँदी','चाँदी','silver'],units:['१ तोला','1 tola','tola']});
+            const silver10 = findRate({metals:['असली चाँदी','चाँदी','silver'],units:['१० ग्राम','10 gram','10g']});
 
             if (!gold || !gold10 || !silver || !silver10) {
               console.error('FENEGOSIDA rateType values received:', rows.map(x => x.rateType));
               throw new Error('Required FENEGOSIDA gold/silver rate set missing');
             }
-            const values = [gold, gold10, tejabi, silver, silver10].map(x => Number(x?.todayBaseRatePerGram));
-            const requiredValues = [values[0], values[1], values[3], values[4]];
-            if (requiredValues.some(x => !Number.isFinite(x) || x <= 0)) throw new Error('Invalid FENEGOSIDA rate value');
 
-            const existing = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {history:[]};
+            const values = [gold,gold10,tejabi,silver,silver10].map(x => Number(x?.todayBaseRatePerGram));
+            if ([values[0],values[1],values[3],values[4]].some(x => !Number.isFinite(x) || x <= 0)) {
+              throw new Error('Invalid FENEGOSIDA rate value');
+            }
+
+            const existing = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file,'utf8')) : {history:[]};
             const rateDate = String(gold.todayDate || new Date().toISOString()).split('T')[0];
-            const entry = {
-              date: rateDate,
-              gold: Number(gold.todayBaseRatePerGram),
-              silver: Number(silver.todayBaseRatePerGram)
-            };
+            const entry = {date:rateDate,gold:values[0],silver:values[3]};
             const history = Array.isArray(existing.history) ? existing.history.filter(x => x.date !== rateDate) : [];
             history.unshift(entry);
             history.sort((a,b) => String(b.date).localeCompare(String(a.date)));
 
             const output = {
-              goldTola: entry.gold,
-              gold10g: values[1],
-              tejabiTola: tejabi ? values[2] : Number(existing.tejabiTola || 0),
-              silverTola: entry.silver,
-              silver10g: values[4],
-              goldYesterday: Number(gold.yestardayBaseRatePerGram || 0),
-              silverYesterday: Number(silver.yestardayBaseRatePerGram || 0),
+              goldTola:entry.gold,
+              gold10g:values[1],
+              tejabiTola:tejabi ? values[2] : Number(existing.tejabiTola || 0),
+              silverTola:entry.silver,
+              silver10g:values[4],
+              goldYesterday:Number(gold.yestardayBaseRatePerGram || 0),
+              silverYesterday:Number(silver.yestardayBaseRatePerGram || 0),
               rateDate,
-              publishedAt: gold.todayDate || null,
-              fetchedAt: new Date().toISOString(),
-              status: 'verified',
-              source: 'FENEGOSIDA',
-              sourceUrl: 'https://api.fenegosida.org/api/website/v1/Dashboard/today',
-              history: history.slice(0,365),
-              tejabiStatus: tejabi ? 'verified' : 'carried-forward'
+              publishedAt:gold.todayDate || null,
+              fetchedAt:new Date().toISOString(),
+              status:'verified',
+              source:'FENEGOSIDA',
+              sourceUrl:'https://api.fenegosida.org/api/website/v1/Dashboard/today',
+              history:history.slice(0,365),
+              tejabiStatus:tejabi ? 'verified' : 'carried-forward'
             };
 
-            fs.mkdirSync('data', {recursive:true});
-            fs.writeFileSync(file, JSON.stringify(output, null, 2) + '\\n');
-            console.log(JSON.stringify(output, null, 2));
+            fs.mkdirSync('data',{recursive:true});
+            fs.writeFileSync(file,JSON.stringify(output,null,2)+'\n');
+            console.log(JSON.stringify(output,null,2));
           })().catch(err => { console.error(err); process.exit(1); });
           NODE
 
-      - name: Commit changed rate data
+      - name: Generate WhatsApp Channel post
+        run: node scripts/generate-whatsapp.js
+
+      - name: Commit rate data and WhatsApp draft
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/fenegosida.json
-          git diff --cached --quiet || git commit -m "chore: update FENEGOSIDA gold and silver rates"
+          git add data/fenegosida.json data/whatsapp-latest.json data/whatsapp-latest.txt
+          git diff --cached --quiet || git commit -m "chore: update gold rate and WhatsApp post"
+          git pull --rebase origin main
+          git push
+
+      - name: Publish to WhatsApp-compatible webhook
+        if: ${{ secrets.WHATSAPP_CHANNEL_WEBHOOK_URL != '' }}
+        env:
+          WEBHOOK_URL: ${{ secrets.WHATSAPP_CHANNEL_WEBHOOK_URL }}
+        run: |
+          node <<'NODE'
+          const fs = require('fs');
+          const https = require('https');
+          const http = require('http');
+          const data = JSON.parse(fs.readFileSync('data/whatsapp-latest.json','utf8'));
+          const stateFile = 'data/whatsapp-state.json';
+          const state = fs.existsSync(stateFile) ? JSON.parse(fs.readFileSync(stateFile,'utf8')) : {};
+
+          if (state.lastPostedRateDate === data.rateDate) {
+            console.log('WhatsApp post already sent for ' + data.rateDate);
+            process.exit(0);
+          }
+
+          const target = new URL(process.env.WEBHOOK_URL);
+          const body = JSON.stringify({
+            text: data.text,
+            rateDate: data.rateDate,
+            source: data.source,
+            sourceUrl: data.sourceUrl
+          });
+          const client = target.protocol === 'https:' ? https : http;
+
+          const req = client.request(target, {
+            method:'POST',
+            headers:{
+              'Content-Type':'application/json',
+              'Content-Length':Buffer.byteLength(body)
+            }
+          }, res => {
+            let out = '';
+            res.on('data', c => out += c);
+            res.on('end', () => {
+              if (res.statusCode < 200 || res.statusCode >= 300) {
+                console.error('Webhook HTTP ' + res.statusCode + ': ' + out);
+                process.exit(1);
+              }
+              fs.writeFileSync(stateFile, JSON.stringify({
+                lastPostedRateDate:data.rateDate,
+                postedAt:new Date().toISOString()
+              },null,2)+'\n');
+              console.log('WhatsApp webhook accepted the post for ' + data.rateDate);
+            });
+          });
+
+          req.setTimeout(20000,()=>req.destroy(new Error('timeout')));
+          req.on('error',err=>{console.error(err);process.exit(1);});
+          req.write(body);
+          req.end();
+          NODE
+
+      - name: Save WhatsApp publish state
+        if: ${{ secrets.WHATSAPP_CHANNEL_WEBHOOK_URL != '' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/whatsapp-state.json
+          git diff --cached --quiet || git commit -m "chore: record WhatsApp gold-rate publication"
           git pull --rebase origin main
           git push
