@@ -1,4 +1,5 @@
 name: Update FENEGOSIDA Rates
+# Semi-automatic WhatsApp publisher: generate a copy-ready Channel post; no unofficial WhatsApp API required.
 
 on:
   schedule:
