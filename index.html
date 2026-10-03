@@ -821,12 +821,12 @@ let activeRange = 30;
                 const liveDate = fenegosidaRates.rateDate || '';
                 const liveLabel = liveDate ? new Date(liveDate + 'T00:00:00').toLocaleDateString(currentLang === 'np' ? 'ne-NP' : 'en-US', {day:'2-digit',month:'short'}) : 'Today';
                 const lastDate = priceHistory.dates[priceHistory.dates.length - 1] || '';
-                if (lastDate !== liveDate) {
+                if (liveDate && lastDate !== liveDate) {
                     priceHistory.labels.push(liveLabel);
                     priceHistory.gold.push(fenegosidaRates.goldTola);
                     priceHistory.silver.push(fenegosidaRates.silverTola);
                     priceHistory.dates.push(liveDate);
-                    if (priceHistory.gold.length > 365) { priceHistory.gold.shift(); priceHistory.silver.shift(); priceHistory.labels.shift(); }
+                    if (priceHistory.gold.length > 365) { priceHistory.gold.shift(); priceHistory.silver.shift(); priceHistory.labels.shift(); priceHistory.dates.shift(); }
                 } else {
                     priceHistory.gold[priceHistory.gold.length - 1] = fenegosidaRates.goldTola;
                     priceHistory.silver[priceHistory.silver.length - 1] = fenegosidaRates.silverTola;
