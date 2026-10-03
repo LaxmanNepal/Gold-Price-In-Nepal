@@ -194,6 +194,7 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
       <div class="mini-row"><span>चाँदी · प्रति तोला</span><strong id="bigSilverTola">—</strong></div>
       <div class="mini-row"><span>दर प्रकाशित मिति</span><strong id="rateDate">—</strong></div>
       <div class="mini-row"><span>अन्तिम जाँच</span><strong id="lastFetched">—</strong></div>
+      <div class="mini-row"><span>डेटा अवस्था</span><strong id="dataFreshness">—</strong></div>
       <div class="subtle" style="margin-top:9px">यो FENEGOSIDA को प्रकाशित स्थानीय reference rate हो; पसलको अन्तिम बिलमा ज्याला, जर्ती, VAT वा अन्य शुल्क फरक हुन सक्छ।</div>
     </div>
   </div>
@@ -679,7 +680,25 @@ let activeRange = 30;
             if (id('lastFetched')) {
                 id('lastFetched').innerText = lastLiveFetch
                     ? new Date(lastLiveFetch).toLocaleTimeString(currentLang === 'np' ? 'ne-NP' : 'en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit'})
-                    : '—';
+                    : (fenegosidaRates.fetchedAt ? new Date(fenegosidaRates.fetchedAt).toLocaleTimeString(currentLang === 'np' ? 'ne-NP' : 'en-US', {hour:'2-digit', minute:'2-digit'}) : '—');
+            }
+            if (id('dataFreshness')) {
+                const status = fenegosidaRates.status;
+                const fetched = fenegosidaRates.fetchedAt ? new Date(fenegosidaRates.fetchedAt) : null;
+                const published = fenegosidaRates.publishedAt ? new Date(fenegosidaRates.publishedAt) : null;
+                let label = status === 'live' ? 'LIVE · अहिले जाँचिएको' : status === 'verified' ? 'VERIFIED · GitHub fallback' : status === 'loading' ? 'लोड हुँदैछ…' : 'उपलब्ध छैन';
+                if (status === 'verified' && fetched && !Number.isNaN(fetched.getTime())) {
+                    const ageHours = (Date.now() - fetched.getTime()) / 36e5;
+                    label = ageHours > 36 ? 'VERIFIED · पुरानो snapshot' : 'VERIFIED · हालको snapshot';
+                }
+                id('dataFreshness').innerText = label;
+                id('dataFreshness').title = [
+                    published && !Number.isNaN(published.getTime()) ? 'प्रकाशित: ' + published.toLocaleString(currentLang === 'np' ? 'ne-NP' : 'en-US') : '',
+                    fetched && !Number.isNaN(fetched.getTime()) ? 'स्रोत जाँच: ' + fetched.toLocaleString(currentLang === 'np' ? 'ne-NP' : 'en-US') : ''
+                ].filter(Boolean).join(' · ');
+            }
+            if (id('gold22Tola') && fenegosidaRates.tejabiStatus === 'carried-forward') {
+                id('gold22Tola').title = 'तेजाबी दर FENEGOSIDA बाट पछिल्लो प्रमाणित दरको रूपमा राखिएको हो; आजको API response मा नयाँ तेजाबी row थिएन।';
             }
         }
 
