@@ -21,9 +21,14 @@
 {"@context":"https://schema.org","@type":"WebApplication","name":"Gold Price in Nepal Today","url":"https://laxmannepal.com.np/Gold-Price-In-Nepal/","applicationCategory":"FinanceApplication","operatingSystem":"Web","description":"Nepal gold and silver rates, price history and calculators using FENEGOSIDA published local reference rates.","inLanguage":["ne","en"],"publisher":{"@type":"Person","name":"Laxman Nepal","url":"https://laxmannepal.com.np/"}}
 </script>
 
-<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://api.fenegosida.org" crossorigin>
+<script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f7f7f5;--surface:#fff;--surface2:#f4f4f0;--line:#e7e5df;--text:#171717;--muted:#737373;--gold:#e6a51a;--gold2:#ffd66b;--green:#16a34a}
 .dark{--bg:#08090b;--surface:#111316;--surface2:#17191d;--line:#292c31;--text:#fafafa;--muted:#a1a1aa;--gold:#f4b52b;--gold2:#ffe08a}
@@ -744,9 +749,9 @@ let activeRange = 30;
             const refreshIcon = id('refreshIcon');
             if (refreshIcon) refreshIcon.classList.add('fa-spin');
 
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), FENEGOSIDA_RATE_TIMEOUT);
             try {
-                const controller = new AbortController();
-                const timeout = setTimeout(() => controller.abort(), FENEGOSIDA_RATE_TIMEOUT);
                 const res = await fetch(FENEGOSIDA_API, {
                     cache: 'no-store',
                     signal: controller.signal,
@@ -755,8 +760,6 @@ let activeRange = 30;
                     }
                 });
                 if (!res.ok) throw new Error('FENEGOSIDA HTTP ' + res.status);
-                clearTimeout(timeout);
-
                 const data = await res.json();
                 if (!Array.isArray(data) || !data.length) throw new Error('Empty FENEGOSIDA response');
 
@@ -839,6 +842,7 @@ let activeRange = 30;
                 console.warn('FENEGOSIDA live fetch failed; no new rate was accepted.', e);
                 if (fenegosidaRates.status !== 'verified') fenegosidaRates.status = 'unavailable';
             } finally {
+                clearTimeout(timeout);
                 if (heroPrice) heroPrice.style.opacity = '1';
                 if (refreshIcon) refreshIcon.classList.remove('fa-spin');
                 updateAllUI();
@@ -882,7 +886,7 @@ let activeRange = 30;
             if (e.target === id('assetModal')) closeAddModal();
         });
 
-        window.onload = () => {
+        document.addEventListener('DOMContentLoaded', () => {
             setupPurity('gold');
             loadTodayNepaliDate();
             initCharts();
@@ -891,8 +895,8 @@ let activeRange = 30;
             loadStoredRates().finally(() => fetchLiveData());
             // The federation publishes local rates, not a continuous spot feed.
             // Polling keeps the page fresh without pretending the source changes every minute.
-            setInterval(fetchLiveData, 5 * 60 * 1000);
-        };
+            setInterval(fetchLiveData, 15 * 60 * 1000);
+        });
     </script>
 </body>
 </html>
