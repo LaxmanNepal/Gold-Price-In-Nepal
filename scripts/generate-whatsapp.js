@@ -78,7 +78,18 @@ async function getNepaliDate(iso) {
     '🌐 https://laxmannepal.com.np/Gold-Price-In-Nepal/'
   ].filter(Boolean).join('\n');
 
-  const output = {rateDate:data.rateDate, source:data.source, sourceUrl:data.sourceUrl, text};
+  const output = {
+    rateDate: data.rateDate,
+    publishedAt: data.publishedAt || null,
+    fetchedAt: data.fetchedAt || null,
+    status: data.status || 'verified',
+    source: data.source || 'FENEGOSIDA',
+    sourceUrl: data.sourceUrl || 'https://api.fenegosida.org/api/website/v1/Dashboard/today',
+    tejabiStatus: data.tejabiStatus || (Number(data.tejabiTola) > 0 ? 'verified' : 'unavailable'),
+    selection: 'verified-fenegosida-snapshot',
+    generatedAt: new Date().toISOString(),
+    text
+  };
   fs.writeFileSync(OUT_JSON, JSON.stringify(output, null, 2) + '\n');
   fs.writeFileSync(OUT_TXT, text + '\n');
   console.log(text);
