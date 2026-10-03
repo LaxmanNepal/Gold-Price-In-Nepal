@@ -67,7 +67,7 @@ async function getNepaliDate(iso) {
     '',
     '🟡 छापावाल सुन: रु. ' + money(data.goldTola) + ' प्रति तोला',
     '🟡 छापावाल सुन: रु. ' + money(data.gold10g) + ' प्रति १० ग्राम',
-    '🟠 तेजाबी सुन: रु. ' + money(data.tejabiTola) + ' प्रति तोला',
+    (Number(data.tejabiTola) > 0 ? '🟠 तेजाबी सुन: रु. ' + money(data.tejabiTola) + ' प्रति तोला' + (data.tejabiStatus === 'carried-forward' ? ' (अन्तिम प्रमाणित दर)' : '') : null),
     '⚪ चाँदी: रु. ' + money(data.silverTola) + ' प्रति तोला',
     '⚪ चाँदी: रु. ' + money(data.silver10g) + ' प्रति १० ग्राम',
     '',
@@ -76,7 +76,7 @@ async function getNepaliDate(iso) {
     '',
     '📌 स्रोत: नेपाल सुनचाँदी व्यवसायी महासंघ (FENEGOSIDA)',
     '🌐 https://laxmannepal.com.np/Gold-Price-In-Nepal/'
-  ].join('\n');
+  ].filter(Boolean).join('\n');
 
   const output = {rateDate:data.rateDate, source:data.source, sourceUrl:data.sourceUrl, text};
   fs.writeFileSync(OUT_JSON, JSON.stringify(output, null, 2) + '\n');
