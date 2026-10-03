@@ -145,6 +145,10 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
 .dark .topbar{background:rgba(8,9,11,.86)}.dark body{background:radial-gradient(circle at 50% -10%,rgba(244,181,43,.12),transparent 35%),var(--bg)}
 @media(max-width:560px){.topbar{margin-left:-10px;margin-right:-10px;padding:0 10px;width:calc(100% + 20px)}.hero-price{text-shadow:none}.rate-card:hover,.panel:hover,.faq:hover,.seo-copy:hover{transform:none}}
 .chart-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:11px;font-weight:800;pointer-events:none}.chart-empty.hidden{display:none}\n.today-date{display:flex;align-items:center;justify-content:center;gap:8px;min-height:38px;margin-top:8px;padding:8px 14px;border:1px solid rgba(183,121,8,.16);border-radius:999px;background:rgba(255,255,255,.72);box-shadow:0 8px 25px rgba(15,23,42,.04);color:var(--muted);font-size:11px;font-weight:800;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.today-date strong{color:var(--text)}.today-date .ad-date{font-weight:700;color:var(--muted)}.dark .today-date{background:rgba(17,19,22,.72)}@media(max-width:560px){.today-date{font-size:10px;margin-top:6px;gap:5px;white-space:nowrap;overflow:hidden}.today-date .ad-date{display:none}}
+
+/* WhatsApp semi-automatic publisher */
+.whatsapp-publisher{margin-top:22px;border:1px solid rgba(34,197,94,.22);border-radius:22px;padding:18px;background:linear-gradient(135deg,rgba(34,197,94,.07),transparent 55%),var(--surface);box-shadow:var(--shadow)}
+.whatsapp-publisher .wp-head{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:13px}.wp-title{display:flex;gap:10px;align-items:center}.wp-icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;background:#25D366;color:#fff;box-shadow:0 8px 22px rgba(37,211,102,.22)}.wp-title h3{margin:0;font-size:14px;font-weight:900}.wp-title p{margin:3px 0 0;font-size:10px;color:var(--muted)}.wp-status{font-size:9px;font-weight:900;padding:6px 9px;border-radius:999px;background:rgba(34,197,94,.1);color:#15803d;white-space:nowrap}.wp-status.pending{background:rgba(234,179,8,.1);color:#a16207}.wp-status.error{background:rgba(239,68,68,.1);color:#dc2626}.wp-preview{white-space:pre-wrap;max-height:240px;overflow:auto;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--surface2);font-size:11px;line-height:1.7;color:var(--text);font-family:inherit}.wp-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}.wp-btn{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:11px;padding:10px 13px;font-size:10px;font-weight:900;cursor:pointer;display:inline-flex;align-items:center;gap:7px}.wp-btn.primary{background:#25D366;border-color:#25D366;color:#fff}.wp-btn.channel{border-color:#25D366;color:#15803d}.wp-btn:disabled{opacity:.5;cursor:not-allowed}.wp-meta{margin-top:9px;font-size:9px;color:var(--muted);display:flex;gap:10px;flex-wrap:wrap}.dark .wp-btn{background:var(--surface)}.dark .wp-btn.primary{background:#25D366;color:#fff}.dark .wp-btn.channel{color:#4ade80}@media(max-width:560px){.whatsapp-publisher{padding:14px;border-radius:18px}.whatsapp-publisher .wp-head{align-items:center}.wp-preview{max-height:210px}.wp-btn{flex:1;justify-content:center;min-width:140px}}
 </style>
 </head>
 <body>
@@ -162,6 +166,13 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
 <div id="todayDate" class="today-date" aria-label="आजको नेपाली मिति"><i class="fa-regular fa-calendar"></i><strong id="todayBsDate">आजको मिति लोड हुँदैछ…</strong><span>·</span><span class="ad-date" id="todayAdDate">—</span></div>
 
 <main class="container">
+<section class="whatsapp-publisher reveal" id="whatsappPublisher" aria-labelledby="whatsappPublisherTitle">
+  <div class="wp-head"><div class="wp-title"><div class="wp-icon"><i class="fa-brands fa-whatsapp"></i></div><div><h3 id="whatsappPublisherTitle">WhatsApp Channel Publisher</h3><p>पोस्ट तयार हुन्छ · तपाईंले Copy गरेर Channel मा Paste गर्नुहोस्</p></div></div><span id="whatsappStatus" class="wp-status pending">लोड हुँदैछ…</span></div>
+  <div id="whatsappPreview" class="wp-preview">आजको WhatsApp पोस्ट तयार हुँदैछ…</div>
+  <div class="wp-actions"><button id="copyWhatsappPost" class="wp-btn primary" type="button" onclick="copyWhatsappPost()" disabled><i class="fa-regular fa-copy"></i> पोस्ट Copy गर्नुहोस्</button><a class="wp-btn channel" href="https://whatsapp.com/channel/0029Vb9COT21yT26wAsUTE04" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Channel खोल्नुहोस्</a><button id="refreshWhatsappPost" class="wp-btn" type="button" onclick="loadWhatsappPost()"><i class="fa-solid fa-rotate"></i> Refresh</button></div>
+  <div class="wp-meta"><span id="whatsappPostDate">मिति: —</span><span id="whatsappPostSource">स्रोत: FENEGOSIDA</span></div>
+</section>
+
 <section class="hero reveal glass" aria-labelledby="goldLabel">
   <div class="hero-grid">
     <div class="hero-main">
@@ -594,6 +605,31 @@ let activeRange = 30;
             }
         }
 
+
+        let whatsappPostText = '';
+        async function loadWhatsappPost() {
+            const status = id('whatsappStatus'), preview = id('whatsappPreview'), copyBtn = id('copyWhatsappPost');
+            if (!status || !preview || !copyBtn) return;
+            status.className = 'wp-status pending'; status.innerText = 'लोड हुँदैछ…';
+            try {
+                const res = await fetch('./data/whatsapp-latest.json?t=' + Date.now(), {cache:'no-store'});
+                if (!res.ok) throw new Error('WhatsApp draft not found');
+                const data = await res.json();
+                if (!data.text) throw new Error('Empty WhatsApp draft');
+                whatsappPostText = String(data.text); preview.innerText = whatsappPostText; copyBtn.disabled = false;
+                status.className = 'wp-status'; status.innerText = '✓ READY';
+                if (id('whatsappPostDate')) id('whatsappPostDate').innerText = 'मिति: ' + (data.rateDate || '—');
+                if (id('whatsappPostSource')) id('whatsappPostSource').innerText = 'स्रोत: ' + (data.source || 'FENEGOSIDA');
+            } catch (e) {
+                whatsappPostText = ''; preview.innerText = 'अहिलेको पोस्ट अझै तयार भएको छैन। GitHub Action ले FENEGOSIDA दर अपडेट गरेपछि यहाँ Copy-ready पोस्ट देखिन्छ।'; copyBtn.disabled = true; status.className = 'wp-status error'; status.innerText = 'NOT READY';
+            }
+        }
+        async function copyWhatsappPost() {
+            if (!whatsappPostText) await loadWhatsappPost();
+            if (!whatsappPostText) return;
+            try { await navigator.clipboard.writeText(whatsappPostText); showToast('WhatsApp पोस्ट clipboard मा copy भयो! अब Channel मा Paste गर्नुहोस्।'); }
+            catch (e) { const ta=document.createElement('textarea'); ta.value=whatsappPostText; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); showToast('WhatsApp पोस्ट copy भयो!'); } catch (_) { showToast('Copy गर्न सकिएन'); } ta.remove(); }
+        }
         function showToast(msg) {
             const toast = id('toast');
             id('toastText').innerText = msg;
@@ -849,6 +885,7 @@ let activeRange = 30;
             loadTodayNepaliDate();
             initCharts();
             updateAllUI();
+            loadWhatsappPost();
             loadStoredRates().finally(() => fetchLiveData());
             // The federation publishes local rates, not a continuous spot feed.
             // Polling keeps the page fresh without pretending the source changes every minute.
