@@ -28,7 +28,7 @@
 <link rel="preconnect" href="https://api.fenegosida.org" crossorigin>
 <script defer src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+Devanagari:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#f7f7f5;--surface:#fff;--surface2:#f4f4f0;--line:#e7e5df;--text:#171717;--muted:#737373;--gold:#e6a51a;--gold2:#ffd66b;--green:#16a34a}
 .dark{--bg:#08090b;--surface:#111316;--surface2:#17191d;--line:#292c31;--text:#fafafa;--muted:#a1a1aa;--gold:#f4b52b;--gold2:#ffe08a}
@@ -830,10 +830,15 @@ let activeRange = 30;
                     priceHistory.silver.push(fenegosidaRates.silverTola);
                     priceHistory.dates.push(liveDate);
                     if (priceHistory.gold.length > 365) { priceHistory.gold.shift(); priceHistory.silver.shift(); priceHistory.labels.shift(); priceHistory.dates.shift(); }
-                } else {
+                } else if (priceHistory.gold.length) {
                     priceHistory.gold[priceHistory.gold.length - 1] = fenegosidaRates.goldTola;
                     priceHistory.silver[priceHistory.silver.length - 1] = fenegosidaRates.silverTola;
-                    priceHistory.dates[priceHistory.dates.length - 1] = liveDate;
+                    if (liveDate) priceHistory.dates[priceHistory.dates.length - 1] = liveDate;
+                } else if (liveDate) {
+                    priceHistory.labels.push(liveLabel);
+                    priceHistory.gold.push(fenegosidaRates.goldTola);
+                    priceHistory.silver.push(fenegosidaRates.silverTola);
+                    priceHistory.dates.push(liveDate);
                 }
                 refreshCharts();
 
