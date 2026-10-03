@@ -87,7 +87,7 @@ jobs:
               throw new Error('Invalid FENEGOSIDA rate value');
             }
 
-            const existing = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {history:[]};
+            const rawExisting = fs.existsSync(file) ? fs.readFileSync(file, 'utf8').replace(/\\n\\s*$/, '\\n') : '';\n            const existing = rawExisting ? JSON.parse(rawExisting) : {history:[]};
             const rateDate = String(gold.todayDate || new Date().toISOString()).split('T')[0];
             const history = Array.isArray(existing.history) ? existing.history.filter(x => x.date !== rateDate) : [];
             history.unshift({date:rateDate, gold:values[0], silver:values[3]});
