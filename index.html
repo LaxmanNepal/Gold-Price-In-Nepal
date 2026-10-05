@@ -650,341 +650,80 @@ let activeRange = 30;
             }
         }
         async function loadWhatsappPost() {
-            const status = id('whatsappStatus'), preview = id('whatsappPreview'), copyBtn = id('copyWhatsappPost');
-            if (!status || !preview || !copyBtn) return;
-            status.className = 'wp-status pending'; status.innerText = 'लोड हुँदैछ…';
-            copyBtn.disabled = true;
-            try {
-                const controller = new AbortController();
-                const timeout = setTimeout(() => controller.abort(), 7000);
-                let draftRes;
-                try {
-                    draftRes = await fetch('./data/whatsapp-latest.json?t=' + Date.now(), {cache:'no-store', signal:controller.signal});
-                } finally {
-                    clearTimeout(timeout);
-                }
-                if (!draftRes.ok) throw new Error('WhatsApp draft HTTP ' + draftRes.status);
-                const draft = await draftRes.json();
-                if (!draft || draft.status !== 'verified' || !draft.text || !draft.rateDate) throw new Error('No verified WhatsApp draft');
-                whatsappPostText = String(draft.text);
-                whatsappDraftMeta = draft;
-                preview.innerText = whatsappPostText;
-                copyBtn.disabled = false;
-                status.className = 'wp-status';
-                status.innerText = '✓ VERIFIED';
-                updateWhatsappProof(draft, false);
-            } catch (e) {
-                whatsappPostText = ''; whatsappDraftMeta = null;
-                preview.innerText = 'प्रमाणित FENEGOSIDA पोस्ट उपलब्ध छैन। GitHub Action ले नयाँ verified rate तयार गरेपछि यहाँ देखिन्छ।';
-                copyBtn.disabled = true;
-                status.className = 'wp-status error';
-                status.innerText = 'NOT VERIFIED';
-                if (id('whatsappBest')) id('whatsappBest').innerText = '⚠️ प्रमाणित पोस्ट उपलब्ध छैन।';
-                if (id('whatsappProof')) id('whatsappProof').innerHTML = '';
-                console.warn('WhatsApp verified draft load failed:', e);
-            }
-        }
-        async function copyWhatsappPost() {
-            if (!whatsappPostText) await loadWhatsappPost();
-            if (!whatsappPostText) return;
-            const copyBtn=id('copyWhatsappPost');
-            try {
-              await navigator.clipboard.writeText(whatsappPostText);
-              if(copyBtn){copyBtn.classList.add('copied');copyBtn.innerHTML='<i class="fa-solid fa-check"></i> Copied ✓';}
-              showToast('Verified WhatsApp पोस्ट copy भयो! अब Channel मा Paste गर्नुहोस्।');
-              setTimeout(()=>{if(copyBtn){copyBtn.classList.remove('copied');copyBtn.innerHTML='<i class="fa-regular fa-copy"></i> पोस्ट Copy गर्नुहोस्';}},2200);
-            } catch (e) {
-              const ta=document.createElement('textarea'); ta.value=whatsappPostText; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select();
-              try { document.execCommand('copy'); if(copyBtn){copyBtn.classList.add('copied');copyBtn.innerHTML='<i class="fa-solid fa-check"></i> Copied ✓';} showToast('Verified WhatsApp पोस्ट copy भयो!'); }
-              catch (_) { showToast('Copy गर्न सकिएन'); }
-              ta.remove();
-            }
-        }
-        function showToast(msg) {
-            const toast = id('toast');
-            id('toastText').innerText = msg;
-            toast.classList.remove('hidden');
-            toast.classList.add('flex');
-            setTimeout(() => {
-                toast.classList.add('hidden');
-                toast.classList.remove('flex');
-            }, 2500);
-        }
+  const status = id('whatsappStatus'), preview = id('whatsappPreview'), copyBtn = id('copyWhatsappPost');
+  if (!status || !preview || !copyBtn) return;
+  status.className = 'wp-status pending';
+  status.innerText = 'प्रमाणित दर जाँच हुँदैछ…';
+  copyBtn.disabled = true;
 
-        function updateAllUI() {
-            const goldGram = getGramPriceNPR('gold');
-            const silverGram = getGramPriceNPR('silver');
-            const tejabiGram = getGramPriceNPR('tejabi');
+  const fetchJson = async (url, ms=7000) => {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), ms);
+    try {
+      const res = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now(), {cache:'no-store', signal:controller.signal});
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return await res.json();
+    } finally {
+      clearTimeout(timer);
+    }
+  };
 
-            id('bigGoldTola').innerText = rateText(fenegosidaRates.goldTola, fenegosidaRates.status === 'loading');
-            id('bigGoldGram').innerText = rateReady(goldGram) ? formatCurrency(goldGram, 'NPR') : (fenegosidaRates.status === 'loading' ? 'लोड हुँदैछ…' : 'दर उपलब्ध छैन');
-            id('gold22Tola').innerText = rateText(fenegosidaRates.tejabiTola, fenegosidaRates.status === 'loading');
-            id('bigSilverTola').innerText = rateText(fenegosidaRates.silverTola, fenegosidaRates.status === 'loading');
-            id('silverTolaSmall').innerText = rateText(fenegosidaRates.silverTola, fenegosidaRates.status === 'loading');
-            id('platinumTolaSmall').innerText = rateText(fenegosidaRates.tejabiTola, fenegosidaRates.status === 'loading');
-            id('ratioValue').innerText = rateReady(fenegosidaRates.goldTola) && rateReady(fenegosidaRates.silverTola) ? (fenegosidaRates.goldTola / fenegosidaRates.silverTola).toFixed(1) : '—';
+  try {
+    let draft = null;
+    try {
+      draft = await fetchJson('./data/whatsapp-latest.json');
+    } catch (e) {
+      console.warn('WhatsApp draft unavailable; falling back to verified rate data.', e);
+    }
 
-            updateCalc();
-            renderMatrix();
-            calcScrap();
-            renderPortfolio();
+    if (!draft || draft.status !== 'verified' || !draft.text || !draft.rateDate) {
+      const rates = await fetchJson('./data/fenegosida.json');
+      if (!rates || rates.status !== 'verified' || !Number.isFinite(Number(rates.goldTola)) || !rates.rateDate) {
+        throw new Error('No verified rate snapshot available');
+      }
+      const nepaliDate = formatWpDate(rates.rateDate);
+      const goldChange = Number(rates.goldTola) - Number(rates.goldYesterday || 0);
+      const silverChange = Number(rates.silverTola) - Number(rates.silverYesterday || 0);
+      const line = (n, suffix='') => 'रु. ' + formatCurrency(Number(n), 'NPR') + suffix;
+      const goldDir = goldChange > 0 ? '▲ +' : goldChange < 0 ? '▼ ' : '• ';
+      const silverDir = silverChange > 0 ? '▲ +' : silverChange < 0 ? '▼ ' : '• ';
+      draft = {
+        ...rates,
+        selection:'verified-fenegosida-snapshot',
+        tejabiStatus: rates.tejabiStatus || 'carried-forward',
+        text:[
+          '🪙 आजको सुनचाँदीको मूल्य',
+          '📅 मिति: ' + nepaliDate,
+          '🟡 छापावाल सुन: ' + line(rates.goldTola) + ' प्रति तोला',
+          '🟡 छापावाल सुन: ' + line(rates.gold10g) + ' प्रति १० ग्राम',
+          Number(rates.tejabiTola) > 0 ? '🟠 तेजाबी सुन: ' + line(rates.tejabiTola) + (rates.tejabiStatus === 'carried-forward' ? ' प्रति तोला (अन्तिम प्रमाणित दर)' : ' प्रति तोला') : '',
+          '⚪ चाँदी: ' + line(rates.silverTola) + ' प्रति तोला',
+          '⚪ चाँदी: ' + line(rates.silver10g) + ' प्रति १० ग्राम',
+          '📈 सुन: ' + goldDir + Math.abs(goldChange).toLocaleString('en-IN') + ' रुपैयाँ',
+          '📈 चाँदी: ' + silverDir + Math.abs(silverChange).toLocaleString('en-IN') + ' रुपैयाँ',
+          '📌 स्रोत: नेपाल सुनचाँदी व्यवसायी महासंघ (FENEGOSIDA)',
+          '🌐 https://laxmannepal.com.np/Gold-Price-In-Nepal/'
+        ].filter(Boolean).join('\n')
+      };
+    }
 
-            if (id('rateDate')) id('rateDate').innerText = fenegosidaRates.rateDate || '—'; if (id('rateDate2')) id('rateDate2').innerText = fenegosidaRates.rateDate || '—'; if (id('gold24Card')) id('gold24Card').innerText = rateText(fenegosidaRates.goldTola, fenegosidaRates.status === 'loading'); if (id('gold10Card')) id('gold10Card').innerText = rateText(fenegosidaRates.gold10g, fenegosidaRates.status === 'loading'); if (id('tejabiCard')) id('tejabiCard').innerText = rateText(fenegosidaRates.tejabiTola, fenegosidaRates.status === 'loading'); if (id('silverCard')) id('silverCard').innerText = rateText(fenegosidaRates.silverTola, fenegosidaRates.status === 'loading'); if (id('statusCard')) id('statusCard').innerText = fenegosidaRates.status === 'live' ? 'LIVE' : fenegosidaRates.status === 'verified' ? 'VERIFIED' : fenegosidaRates.status === 'loading' ? 'LOADING' : 'UNAVAILABLE'; if (id('changeValue')) {
-                const c = rateReady(fenegosidaRates.goldTola) && rateReady(fenegosidaRates.goldYesterday) ? fenegosidaRates.goldTola - fenegosidaRates.goldYesterday : null;
-                const badge = id('dailyChange');
-                const icon = badge ? badge.querySelector('i') : null;
-                id('changeValue').innerText = c !== null && c !== 0 ? (c > 0 ? '+' : '') + formatCurrency(Math.abs(c),'NPR') : 'उपलब्ध छैन';
-                if (badge) badge.classList.toggle('down', c !== null && c < 0);
-                if (icon) icon.className = c !== null && c > 0 ? 'fa-solid fa-arrow-trend-up' : c !== null && c < 0 ? 'fa-solid fa-arrow-trend-down' : 'fa-solid fa-minus';
-            }
-            if (id('sourceStatus')) {
-                id('sourceStatus').innerText = fenegosidaRates.status === 'live' ? 'LIVE · FENEGOSIDA' : fenegosidaRates.status === 'verified' ? 'VERIFIED · FENEGOSIDA' : fenegosidaRates.status === 'loading' ? 'दर लोड हुँदैछ…' : 'दर उपलब्ध छैन';
-                id('sourceStatus').className = fenegosidaRates.status === 'live' ? 'source-live' : fenegosidaRates.status === 'verified' ? 'source-verified' : 'source-fallback';
-            }
-            if (id('lastFetched')) {
-                id('lastFetched').innerText = lastLiveFetch
-                    ? new Date(lastLiveFetch).toLocaleTimeString(currentLang === 'np' ? 'ne-NP' : 'en-US', {hour:'2-digit', minute:'2-digit', second:'2-digit'})
-                    : (fenegosidaRates.fetchedAt ? new Date(fenegosidaRates.fetchedAt).toLocaleTimeString(currentLang === 'np' ? 'ne-NP' : 'en-US', {hour:'2-digit', minute:'2-digit'}) : '—');
-            }
-            if (id('dataFreshness')) {
-                const status = fenegosidaRates.status;
-                const fetched = fenegosidaRates.fetchedAt ? new Date(fenegosidaRates.fetchedAt) : null;
-                const published = fenegosidaRates.publishedAt ? new Date(fenegosidaRates.publishedAt) : null;
-                let label = status === 'live' ? 'LIVE · अहिले जाँचिएको' : status === 'verified' ? 'VERIFIED · GitHub fallback' : status === 'loading' ? 'लोड हुँदैछ…' : 'उपलब्ध छैन';
-                if (status === 'verified' && fetched && !Number.isNaN(fetched.getTime())) {
-                    const ageHours = (Date.now() - fetched.getTime()) / 36e5;
-                    label = ageHours > 36 ? 'VERIFIED · पुरानो snapshot' : 'VERIFIED · हालको snapshot';
-                }
-                id('dataFreshness').innerText = label;
-                id('dataFreshness').title = [
-                    published && !Number.isNaN(published.getTime()) ? 'प्रकाशित: ' + published.toLocaleString(currentLang === 'np' ? 'ne-NP' : 'en-US') : '',
-                    fetched && !Number.isNaN(fetched.getTime()) ? 'स्रोत जाँच: ' + fetched.toLocaleString(currentLang === 'np' ? 'ne-NP' : 'en-US') : ''
-                ].filter(Boolean).join(' · ');
-            }
-            if (id('gold22Tola') && fenegosidaRates.tejabiStatus === 'carried-forward') {
-                id('gold22Tola').title = 'तेजाबी दर FENEGOSIDA बाट पछिल्लो प्रमाणित दरको रूपमा राखिएको हो; आजको API response मा नयाँ तेजाबी row थिएन।';
-            }
-        }
+    whatsappPostText = String(draft.text);
+    whatsappDraftMeta = draft;
+    preview.innerText = whatsappPostText;
+    copyBtn.disabled = false;
+    status.className = 'wp-status';
+    status.innerText = '✓ VERIFIED';
+    updateWhatsappProof(draft, false);
+  } catch (e) {
+    whatsappPostText = '';
+    whatsappDraftMeta = null;
+    preview.innerText = 'प्रमाणित FENEGOSIDA दर उपलब्ध हुन सकेन। Refresh गरेर पुनः जाँच गर्नुहोस्।';
+    copyBtn.disabled = true;
+    status.className = 'wp-status error';
+    status.innerText = 'NOT VERIFIED';
+    if (id('whatsappBest')) id('whatsappBest').innerText = '⚠️ प्रमाणित दर उपलब्ध छैन।';
+    if (id('whatsappProof')) id('whatsappProof').innerHTML = '';
+    console.warn('Verified WhatsApp publisher failed:', e);
+  }
+}
 
-        function chartSlice(days = activeRange) {
-            const total = priceHistory.gold.length;
-            const count = Math.min(days, total);
-            return {
-                labels: priceHistory.labels.slice(-count),
-                gold: priceHistory.gold.slice(-count),
-                silver: priceHistory.silver.slice(-count)
-            };
-        }
-
-        function refreshCharts() {
-            if (!goldChartInstance || !silverChartInstance) return;
-            const s = chartSlice();
-            const hasData = s.gold.length > 0 && s.silver.length > 0;
-            ['goldChartEmpty','silverChartEmpty'].forEach((name) => { const el = id(name); if (el) { el.classList.toggle('hidden', hasData); el.innerText = hasData ? '' : (fenegosidaRates.status === 'loading' ? 'इतिहास लोड हुँदैछ…' : 'इतिहास उपलब्ध छैन'); } });
-            goldChartInstance.data.labels = s.labels;
-            goldChartInstance.data.datasets[0].data = s.gold;
-            silverChartInstance.data.labels = s.labels;
-            silverChartInstance.data.datasets[0].data = s.silver;
-            goldChartInstance.update('none');
-            silverChartInstance.update('none');
-        }
-
-        function initCharts() {
-            const goldCtx = id('goldChart').getContext('2d');
-            const silverCtx = id('silverChart').getContext('2d');
-            const common = {
-                responsive:true,
-                maintainAspectRatio:false,
-                animation:{duration:500,easing:'easeOutQuart'},
-                interaction:{mode:'index',intersect:false},
-                plugins:{
-                    legend:{display:false},
-                    tooltip:{displayColors:false,callbacks:{label:(ctx)=>' रू '+Number(ctx.parsed.y).toLocaleString('ne-NP')}}
-                },
-                scales:{
-                    x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:7,color:'#9ca3af',font:{size:9}}},
-                    y:{grid:{color:'rgba(148,163,184,.10)'},ticks:{color:'#9ca3af',font:{size:9},callback:v=>Number(v).toLocaleString('ne-NP')}}
-                }
-            };
-            goldChartInstance = new Chart(goldCtx,{
-                type:'line',
-                data:{labels:priceHistory.labels,datasets:[{data:priceHistory.gold,borderColor:'#f4b52b',borderWidth:2.5,backgroundColor:'rgba(244,181,43,.10)',fill:true,tension:.38,pointRadius:2.5,pointHoverRadius:5,pointBackgroundColor:'#f4b52b'}]},
-                options:{...common}
-            });
-            silverChartInstance = new Chart(silverCtx,{
-                type:'line',
-                data:{labels:priceHistory.labels,datasets:[{data:priceHistory.silver,borderColor:'#aeb7c5',borderWidth:2.5,backgroundColor:'rgba(174,183,197,.09)',fill:true,tension:.38,pointRadius:2.5,pointHoverRadius:5,pointBackgroundColor:'#aeb7c5'}]},
-                options:{...common}
-            });
-            document.querySelectorAll('.range-tabs button').forEach(btn=>{
-                btn.addEventListener('click',()=>{
-                    document.querySelectorAll('.range-tabs button').forEach(b=>b.classList.remove('active'));
-                    btn.classList.add('active');
-                    const n = btn.textContent.trim()==='7D' ? 7 : btn.textContent.trim()==='30D' ? 30 : btn.textContent.trim()==='6M' ? 180 : 365;
-                    activeRange=n; refreshCharts();
-                });
-            });
-        }
-
-        async function fetchLiveData() {
-            const heroPrice = id('bigGoldTola');
-            if (heroPrice) heroPrice.style.opacity = '.55';
-            const refreshIcon = id('refreshIcon');
-            if (refreshIcon) refreshIcon.classList.add('fa-spin');
-
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), FENEGOSIDA_RATE_TIMEOUT);
-            try {
-                const res = await fetch(FENEGOSIDA_API, {
-                    cache: 'no-store',
-                    signal: controller.signal,
-                    headers: {
-                        'Accept': 'application/json'
-                    }
-                });
-                if (!res.ok) throw new Error('FENEGOSIDA HTTP ' + res.status);
-                const data = await res.json();
-                if (!Array.isArray(data) || !data.length) throw new Error('Empty FENEGOSIDA response');
-
-                const normalizeDigits = value => String(value ?? '')
-                    .normalize('NFKC')
-                    .replace(/[०-९]/g, d => String('०१२३४५६७८९'.indexOf(d)))
-                    .replace(/[\s._-]+/g, '')
-                    .toLowerCase();
-
-                const findRate = ({metals, units}) => {
-                    const metalTokens = metals.map(normalizeDigits);
-                    const unitTokens = units.map(normalizeDigits);
-                    return data.find(item => {
-                        const type = normalizeDigits(item.rateType);
-                        return metalTokens.some(token => type.includes(token)) &&
-                               unitTokens.some(token => type.includes(token));
-                    });
-                };
-
-                const gold = findRate({
-                    metals: ['छापावाल सुन', 'fine gold', 'hallmark gold'],
-                    units: ['१ तोला', '1 tola', 'tola']
-                });
-                const gold10 = findRate({
-                    metals: ['छापावाल सुन', 'fine gold', 'hallmark gold'],
-                    units: ['१० ग्राम', '10 gram', '10g']
-                });
-                const tejabi = findRate({
-                    metals: ['तेजाबी सुन', 'tejabi gold', 'tejabi'],
-                    units: ['१ तोला', '1 tola', 'tola']
-                });
-                const silver = findRate({
-                    metals: ['असली चाँदी', 'चाँदी', 'silver'],
-                    units: ['१ तोला', '1 tola', 'tola']
-                });
-                const silver10 = findRate({
-                    metals: ['असली चाँदी', 'चाँदी', 'silver'],
-                    units: ['१० ग्राम', '10 gram', '10g']
-                });
-
-                if (!gold || !gold10 || !silver || !silver10) {
-                    console.warn('FENEGOSIDA rateType values received:', data.map(item => item.rateType));
-                    throw new Error('Required FENEGOSIDA gold/silver rate set not found');
-                }
-                const exactRates = [gold, gold10, tejabi, silver, silver10].map(x => Number(x?.todayBaseRatePerGram));
-                const requiredRates = [exactRates[0], exactRates[1], exactRates[3], exactRates[4]];
-                if (requiredRates.some(x => !Number.isFinite(x) || x <= 0)) throw new Error('Invalid FENEGOSIDA rate value');
-                fenegosidaRates.goldTola = exactRates[0];
-                fenegosidaRates.gold10g = exactRates[1];
-                if (Number.isFinite(exactRates[2]) && exactRates[2] > 0) fenegosidaRates.tejabiTola = exactRates[2];
-                fenegosidaRates.silverTola = exactRates[3];
-                fenegosidaRates.silver10g = exactRates[4];
-                fenegosidaRates.goldYesterday = Number(gold.yestardayBaseRatePerGram || 0);
-                fenegosidaRates.silverYesterday = Number(silver.yestardayBaseRatePerGram || 0);
-                fenegosidaRates.rateDate = String(gold.todayDate || '').split('T')[0] || fenegosidaRates.rateDate;
-                fenegosidaRates.publishedAt = gold.todayDate || null;
-                fenegosidaRates.fetchedAt = new Date().toISOString();
-                fenegosidaRates.status = 'live';
-                lastLiveFetch = fenegosidaRates.fetchedAt;
-
-                // Add a point only when the published date is new; 5-minute polling must not duplicate the same rate.
-                const liveDate = fenegosidaRates.rateDate || '';
-                const liveLabel = liveDate ? new Date(liveDate + 'T00:00:00').toLocaleDateString(currentLang === 'np' ? 'ne-NP' : 'en-US', {day:'2-digit',month:'short'}) : 'Today';
-                const lastDate = priceHistory.dates[priceHistory.dates.length - 1] || '';
-                if (liveDate && lastDate !== liveDate) {
-                    priceHistory.labels.push(liveLabel);
-                    priceHistory.gold.push(fenegosidaRates.goldTola);
-                    priceHistory.silver.push(fenegosidaRates.silverTola);
-                    priceHistory.dates.push(liveDate);
-                    if (priceHistory.gold.length > 365) { priceHistory.gold.shift(); priceHistory.silver.shift(); priceHistory.labels.shift(); priceHistory.dates.shift(); }
-                } else if (priceHistory.gold.length) {
-                    priceHistory.gold[priceHistory.gold.length - 1] = fenegosidaRates.goldTola;
-                    priceHistory.silver[priceHistory.silver.length - 1] = fenegosidaRates.silverTola;
-                    if (liveDate) priceHistory.dates[priceHistory.dates.length - 1] = liveDate;
-                } else if (liveDate) {
-                    priceHistory.labels.push(liveLabel);
-                    priceHistory.gold.push(fenegosidaRates.goldTola);
-                    priceHistory.silver.push(fenegosidaRates.silverTola);
-                    priceHistory.dates.push(liveDate);
-                }
-                refreshCharts();
-
-                showToast('FENEGOSIDA को पछिल्लो प्रकाशित दर अपडेट भयो!');
-            } catch (e) {
-                console.warn('FENEGOSIDA live fetch failed; no new rate was accepted.', e);
-                if (fenegosidaRates.status !== 'verified') fenegosidaRates.status = 'unavailable';
-            } finally {
-                clearTimeout(timeout);
-                if (heroPrice) heroPrice.style.opacity = '1';
-                if (refreshIcon) refreshIcon.classList.remove('fa-spin');
-                updateAllUI();
-            }
-        }
-
-        async function loadStoredRates() {
-            try {
-                const res = await fetch('./data/fenegosida.json', { cache: 'no-store' });
-                if (!res.ok) return;
-                const saved = await res.json();
-                if (!fenegosidaRates.status || fenegosidaRates.status === 'loading' || fenegosidaRates.status === 'unavailable') {
-                    fenegosidaRates = { ...fenegosidaRates, ...saved };
-                }
-                if (Array.isArray(saved.history) && saved.history.length) {
-                    const history = saved.history
-                        .filter(x => Number(x.gold) && Number(x.silver) && x.date)
-                        .sort((a,b) => String(a.date).localeCompare(String(b.date)))
-                        .slice(-365);
-                    priceHistory.labels = history.map(x => {
-                        const d = new Date(String(x.date) + 'T00:00:00');
-                        return d.toLocaleDateString(currentLang === 'np' ? 'ne-NP' : 'en-US', {day:'2-digit',month:'short'});
-                    });
-                    priceHistory.gold = history.map(x => Number(x.gold));
-                    priceHistory.silver = history.map(x => Number(x.silver));
-                    priceHistory.dates = history.map(x => String(x.date));
-                }
-                updateAllUI();
-                if (goldChartInstance) {
-                    refreshCharts();
-                }
-            } catch (e) {
-                console.warn('Stored FENEGOSIDA fallback unavailable.');
-            }
-        }
-
-        document.addEventListener('keydown', e => {
-            if (e.key === 'Escape' && !id('assetModal').classList.contains('hidden')) closeAddModal();
-        });
-        id('assetModal').addEventListener('click', e => {
-            if (e.target === id('assetModal')) closeAddModal();
-        });
-
-        document.addEventListener('DOMContentLoaded', () => {
-            setupPurity('gold');
-            loadTodayNepaliDate();
-            initCharts();
-            updateAllUI();
-            loadWhatsappPost();
-            loadStoredRates().finally(() => fetchLiveData());
-            // The federation publishes local rates, not a continuous spot feed.
-            // Polling keeps the page fresh without pretending the source changes every minute.
-            setInterval(fetchLiveData, 15 * 60 * 1000);
-        });
-    </script>
-</body>
-</html>
