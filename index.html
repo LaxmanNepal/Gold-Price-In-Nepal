@@ -655,7 +655,14 @@ let activeRange = 30;
             status.className = 'wp-status pending'; status.innerText = 'लोड हुँदैछ…';
             copyBtn.disabled = true;
             try {
-                const draftRes = await fetch('./data/whatsapp-latest.json?t=' + Date.now(), {cache:'no-store'});
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 7000);
+                let draftRes;
+                try {
+                    draftRes = await fetch('./data/whatsapp-latest.json?t=' + Date.now(), {cache:'no-store', signal:controller.signal});
+                } finally {
+                    clearTimeout(timeout);
+                }
                 if (!draftRes.ok) throw new Error('WhatsApp draft HTTP ' + draftRes.status);
                 const draft = await draftRes.json();
                 if (!draft || draft.status !== 'verified' || !draft.text || !draft.rateDate) throw new Error('No verified WhatsApp draft');
