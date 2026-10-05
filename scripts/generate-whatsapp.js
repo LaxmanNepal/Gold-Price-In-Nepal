@@ -80,6 +80,13 @@ async function getNepaliDate(iso) {
 
   const output = {
     rateDate: data.rateDate,
+    goldTola: Number(data.goldTola),
+    gold10g: Number(data.gold10g),
+    tejabiTola: Number(data.tejabiTola || 0),
+    silverTola: Number(data.silverTola),
+    silver10g: Number(data.silver10g),
+    goldYesterday: Number(data.goldYesterday || 0),
+    silverYesterday: Number(data.silverYesterday || 0),
     publishedAt: data.publishedAt || null,
     fetchedAt: data.fetchedAt || null,
     status: data.status || 'verified',
