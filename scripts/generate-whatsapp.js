@@ -74,7 +74,6 @@ async function getNepaliDate(iso) {
     '📈 सुन: ' + signedMoney(goldChange),
     '📈 चाँदी: ' + signedMoney(silverChange),
     '',
-    '📌 स्रोत: नेपाल सुनचाँदी व्यवसायी महासंघ (FENEGOSIDA)',
     '🌐 https://laxmannepal.com.np/Gold-Price-In-Nepal/'
   ].filter(Boolean).join('\n');
 
