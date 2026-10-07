@@ -8,6 +8,7 @@
 <meta name="keywords" content="gold price in Nepal today,gold price Nepal today,नेपाल सुनको भाउ,आजको सुनको भाउ,सुन चाँदीको भाउ,छापावाल सुन,तेजाबी सुन,FENEGOSIDA,gold rate Nepal,silver rate Nepal,gold price per tola Nepal">
 <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
 <meta name="theme-color" content="#ffffff">
+<link rel="manifest" href="./manifest.webmanifest">
 <link rel="canonical" href="https://laxmannepal.com.np/Gold-Price-In-Nepal/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://laxmannepal.com.np/Gold-Price-In-Nepal/">
@@ -149,7 +150,7 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
 .toast{background:rgba(17,24,39,.94);box-shadow:0 15px 40px rgba(15,23,42,.22)}
 .dark .topbar{background:rgba(8,9,11,.86)}.dark body{background:radial-gradient(circle at 50% -10%,rgba(244,181,43,.12),transparent 35%),var(--bg)}
 @media(max-width:560px){.topbar{margin-left:-10px;margin-right:-10px;padding:0 10px;width:calc(100% + 20px)}.hero-price{text-shadow:none}.rate-card:hover,.panel:hover,.faq:hover,.seo-copy:hover{transform:none}}
-.chart-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:11px;font-weight:800;pointer-events:none}.chart-empty.hidden{display:none}\n.today-date{display:flex;align-items:center;justify-content:center;gap:8px;min-height:38px;margin-top:8px;padding:8px 14px;border:1px solid rgba(183,121,8,.16);border-radius:999px;background:rgba(255,255,255,.72);box-shadow:0 8px 25px rgba(15,23,42,.04);color:var(--muted);font-size:11px;font-weight:800;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.today-date strong{color:var(--text)}.today-date .ad-date{font-weight:700;color:var(--muted)}.dark .today-date{background:rgba(17,19,22,.72)}@media(max-width:560px){.today-date{font-size:10px;margin-top:6px;gap:5px;white-space:nowrap;overflow:hidden}.today-date .ad-date{display:none}}
+.network-badge{position:fixed;right:14px;bottom:14px;z-index:1200;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.94);color:#15803d;box-shadow:0 8px 25px rgba(15,23,42,.10);font-size:9px;font-weight:900;backdrop-filter:blur(10px)}.network-badge.offline{color:#b45309;background:#fffbeb}.network-badge.cached{color:#2563eb;background:#eff6ff}.dark .network-badge{background:rgba(17,19,22,.94)}.chart-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:11px;font-weight:800;pointer-events:none}.chart-empty.hidden{display:none}\n.today-date{display:flex;align-items:center;justify-content:center;gap:8px;min-height:38px;margin-top:8px;padding:8px 14px;border:1px solid rgba(183,121,8,.16);border-radius:999px;background:rgba(255,255,255,.72);box-shadow:0 8px 25px rgba(15,23,42,.04);color:var(--muted);font-size:11px;font-weight:800;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.today-date strong{color:var(--text)}.today-date .ad-date{font-weight:700;color:var(--muted)}.dark .today-date{background:rgba(17,19,22,.72)}@media(max-width:560px){.today-date{font-size:10px;margin-top:6px;gap:5px;white-space:nowrap;overflow:hidden}.today-date .ad-date{display:none}}
 
 /* WhatsApp semi-automatic publisher */
 .whatsapp-publisher{margin-top:22px;border:1px solid rgba(34,197,94,.22);border-radius:22px;padding:18px;background:linear-gradient(135deg,rgba(34,197,94,.07),transparent 55%),var(--surface);box-shadow:var(--shadow)}
@@ -162,6 +163,7 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
 </style>
 </head>
 <body>
+<div id="networkBadge" class="network-badge" aria-live="polite">● Online</div>
 <header id="top" class="container topbar">
   <a class="brand" href="/" aria-label="Laxman Nepal">
     <div class="brand-mark"><i class="fa-solid fa-coins"></i></div>
@@ -828,7 +830,8 @@ let activeRange = 30;
                 const saved=await res.json();
                 if(saved?.status==='verified' && Number(saved.goldTola)>0) {
                     fenegosidaRates={...fenegosidaRates,...saved,status:'verified'};
-                }
+                    try{localStorage.setItem('gold-nepal-last-verified',JSON.stringify(saved));}catch(_e){}
+                } else { try { const cached=JSON.parse(localStorage.getItem('gold-nepal-last-verified')||'null'); if(validVerifiedSnapshot(cached)) fenegosidaRates={...fenegosidaRates,...cached,status:'verified'}; } catch(_e){} }
                 if(Array.isArray(saved?.history)) {
                     const history=saved.history.filter(x=>Number(x.gold)>0&&Number(x.silver)>0&&x.date).sort((a,b)=>String(a.date).localeCompare(String(b.date))).slice(-365);
                     priceHistory.labels=history.map(x=>new Date(String(x.date)+'T00:00:00').toLocaleDateString(currentLang==='np'?'ne-NP':'en-US',{day:'2-digit',month:'short'}));
@@ -984,7 +987,7 @@ function initGoldPriceSite() {
     loadTodayNepaliDate();
     initCharts();
     updateAllUI();
-    loadStoredRates().finally(() => fetchLiveData());
+    loadStoredRates().finally(() => { updateNetworkBadge(); if(navigator.onLine) fetchLiveData(); });
     setInterval(fetchLiveData, 15 * 60 * 1000);
   } catch (e) {
     console.error('Gold Price site initialization failed:', e);
@@ -994,6 +997,12 @@ function initGoldPriceSite() {
     if (hero) hero.innerText = 'दर उपलब्ध छैन';
   }
 }
+
+function updateNetworkBadge(){const b=id('networkBadge');if(!b)return;if(!navigator.onLine){b.textContent='● Offline · last verified rate';b.className='network-badge offline';}else if(fenegosidaRates.status==='verified'){b.textContent='● Online · verified snapshot';b.className='network-badge cached';}else{b.textContent='● Online';b.className='network-badge';}}
+window.addEventListener('online',()=>{updateNetworkBadge();fetchLiveData();});
+window.addEventListener('offline',updateNetworkBadge);
+setInterval(updateNetworkBadge,5000);
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(e=>console.warn('Service worker registration failed',e)));}
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', initGoldPriceSite, { once: true });
