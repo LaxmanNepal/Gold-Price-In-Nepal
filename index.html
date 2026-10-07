@@ -614,6 +614,223 @@ let activeRange = 30;
         }
 
 
+
+        const rateReady = value => Number.isFinite(Number(value)) && Number(value) > 0;
+        const rateText = (value, loading = false) =>
+            rateReady(value) ? formatCurrency(value, 'NPR') : (loading ? 'लोड हुँदैछ…' : 'दर उपलब्ध छैन');
+
+        function showToast(msg) {
+            const toast = id('toast');
+            const toastText = id('toastText');
+            if (!toast || !toastText) return;
+            toastText.innerText = msg;
+            toast.classList.remove('hidden');
+            toast.classList.add('flex');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+                toast.classList.remove('flex');
+            }, 2500);
+        }
+
+        function updateAllUI() {
+            const goldGram = getGramPriceNPR('gold');
+            id('bigGoldTola').innerText = rateText(fenegosidaRates.goldTola, fenegosidaRates.status === 'loading');
+            id('bigGoldGram').innerText = rateReady(goldGram) ? formatCurrency(goldGram, 'NPR') : (fenegosidaRates.status === 'loading' ? 'लोड हुँदैछ…' : 'दर उपलब्ध छैन');
+            id('gold22Tola').innerText = rateText(fenegosidaRates.tejabiTola, fenegosidaRates.status === 'loading');
+            id('bigSilverTola').innerText = rateText(fenegosidaRates.silverTola, fenegosidaRates.status === 'loading');
+            id('silverTolaSmall').innerText = rateText(fenegosidaRates.silverTola, fenegosidaRates.status === 'loading');
+            id('platinumTolaSmall').innerText = rateText(fenegosidaRates.tejabiTola, fenegosidaRates.status === 'loading');
+            id('ratioValue').innerText = rateReady(fenegosidaRates.goldTola) && rateReady(fenegosidaRates.silverTola)
+                ? (fenegosidaRates.goldTola / fenegosidaRates.silverTola).toFixed(1) : '—';
+
+            if (id('rateDate')) id('rateDate').innerText = fenegosidaRates.rateDate || '—';
+            if (id('rateDate2')) id('rateDate2').innerText = fenegosidaRates.rateDate || '—';
+            if (id('gold24Card')) id('gold24Card').innerText = rateText(fenegosidaRates.goldTola, fenegosidaRates.status === 'loading');
+            if (id('gold10Card')) id('gold10Card').innerText = rateText(fenegosidaRates.gold10g, fenegosidaRates.status === 'loading');
+            if (id('tejabiCard')) id('tejabiCard').innerText = rateText(fenegosidaRates.tejabiTola, fenegosidaRates.status === 'loading');
+            if (id('silverCard')) id('silverCard').innerText = rateText(fenegosidaRates.silverTola, fenegosidaRates.status === 'loading');
+
+            if (id('sourceStatus')) {
+                const live = fenegosidaRates.status === 'live';
+                const verified = fenegosidaRates.status === 'verified';
+                id('sourceStatus').innerText = live ? 'LIVE · FENEGOSIDA' : verified ? 'VERIFIED · FENEGOSIDA' : fenegosidaRates.status === 'loading' ? 'दर लोड हुँदैछ…' : 'दर उपलब्ध छैन';
+                id('sourceStatus').className = live ? 'source-live' : verified ? 'source-verified' : 'source-fallback';
+            }
+            if (id('statusCard')) id('statusCard').innerText = fenegosidaRates.status === 'live' ? 'LIVE' : fenegosidaRates.status === 'verified' ? 'VERIFIED' : fenegosidaRates.status === 'loading' ? 'LOADING' : 'UNAVAILABLE';
+            if (id('lastFetched')) id('lastFetched').innerText = lastLiveFetch
+                ? new Date(lastLiveFetch).toLocaleTimeString(currentLang === 'np' ? 'ne-NP' : 'en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'})
+                : (fenegosidaRates.fetchedAt ? new Date(fenegosidaRates.fetchedAt).toLocaleTimeString(currentLang === 'np' ? 'ne-NP' : 'en-US', {hour:'2-digit',minute:'2-digit'}) : '—');
+
+            if (id('dataFreshness')) {
+                let label = fenegosidaRates.status === 'live' ? 'LIVE · अहिले जाँचिएको' : fenegosidaRates.status === 'verified' ? 'VERIFIED · snapshot' : fenegosidaRates.status === 'loading' ? 'लोड हुँदैछ…' : 'उपलब्ध छैन';
+                if (fenegosidaRates.status === 'verified' && fenegosidaRates.fetchedAt) {
+                    const t = new Date(fenegosidaRates.fetchedAt);
+                    if (!Number.isNaN(t.getTime()) && (Date.now() - t.getTime()) > 36 * 3600000) label = 'VERIFIED · पुरानो snapshot';
+                }
+                id('dataFreshness').innerText = label;
+            }
+            if (id('gold22Tola') && fenegosidaRates.tejabiStatus === 'carried-forward') {
+                id('gold22Tola').title = 'तेजाबी दर FENEGOSIDA बाट पछिल्लो प्रमाणित दरको रूपमा राखिएको हो।';
+            }
+
+            updateCalc();
+            renderMatrix();
+            calcScrap();
+            renderPortfolio();
+            refreshCharts();
+        }
+
+        function chartSlice(days = activeRange) {
+            const count = Math.min(days, priceHistory.gold.length);
+            return {
+                labels: priceHistory.labels.slice(-count),
+                gold: priceHistory.gold.slice(-count),
+                silver: priceHistory.silver.slice(-count)
+            };
+        }
+
+        function refreshCharts() {
+            if (!goldChartInstance || !silverChartInstance) return;
+            const s = chartSlice();
+            const hasData = s.gold.length > 0 && s.silver.length > 0;
+            ['goldChartEmpty','silverChartEmpty'].forEach(name => {
+                const el = id(name);
+                if (el) {
+                    el.classList.toggle('hidden', hasData);
+                    el.innerText = hasData ? '' : (fenegosidaRates.status === 'loading' ? 'इतिहास लोड हुँदैछ…' : 'इतिहास उपलब्ध छैन');
+                }
+            });
+            goldChartInstance.data.labels = s.labels;
+            goldChartInstance.data.datasets[0].data = s.gold;
+            silverChartInstance.data.labels = s.labels;
+            silverChartInstance.data.datasets[0].data = s.silver;
+            goldChartInstance.update('none');
+            silverChartInstance.update('none');
+        }
+
+        function initCharts() {
+            if (typeof Chart === 'undefined') {
+                ['goldChartEmpty','silverChartEmpty'].forEach(name => {
+                    const el = id(name);
+                    if (el) el.innerText = 'चार्ट सेवा उपलब्ध छैन';
+                });
+                return;
+            }
+            const goldCanvas = id('goldChart'), silverCanvas = id('silverChart');
+            if (!goldCanvas || !silverCanvas) return;
+            goldChartInstance?.destroy();
+            silverChartInstance?.destroy();
+            const common = {
+                responsive:true, maintainAspectRatio:false,
+                animation:{duration:500,easing:'easeOutQuart'},
+                interaction:{mode:'index',intersect:false},
+                plugins:{legend:{display:false},tooltip:{displayColors:false,callbacks:{label:ctx=>' रू '+Number(ctx.parsed.y).toLocaleString('ne-NP')}}},
+                scales:{x:{grid:{display:false},ticks:{maxRotation:0,autoSkip:true,maxTicksLimit:7,color:'#9ca3af',font:{size:9}}},y:{grid:{color:'rgba(148,163,184,.10)'},ticks:{color:'#9ca3af',font:{size:9},callback:v=>Number(v).toLocaleString('ne-NP')}}}
+            };
+            goldChartInstance = new Chart(goldCanvas.getContext('2d'), {
+                type:'line',
+                data:{labels:priceHistory.labels,datasets:[{data:priceHistory.gold,borderColor:'#f4b52b',borderWidth:2.5,backgroundColor:'rgba(244,181,43,.10)',fill:true,tension:.38,pointRadius:2.5,pointHoverRadius:5,pointBackgroundColor:'#f4b52b'}]},
+                options:common
+            });
+            silverChartInstance = new Chart(silverCanvas.getContext('2d'), {
+                type:'line',
+                data:{labels:priceHistory.labels,datasets:[{data:priceHistory.silver,borderColor:'#aeb7c5',borderWidth:2.5,backgroundColor:'rgba(174,183,197,.09)',fill:true,tension:.38,pointRadius:2.5,pointHoverRadius:5,pointBackgroundColor:'#aeb7c5'}]},
+                options:common
+            });
+            document.querySelectorAll('.range-tabs button').forEach(btn => {
+                if (btn.dataset.goldBound) return;
+                btn.dataset.goldBound = '1';
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.range-tabs button').forEach(b=>b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const n = btn.textContent.trim()==='7D' ? 7 : btn.textContent.trim()==='30D' ? 30 : btn.textContent.trim()==='6M' ? 180 : 365;
+                    activeRange=n; refreshCharts();
+                });
+            });
+        }
+
+        async function fetchLiveData() {
+            const heroPrice = id('bigGoldTola'), refreshIcon = id('refreshIcon');
+            if (heroPrice) heroPrice.style.opacity = '.55';
+            if (refreshIcon) refreshIcon.classList.add('fa-spin');
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), FENEGOSIDA_RATE_TIMEOUT);
+            try {
+                const res = await fetch(FENEGOSIDA_API, {cache:'no-store',signal:controller.signal,headers:{Accept:'application/json'}});
+                if (!res.ok) throw new Error('FENEGOSIDA HTTP '+res.status);
+                const data = await res.json();
+                if (!Array.isArray(data) || !data.length) throw new Error('Empty FENEGOSIDA response');
+
+                const normalizeDigits = value => String(value ?? '').normalize('NFKC').replace(/[०-९]/g,d=>String('०१२३४५६७८९'.indexOf(d))).replace(/[\s._-]+/g,'').toLowerCase();
+                const findRate = ({metals,units}) => data.find(item => {
+                    const type=normalizeDigits(item.rateType);
+                    return metals.map(normalizeDigits).some(t=>type.includes(t)) && units.map(normalizeDigits).some(t=>type.includes(t));
+                });
+                const gold=findRate({metals:['छापावाल सुन','fine gold','hallmark gold'],units:['१ तोला','1 tola','tola']});
+                const gold10=findRate({metals:['छापावाल सुन','fine gold','hallmark gold'],units:['१० ग्राम','10 gram','10g']});
+                const tejabi=findRate({metals:['तेजाबी सुन','tejabi gold','tejabi'],units:['१ तोला','1 tola','tola']});
+                const silver=findRate({metals:['असली चाँदी','चाँदी','silver'],units:['१ तोला','1 tola','tola']});
+                const silver10=findRate({metals:['असली चाँदी','चाँदी','silver'],units:['१० ग्राम','10 gram','10g']});
+                if (!gold || !gold10 || !silver || !silver10) throw new Error('Required FENEGOSIDA rate set not found');
+
+                const values=[gold,gold10,tejabi,silver,silver10].map(x=>Number(x?.todayBaseRatePerGram));
+                const required=[values[0],values[1],values[3],values[4]];
+                if (required.some(x=>!Number.isFinite(x)||x<=0)) throw new Error('Invalid FENEGOSIDA rate value');
+                fenegosidaRates.goldTola=values[0];
+                fenegosidaRates.gold10g=values[1];
+                if (Number.isFinite(values[2]) && values[2]>0) fenegosidaRates.tejabiTola=values[2];
+                fenegosidaRates.silverTola=values[3];
+                fenegosidaRates.silver10g=values[4];
+                fenegosidaRates.goldYesterday=Number(gold.yestardayBaseRatePerGram||0);
+                fenegosidaRates.silverYesterday=Number(silver.yestardayBaseRatePerGram||0);
+                fenegosidaRates.rateDate=String(gold.todayDate||'').split('T')[0]||fenegosidaRates.rateDate;
+                fenegosidaRates.publishedAt=gold.todayDate||null;
+                fenegosidaRates.fetchedAt=new Date().toISOString();
+                fenegosidaRates.status='live';
+                lastLiveFetch=fenegosidaRates.fetchedAt;
+
+                const liveDate=fenegosidaRates.rateDate||'';
+                const liveLabel=liveDate?new Date(liveDate+'T00:00:00').toLocaleDateString(currentLang==='np'?'ne-NP':'en-US',{day:'2-digit',month:'short'}):'Today';
+                const lastDate=priceHistory.dates[priceHistory.dates.length-1]||'';
+                if(liveDate && lastDate!==liveDate){priceHistory.labels.push(liveLabel);priceHistory.gold.push(fenegosidaRates.goldTola);priceHistory.silver.push(fenegosidaRates.silverTola);priceHistory.dates.push(liveDate);}
+                else if(priceHistory.gold.length){priceHistory.gold[priceHistory.gold.length-1]=fenegosidaRates.goldTola;priceHistory.silver[priceHistory.silver.length-1]=fenegosidaRates.silverTola;}
+                if(priceHistory.gold.length>365){priceHistory.gold.shift();priceHistory.silver.shift();priceHistory.labels.shift();priceHistory.dates.shift();}
+                refreshCharts();
+            } catch(e) {
+                console.warn('FENEGOSIDA live fetch failed; retaining verified snapshot.',e);
+                if(fenegosidaRates.status!=='verified') fenegosidaRates.status='unavailable';
+            } finally {
+                clearTimeout(timeout);
+                if(heroPrice) heroPrice.style.opacity='1';
+                if(refreshIcon) refreshIcon.classList.remove('fa-spin');
+                updateAllUI();
+            }
+        }
+
+        async function loadStoredRates() {
+            try {
+                const res=await fetch('./data/fenegosida.json',{cache:'no-store'});
+                if(!res.ok) throw new Error('HTTP '+res.status);
+                const saved=await res.json();
+                if(saved?.status==='verified' && Number(saved.goldTola)>0) {
+                    fenegosidaRates={...fenegosidaRates,...saved,status:'verified'};
+                }
+                if(Array.isArray(saved?.history)) {
+                    const history=saved.history.filter(x=>Number(x.gold)>0&&Number(x.silver)>0&&x.date).sort((a,b)=>String(a.date).localeCompare(String(b.date))).slice(-365);
+                    priceHistory.labels=history.map(x=>new Date(String(x.date)+'T00:00:00').toLocaleDateString(currentLang==='np'?'ne-NP':'en-US',{day:'2-digit',month:'short'}));
+                    priceHistory.gold=history.map(x=>Number(x.gold));
+                    priceHistory.silver=history.map(x=>Number(x.silver));
+                    priceHistory.dates=history.map(x=>String(x.date));
+                }
+                updateAllUI();
+                refreshCharts();
+            } catch(e) {
+                console.warn('Stored FENEGOSIDA fallback unavailable.',e);
+                if(fenegosidaRates.status==='loading') fenegosidaRates.status='unavailable';
+                updateAllUI();
+            }
+        }
+
         let whatsappPostText = '';
         let whatsappDraftMeta = null;
 
