@@ -1,0 +1,12 @@
+{
+  "name":"Gold Price in Nepal",
+  "short_name":"Gold Nepal",
+  "start_url":"./",
+  "scope":"./",
+  "display":"standalone",
+  "background_color":"#f7f8fb",
+  "theme_color":"#ffffff",
+  "description":"नेपालको सुनचाँदीको दैनिक दर, इतिहास र calculators.",
+  "lang":"ne",
+  "icons":[]
+}
