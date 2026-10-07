@@ -176,14 +176,7 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
 <div id="todayDate" class="today-date" aria-label="आजको नेपाली मिति"><i class="fa-regular fa-calendar"></i><strong id="todayBsDate">आजको मिति लोड हुँदैछ…</strong><span>·</span><span class="ad-date" id="todayAdDate">—</span></div>
 
 <main class="container">
-<section class="whatsapp-publisher reveal" id="whatsappPublisher" aria-labelledby="whatsappPublisherTitle">
-  <div class="wp-head"><div class="wp-title"><div class="wp-icon"><i class="fa-brands fa-whatsapp"></i></div><div><h3 id="whatsappPublisherTitle">WhatsApp Channel Publisher</h3><p>पोस्ट तयार हुन्छ · तपाईंले Copy गरेर Channel मा Paste गर्नुहोस्</p></div></div><span id="whatsappStatus" class="wp-status pending">लोड हुँदैछ…</span></div>
-  <div id="whatsappPreview" class="wp-preview">आजको WhatsApp पोस्ट तयार हुँदैछ…</div>
-  <div id="whatsappBest" class="wp-best">प्रमाणित दर snapshot खोज्दैछ…</div>
-  <div class="wp-actions"><button id="copyWhatsappPost" class="wp-btn primary" type="button" onclick="copyWhatsappPost()" disabled><i class="fa-regular fa-copy"></i> पोस्ट Copy गर्नुहोस्</button><a class="wp-btn channel" href="https://whatsapp.com/channel/0029Vb9COT21yT26wAsUTE04" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Channel खोल्नुहोस्</a><button id="refreshWhatsappPost" class="wp-btn" type="button" onclick="loadWhatsappPost()"><i class="fa-solid fa-rotate"></i> Refresh</button></div>
-  <div class="wp-meta"><span id="whatsappPostDate">दर प्रकाशित: —</span><span id="whatsappPostFetched">डेटा जाँच: —</span><span id="whatsappPostSource">स्रोत: FENEGOSIDA</span></div>
-  <div id="whatsappProof" class="wp-proof"></div>
-</section>
+
 
 <section class="hero reveal glass" aria-labelledby="goldLabel">
   <div class="hero-grid">
@@ -334,7 +327,7 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
   <div style="display:flex;gap:8px;margin-top:14px"><button onclick="savePortfolioItem()" class="action-pill" style="background:var(--gold);color:#171717;border:0;flex:1">सेभ</button><button onclick="closeAddModal()" class="action-pill" style="flex:1">रद्द</button></div>
  </div>
 </div>
-<nav class="mobile-nav" aria-label="Quick navigation"><a href="#top" class="active"><i class="fa-solid fa-house"></i><span>होम</span></a><a href="#history"><i class="fa-solid fa-chart-line"></i><span>ट्रेन्ड</span></a><a href="#calc"><i class="fa-solid fa-calculator"></i><span>क्याल्क</span></a><a href="#advancedTools"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Tools</span></a><a href="#whatsappPublisher"><i class="fa-brands fa-whatsapp"></i><span>WhatsApp</span></a></nav>
+<nav class="mobile-nav" aria-label="Quick navigation"><a href="#top" class="active"><i class="fa-solid fa-house"></i><span>होम</span></a><a href="#history"><i class="fa-solid fa-chart-line"></i><span>ट्रेन्ड</span></a><a href="#calc"><i class="fa-solid fa-calculator"></i><span>क्याल्क</span></a><a href="#advancedTools"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Tools</span></a></nav>
 <div id="toast" class="toast hidden"><i class="fa-solid fa-circle-check" style="color:#34d399"></i><span id="toastText">सफल भयो</span></div>
 
 <script>
@@ -991,7 +984,6 @@ function initGoldPriceSite() {
     loadTodayNepaliDate();
     initCharts();
     updateAllUI();
-    loadWhatsappPost();
     loadStoredRates().finally(() => fetchLiveData());
     setInterval(fetchLiveData, 15 * 60 * 1000);
   } catch (e) {
