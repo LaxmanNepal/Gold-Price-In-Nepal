@@ -9,7 +9,7 @@
 <style>
 :root{--bg:#f5f7fb;--card:#fff;--line:#e5e7eb;--text:#111827;--muted:#64748b;--green:#16a34a;--wa:#25D366;--gold:#b77908}
 *{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#fff,#f4f7f8);color:var(--text);font-family:Inter,Arial,'Noto Sans Devanagari',sans-serif}.wrap{width:min(900px,calc(100% - 24px));margin:0 auto;padding:24px 0 50px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.brand{display:flex;align-items:center;gap:11px}.icon{width:42px;height:42px;border-radius:13px;background:var(--wa);display:grid;place-items:center;color:#fff;font-size:21px}.title{margin:0;font-size:20px;font-weight:900}.sub{margin:3px 0 0;color:var(--muted);font-size:11px}.btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 13px;font-weight:800;font-size:11px;cursor:pointer;text-decoration:none}.btn:hover{border-color:var(--gold)}.card{background:var(--card);border:1px solid rgba(34,197,94,.2);border-radius:20px;padding:18px;box-shadow:0 18px 55px rgba(15,23,42,.08)}.head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.head h2{margin:0;font-size:16px}.status{padding:6px 9px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:9px;font-weight:900}.status.ok{background:#dcfce7;color:#166534}.status.err{background:#fee2e2;color:#991b1b}.preview{white-space:pre-wrap;line-height:1.65;background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:16px;font-size:13px;min-height:230px}.best{margin-top:10px;padding:11px 13px;border-radius:11px;background:#f0fdf4;color:#166534;font-size:11px;font-weight:800}.actions{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px;margin-top:11px}.actions button,.actions a{display:flex;justify-content:center;align-items:center;gap:7px}.primary{background:var(--wa);border-color:var(--wa);color:#fff}.meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;color:var(--muted);font-size:9px}.chip{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:#fff}.proof{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.proof span{padding:5px 8px;border-radius:999px;background:#ecfdf5;color:#166534;font-size:9px;font-weight:800}.note{margin-top:14px;color:var(--muted);font-size:10px;line-height:1.7}.note strong{color:var(--text)}@media(max-width:600px){.wrap{padding-top:14px}.top{align-items:flex-start}.title{font-size:16px}.actions{grid-template-columns:1fr 1fr}.actions .primary{grid-column:1/-1}.preview{font-size:12px;min-height:250px}.card{padding:13px}}
-</style>
+.admin-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 14px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px}.stat small{display:block;color:var(--muted);font-size:9px;font-weight:800}.stat b{display:block;margin-top:5px;font-size:15px}.stat.ok b{color:#15803d}.stat.warn b{color:#b45309}.links{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}.links .btn{font-size:10px}@media(max-width:700px){.admin-grid{grid-template-columns:1fr 1fr}}</style>
 </head>
 <body>
 <div class="wrap">
@@ -17,7 +17,7 @@
   <div class="brand"><div class="icon">◉</div><div><h1 class="title">WhatsApp Channel Publisher</h1><p class="sub">Gold Price in Nepal · Admin</p></div></div>
   <a class="btn" href="../">← Homepage</a>
 </header>
-<section class="card">
+<div class="admin-grid"><div class="stat" id="rateStat"><small>RATE SNAPSHOT</small><b>जाँच हुँदैछ…</b></div><div class="stat" id="dateStat"><small>RATE DATE</small><b>—</b></div><div class="stat" id="goldStat"><small>GOLD / TOLA</small><b>—</b></div><div class="stat" id="silverStat"><small>SILVER / TOLA</small><b>—</b></div></div><section class="card">
  <div class="head"><h2>आजको प्रमाणित WhatsApp पोस्ट</h2><span id="status" class="status">जाँच हुँदैछ…</span></div>
  <div id="preview" class="preview">आजको WhatsApp पोस्ट तयार हुँदैछ…</div>
  <div id="best" class="best">प्रमाणित दर snapshot खोज्दैछ…</div>
@@ -28,7 +28,7 @@
  </div>
  <div class="meta"><span id="date" class="chip">दर प्रकाशित: —</span><span id="fetched" class="chip">डेटा जाँच: —</span><span id="source" class="chip">स्रोत: FENEGOSIDA</span></div>
  <div id="proof" class="proof"></div>
- <p class="note"><strong>नोट:</strong> यो admin publisher homepage बाट हटाइएको छ। यस पृष्ठमा देखिएको पोस्ट प्रमाणित snapshot बाट बनाइन्छ; प्रमाणित दर नभएमा पोस्ट copy गर्न दिइँदैन। यो GitHub Pages मा रहेको static admin page भएकाले <strong>URL थाहा पाउने जोसुकैले खोल्न सक्छ</strong>—यो password-protected/private admin system होइन।</p>
+ <div class="links"><a class="btn" href="../data/fenegosida.json" target="_blank" rel="noopener">Rate JSON</a><a class="btn" href="../data/whatsapp-latest.json" target="_blank" rel="noopener">WhatsApp JSON</a><a class="btn" href="../" >Open Homepage</a></div><p class="note"><strong>नोट:</strong> यो admin publisher homepage बाट हटाइएको छ। यस पृष्ठमा देखिएको पोस्ट प्रमाणित snapshot बाट बनाइन्छ; प्रमाणित दर नभएमा पोस्ट copy गर्न दिइँदैन। यो GitHub Pages मा रहेको static admin page भएकाले <strong>URL थाहा पाउने जोसुकैले खोल्न सक्छ</strong>—यो password-protected/private admin system होइन।</p>
 </section>
 </div>
 <script>
@@ -39,6 +39,14 @@ const fmtDate=v=>{if(!v)return '—';const d=new Date(String(v).length===10?v+'T
 const fmtTime=v=>{if(!v)return '—';const d=new Date(v);return isNaN(d)?'—':d.toLocaleString('ne-NP',{year:'numeric',month:'short',day:'2-digit',hour:'2-digit',minute:'2-digit'});};
 const line=n=>'रु. '+fmt(Math.round(Number(n)));
 async function json(url){const r=await fetch(url+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
+function setStat(id,label,value,cls=''){const e=$(id);if(!e)return;e.className='stat '+cls;e.querySelector('b').textContent=value}
+function renderDashboard(r,w){
+ const verified=r&&r.status==='verified'&&Number(r.goldTola)>0&&Number(r.silverTola)>0;
+ setStat('rateStat','RATE SNAPSHOT',verified?'✓ VERIFIED':'⚠ NOT VERIFIED',verified?'ok':'warn');
+ setStat('dateStat','RATE DATE',fmtDate(r&&r.rateDate));
+ setStat('goldStat','GOLD / TOLA',r&&Number(r.goldTola)>0?line(r.goldTola):'—');
+ setStat('silverStat','SILVER / TOLA',r&&Number(r.silverTola)>0?line(r.silverTola):'—');
+}
 function render(d){
  postText=String(d.text||'');$('preview').textContent=postText;
  $('best').innerHTML='🟡 <b>Best verified rate:</b> रु. '+fmt(d.goldTola)+' प्रति तोला · '+fmtDate(d.rateDate);
@@ -67,9 +75,9 @@ async function load(){
     '🌐 https://laxmannepal.com.np/Gold-Price-In-Nepal/'
    ].filter(Boolean).join('\n')};
   }
-  render(d);
+  renderDashboard(d,r); render(d);
  }catch(e){
-  postText='';$('preview').textContent='प्रमाणित FENEGOSIDA दर उपलब्ध हुन सकेन। Refresh गरेर पुनः जाँच गर्नुहोस्।';$('best').textContent='⚠️ प्रमाणित दर उपलब्ध छैन।';$('proof').innerHTML='';$('status').textContent='NOT VERIFIED';$('status').className='status err';
+  renderDashboard({},{}); postText='';$('preview').textContent='प्रमाणित FENEGOSIDA दर उपलब्ध हुन सकेन। Refresh गरेर पुनः जाँच गर्नुहोस्।';$('best').textContent='⚠️ प्रमाणित दर उपलब्ध छैन।';$('proof').innerHTML='';$('status').textContent='NOT VERIFIED';$('status').className='status err';
  }
 }
 $('copy').onclick=async()=>{if(!postText)return;try{await navigator.clipboard.writeText(postText);$('copy').textContent='✓ Copied';setTimeout(()=>$('copy').textContent='▣ पोस्ट Copy गर्नुहोस्',1500)}catch(e){alert('Copy असफल भयो। पोस्ट manually select गरेर copy गर्नुहोस्।')}};
