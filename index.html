@@ -638,9 +638,9 @@ let activeRange = 30;
             id('bigGoldGram').innerText = rateReady(goldGram) ? formatCurrency(goldGram, 'NPR') : (fenegosidaRates.status === 'loading' ? 'लोड हुँदैछ…' : 'दर उपलब्ध छैन');
             id('gold22Tola').innerText = rateText(fenegosidaRates.tejabiTola, fenegosidaRates.status === 'loading');
             id('bigSilverTola').innerText = rateText(fenegosidaRates.silverTola, fenegosidaRates.status === 'loading');
-            id('silverTolaSmall').innerText = rateText(fenegosidaRates.silverTola, fenegosidaRates.status === 'loading');
-            id('platinumTolaSmall').innerText = rateText(fenegosidaRates.tejabiTola, fenegosidaRates.status === 'loading');
-            id('ratioValue').innerText = rateReady(fenegosidaRates.goldTola) && rateReady(fenegosidaRates.silverTola)
+            if (id('silverTolaSmall')) id('silverTolaSmall').innerText = rateText(fenegosidaRates.silverTola, fenegosidaRates.status === 'loading');
+            if (id('platinumTolaSmall')) id('platinumTolaSmall').innerText = rateText(fenegosidaRates.tejabiTola, fenegosidaRates.status === 'loading');
+            if (id('ratioValue')) id('ratioValue').innerText = rateReady(fenegosidaRates.goldTola) && rateReady(fenegosidaRates.silverTola)
                 ? (fenegosidaRates.goldTola / fenegosidaRates.silverTola).toFixed(1) : '—';
 
             if (id('rateDate')) id('rateDate').innerText = fenegosidaRates.rateDate || '—';
@@ -650,13 +650,13 @@ let activeRange = 30;
             if (id('tejabiCard')) id('tejabiCard').innerText = rateText(fenegosidaRates.tejabiTola, fenegosidaRates.status === 'loading');
             if (id('silverCard')) id('silverCard').innerText = rateText(fenegosidaRates.silverTola, fenegosidaRates.status === 'loading');
 
+            if (id('statusCard')) id('statusCard').innerText = fenegosidaRates.status === 'live' ? 'LIVE' : fenegosidaRates.status === 'verified' ? 'VERIFIED' : fenegosidaRates.status === 'loading' ? 'LOADING' : 'UNAVAILABLE';
             if (id('sourceStatus')) {
                 const live = fenegosidaRates.status === 'live';
                 const verified = fenegosidaRates.status === 'verified';
                 id('sourceStatus').innerText = live ? 'LIVE · FENEGOSIDA' : verified ? 'VERIFIED · FENEGOSIDA' : fenegosidaRates.status === 'loading' ? 'दर लोड हुँदैछ…' : 'दर उपलब्ध छैन';
                 id('sourceStatus').className = live ? 'source-live' : verified ? 'source-verified' : 'source-fallback';
             }
-            if (id('statusCard')) id('statusCard').innerText = fenegosidaRates.status === 'live' ? 'LIVE' : fenegosidaRates.status === 'verified' ? 'VERIFIED' : fenegosidaRates.status === 'loading' ? 'LOADING' : 'UNAVAILABLE';
             if (id('lastFetched')) id('lastFetched').innerText = lastLiveFetch
                 ? new Date(lastLiveFetch).toLocaleTimeString(currentLang === 'np' ? 'ne-NP' : 'en-US', {hour:'2-digit',minute:'2-digit',second:'2-digit'})
                 : (fenegosidaRates.fetchedAt ? new Date(fenegosidaRates.fetchedAt).toLocaleTimeString(currentLang === 'np' ? 'ne-NP' : 'en-US', {hour:'2-digit',minute:'2-digit'}) : '—');
