@@ -3,89 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>WhatsApp Channel Publisher | Gold Price Admin</title>
+<title>Gold Price Admin · WhatsApp Publisher</title>
 <meta name="robots" content="noindex,nofollow,noarchive">
 <meta name="theme-color" content="#25D366">
 <style>
-:root{--bg:#f5f7fb;--card:#fff;--line:#e5e7eb;--text:#111827;--muted:#64748b;--green:#16a34a;--wa:#25D366;--gold:#b77908}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#fff,#f4f7f8);color:var(--text);font-family:Inter,Arial,'Noto Sans Devanagari',sans-serif}.wrap{width:min(900px,calc(100% - 24px));margin:0 auto;padding:24px 0 50px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.brand{display:flex;align-items:center;gap:11px}.icon{width:42px;height:42px;border-radius:13px;background:var(--wa);display:grid;place-items:center;color:#fff;font-size:21px}.title{margin:0;font-size:20px;font-weight:900}.sub{margin:3px 0 0;color:var(--muted);font-size:11px}.btn{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:11px;padding:10px 13px;font-weight:800;font-size:11px;cursor:pointer;text-decoration:none}.btn:hover{border-color:var(--gold)}.card{background:var(--card);border:1px solid rgba(34,197,94,.2);border-radius:20px;padding:18px;box-shadow:0 18px 55px rgba(15,23,42,.08)}.head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.head h2{margin:0;font-size:16px}.status{padding:6px 9px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:9px;font-weight:900}.status.ok{background:#dcfce7;color:#166534}.status.err{background:#fee2e2;color:#991b1b}.preview{white-space:pre-wrap;line-height:1.65;background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:16px;font-size:13px;min-height:230px}.best{margin-top:10px;padding:11px 13px;border-radius:11px;background:#f0fdf4;color:#166534;font-size:11px;font-weight:800}.actions{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px;margin-top:11px}.actions button,.actions a{display:flex;justify-content:center;align-items:center;gap:7px}.primary{background:var(--wa);border-color:var(--wa);color:#fff}.meta{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;color:var(--muted);font-size:9px}.chip{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:#fff}.proof{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}.proof span{padding:5px 8px;border-radius:999px;background:#ecfdf5;color:#166534;font-size:9px;font-weight:800}.note{margin-top:14px;color:var(--muted);font-size:10px;line-height:1.7}.note strong{color:var(--text)}@media(max-width:600px){.wrap{padding-top:14px}.top{align-items:flex-start}.title{font-size:16px}.actions{grid-template-columns:1fr 1fr}.actions .primary{grid-column:1/-1}.preview{font-size:12px;min-height:250px}.card{padding:13px}}
-.admin-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 14px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px}.stat small{display:block;color:var(--muted);font-size:9px;font-weight:800}.stat b{display:block;margin-top:5px;font-size:15px}.delta{display:block;margin-top:3px;font-size:9px;color:var(--muted);font-weight:800}.stat.ok b{color:#15803d}.stat.warn b{color:#b45309}.links{display:flex;flex-wrap:wrap;gap:7px;margin-top:13px}.links .btn{font-size:10px}@media(max-width:700px){.admin-grid{grid-template-columns:1fr 1fr}}</style>
+:root{--bg:#f6f8fb;--card:#fff;--line:#e5e7eb;--text:#111827;--muted:#64748b;--green:#16a34a;--wa:#25D366;--gold:#b77908;--red:#dc2626}
+*{box-sizing:border-box}html{background:var(--bg)}body{margin:0;background:linear-gradient(180deg,#fff 0,#f6f8fb 45%,#f1f5f9 100%);color:var(--text);font-family:Inter,Arial,'Noto Sans Devanagari',sans-serif}.wrap{width:min(1040px,calc(100% - 28px));margin:auto;padding:22px 0 56px}.top{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:18px}.brand{display:flex;align-items:center;gap:12px;min-width:0}.icon{width:44px;height:44px;flex:0 0 44px;border-radius:14px;background:var(--wa);display:grid;place-items:center;color:#fff;font-size:21px;box-shadow:0 8px 22px rgba(37,211,102,.2)}.title{margin:0;font-size:21px;line-height:1.2;font-weight:900}.sub{margin:4px 0 0;color:var(--muted);font-size:11px}.btn{border:1px solid var(--line);background:#fff;color:var(--text);border-radius:11px;padding:10px 13px;font-weight:800;font-size:11px;cursor:pointer;text-decoration:none;min-height:40px}.btn:hover{border-color:var(--gold)}.btn:disabled{opacity:.55;cursor:not-allowed}.primary{background:var(--wa);border-color:var(--wa);color:#fff}.admin-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}.stat{min-width:0;background:#fff;border:1px solid var(--line);border-radius:16px;padding:13px;box-shadow:0 8px 28px rgba(15,23,42,.04)}.stat small{display:block;color:var(--muted);font-size:9px;font-weight:900;letter-spacing:.04em}.stat b{display:block;margin-top:6px;font-size:15px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.delta{display:block;margin-top:4px;font-size:9px;color:var(--muted);font-weight:800;white-space:nowrap}.stat.ok b{color:#15803d}.stat.warn b{color:#b45309}.card{background:rgba(255,255,255,.96);border:1px solid rgba(34,197,94,.18);border-radius:22px;padding:20px;box-shadow:0 18px 55px rgba(15,23,42,.08)}.head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:13px}.head h2{margin:0;font-size:16px}.status{flex:0 0 auto;padding:7px 10px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:9px;font-weight:900}.status.ok{background:#dcfce7;color:#166534}.status.err{background:#fee2e2;color:#991b1b}.preview{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;background:#f8fafc;border:1px solid var(--line);border-radius:15px;padding:16px;font-size:13px;min-height:220px}.best{margin-top:10px;padding:12px 14px;border-radius:12px;background:#f0fdf4;color:#166534;font-size:11px;font-weight:800;overflow-wrap:anywhere}.actions{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:9px;margin-top:11px}.actions button,.actions a{display:flex;justify-content:center;align-items:center;gap:7px}.meta,.proof,.links{display:flex;flex-wrap:wrap;gap:7px}.meta{margin-top:11px;color:var(--muted);font-size:9px}.chip{padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:#fff}.proof{margin-top:9px}.proof span{padding:5px 8px;border-radius:999px;background:#ecfdf5;color:#166534;font-size:9px;font-weight:800}.proof .warnchip{background:#fff7ed;color:#9a3412}.links{margin-top:14px}.links .btn{font-size:10px}.note{margin:14px 0 0;color:var(--muted);font-size:10px;line-height:1.7}.note strong{color:var(--text)}.errorbox{display:none;margin:0 0 12px;padding:11px 13px;border:1px solid #fecaca;border-radius:12px;background:#fef2f2;color:#991b1b;font-size:10px;font-weight:700}.footer{margin-top:14px;text-align:center;color:#94a3b8;font-size:9px}
+@media(max-width:760px){.wrap{width:min(100% - 18px,620px);padding-top:14px}.admin-grid{grid-template-columns:1fr 1fr}.top{align-items:flex-start}.title{font-size:17px}.card{padding:14px;border-radius:18px}.actions{grid-template-columns:1fr 1fr}.actions .primary{grid-column:1/-1}.preview{font-size:12px;min-height:250px}}
+@media(max-width:430px){.wrap{width:calc(100% - 14px)}.top{gap:8px}.icon{width:40px;height:40px;flex-basis:40px}.title{font-size:15px}.sub{font-size:10px}.top>.btn{padding:8px 9px;font-size:10px}.stat{padding:10px}.stat b{font-size:13px}.head{align-items:flex-start;flex-direction:column}.status{align-self:flex-start}.actions{grid-template-columns:1fr}.actions .primary{grid-column:auto}.preview{padding:13px;font-size:12px}.links .btn{flex:1 1 120px;text-align:center}}
+</style>
 </head>
 <body>
 <div class="wrap">
-<header class="top">
-  <div class="brand"><div class="icon">◉</div><div><h1 class="title">WhatsApp Channel Publisher</h1><p class="sub">Gold Price in Nepal · Admin</p></div></div>
-  <a class="btn" href="../">← Homepage</a>
-</header>
-<div class="admin-grid"><div class="stat" id="rateStat"><small>RATE SNAPSHOT</small><b>जाँच हुँदैछ…</b><span class="delta">—</span></div><div class="stat" id="dateStat"><small>RATE DATE</small><b>—</b><span class="delta">—</span></div><div class="stat" id="goldStat"><small>GOLD / TOLA</small><b>—</b><span class="delta">—</span></div><div class="stat" id="silverStat"><small>SILVER / TOLA</small><b>—</b><span class="delta">—</span></div></div><section class="card">
+<header class="top"><div class="brand"><div class="icon">◉</div><div><h1 class="title">WhatsApp Channel Publisher</h1><p class="sub">Gold Price in Nepal · Admin Dashboard</p></div></div><a class="btn" href="../">← Homepage</a></header>
+<div id="errorbox" class="errorbox"></div>
+<div class="admin-grid">
+ <div class="stat" id="rateStat"><small>RATE SNAPSHOT</small><b>जाँच हुँदैछ…</b><span class="delta">—</span></div>
+ <div class="stat" id="dateStat"><small>RATE DATE</small><b>—</b><span class="delta">—</span></div>
+ <div class="stat" id="goldStat"><small>GOLD / TOLA</small><b>—</b><span class="delta">—</span></div>
+ <div class="stat" id="silverStat"><small>SILVER / TOLA</small><b>—</b><span class="delta">—</span></div>
+</div>
+<section class="card">
  <div class="head"><h2>आजको प्रमाणित WhatsApp पोस्ट</h2><span id="status" class="status">जाँच हुँदैछ…</span></div>
  <div id="preview" class="preview">आजको WhatsApp पोस्ट तयार हुँदैछ…</div>
  <div id="best" class="best">प्रमाणित दर snapshot खोज्दैछ…</div>
- <div class="actions">
-  <button id="copy" class="btn primary" disabled>▣ पोस्ट Copy गर्नुहोस्</button>
-  <a class="btn" href="https://whatsapp.com/channel/0029Vb9COT21yT26wAsUTE04" target="_blank" rel="noopener">WhatsApp Channel</a>
-  <button id="refresh" class="btn">↻ Refresh</button>
- </div>
+ <div class="actions"><button id="copy" class="btn primary" disabled>▣ पोस्ट Copy गर्नुहोस्</button><a class="btn" href="https://whatsapp.com/channel/0029Vb9COT21yT26wAsUTE04" target="_blank" rel="noopener">WhatsApp Channel</a><button id="refresh" class="btn">↻ Refresh</button></div>
  <div class="meta"><span id="date" class="chip">दर प्रकाशित: —</span><span id="fetched" class="chip">डेटा जाँच: —</span><span id="source" class="chip">स्रोत: FENEGOSIDA</span></div>
  <div id="proof" class="proof"></div>
- <div class="links"><a class="btn" href="../data/fenegosida.json" target="_blank" rel="noopener">Rate JSON</a><a class="btn" href="../data/whatsapp-latest.json" target="_blank" rel="noopener">WhatsApp JSON</a><a class="btn" href="../" >Open Homepage</a></div><p class="note"><strong>नोट:</strong> यो admin publisher homepage बाट हटाइएको छ। यस पृष्ठमा देखिएको पोस्ट प्रमाणित snapshot बाट बनाइन्छ; प्रमाणित दर नभएमा पोस्ट copy गर्न दिइँदैन। यो GitHub Pages मा रहेको static admin page भएकाले <strong>URL थाहा पाउने जोसुकैले खोल्न सक्छ</strong>—यो password-protected/private admin system होइन।</p>
+ <div class="links"><a class="btn" href="../data/fenegosida.json" target="_blank" rel="noopener">Rate JSON</a><a class="btn" href="../data/whatsapp-latest.json" target="_blank" rel="noopener">WhatsApp JSON</a><a class="btn" href="../">Open Homepage</a></div>
+ <p class="note"><strong>नोट:</strong> प्रमाणित snapshot बाट मात्र पोस्ट तयार हुन्छ। प्रमाणित दर नभएमा Copy बन्द रहन्छ। GitHub Pages को static admin भएकाले URL थाहा पाउने जोसुकैले यो पृष्ठ खोल्न सक्छ; यो password-protected/private system होइन।</p>
 </section>
+<div class="footer">Gold Price in Nepal · Admin tools</div>
 </div>
 <script>
-const $=id=>document.getElementById(id);
-let postText='';
+const $=id=>document.getElementById(id);let postText='';
 const fmt=n=>Number(n).toLocaleString('en-IN');
 const fmtDate=v=>{if(!v)return '—';const d=new Date(String(v).length===10?v+'T00:00:00':v);return isNaN(d)?String(v):d.toLocaleDateString('ne-NP',{year:'numeric',month:'short',day:'2-digit'});};
 const fmtTime=v=>{if(!v)return '—';const d=new Date(v);return isNaN(d)?'—':d.toLocaleString('ne-NP',{year:'numeric',month:'short',day:'2-digit',hour:'2-digit',minute:'2-digit'});};
-const line=n=>'रु. '+fmt(Math.round(Number(n)));
+const line=n=>'रु. '+fmt(Math.round(Number(n)||0));
 async function json(url){const r=await fetch(url+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
-function setStat(id,label,value,cls='',delta='—'){const e=$(id);if(!e)return;e.className='stat '+cls;e.querySelector('b').textContent=value;const d=e.querySelector('.delta');if(d)d.textContent=delta}
-function renderDashboard(r,w){
- const verified=r&&r.status==='verified'&&Number(r.goldTola)>0&&Number(r.silverTola)>0;
- const gold=Number(r&&r.goldTola||0), silver=Number(r&&r.silverTola||0), gy=Number(r&&r.goldYesterday||0), sy=Number(r&&r.silverYesterday||0);
- const gd=gold&&gy?gold-gy:0, sd=silver&&sy?silver-sy:0;
- const delta=(v,label)=>v===0?'No change':(v>0?'▲ +':'▼ ')+fmt(Math.abs(v))+' '+label;
- const age=r&&r.fetchedAt?Math.max(0,Date.now()-new Date(r.fetchedAt).getTime()):0;
- const ageText=age>0?(age<3600000?Math.floor(age/60000)+' min ago':Math.floor(age/3600000)+' hr ago'):'—';
- setStat('rateStat','RATE SNAPSHOT',verified?'✓ VERIFIED':'⚠ NOT VERIFIED',verified?'ok':'warn',ageText);
- setStat('dateStat','RATE DATE',fmtDate(r&&r.rateDate),'',r&&Array.isArray(r.history)?r.history.length+' days stored':'—');
- setStat('goldStat','GOLD / TOLA',gold?line(gold):'—','',delta(gd,'रु.'));
- setStat('silverStat','SILVER / TOLA',silver?line(silver):'—','',delta(sd,'रु.'));
-}
-function render(d){
- postText=String(d.text||'');$('preview').textContent=postText;
- $('best').innerHTML='🟡 <b>Best verified rate:</b> रु. '+fmt(d.goldTola)+' प्रति तोला · '+fmtDate(d.rateDate);
- $('date').textContent='दर प्रकाशित: '+fmtDate(d.rateDate);
- $('fetched').textContent='डेटा जाँच: '+fmtTime(d.fetchedAt);
- $('source').textContent='स्रोत: '+(d.source||'FENEGOSIDA');
- $('proof').innerHTML='<span>✓ VERIFIED</span><span>📅 '+fmtDate(d.rateDate)+'</span>'+(d.tejabiStatus==='carried-forward'?'<span>🟠 तेजाबी: अन्तिम प्रमाणित दर</span>':'');
- $('status').textContent='✓ VERIFIED';$('status').className='status ok';$('copy').disabled=!postText;
-}
-async function load(){
- $('status').textContent='प्रमाणित दर जाँच हुँदैछ…';$('status').className='status';$('copy').disabled=true;
- try{
-  let d=null;
-  try{d=await json('../data/whatsapp-latest.json');}catch(e){}
-  if(!d||d.status!=='verified'||!d.text||!d.rateDate){
-   const r=await json('../data/fenegosida.json');
-   if(!r||r.status!=='verified'||Number(r.goldTola)<=0||Number(r.silverTola)<=0||!r.rateDate)throw new Error('No verified snapshot');
-   const gc=Number(r.goldTola)-Number(r.goldYesterday||0),sc=Number(r.silverTola)-Number(r.silverYesterday||0);
-   const gd=gc>0?'▲ +':gc<0?'▼ ':'• ',sd=sc>0?'▲ +':sc<0?'▼ ':'• ';
-   d={...r,text:[
-    '🪙 आजको सुनचाँदीको मूल्य','📅 मिति: '+fmtDate(r.rateDate),
-    '🟡 छापावाल सुन: '+line(r.goldTola)+' प्रति तोला','🟡 छापावाल सुन: '+line(r.gold10g)+' प्रति १० ग्राम',
-    Number(r.tejabiTola)>0?'🟠 तेजाबी सुन: '+line(r.tejabiTola)+(r.tejabiStatus==='carried-forward'?' प्रति तोला (अन्तिम प्रमाणित दर)':' प्रति तोला'):'',
-    '⚪ चाँदी: '+line(r.silverTola)+' प्रति तोला','⚪ चाँदी: '+line(r.silver10g)+' प्रति १० ग्राम',
-    '📈 सुन: '+gd+Math.abs(gc).toLocaleString('en-IN')+' रुपैयाँ','📈 चाँदी: '+sd+Math.abs(sc).toLocaleString('en-IN')+' रुपैयाँ',
-    '🌐 https://laxmannepal.com.np/Gold-Price-In-Nepal/'
-   ].filter(Boolean).join('\n')};
-  }
-  renderDashboard(d,r); render(d);
- }catch(e){
-  renderDashboard({},{}); postText='';$('preview').textContent='प्रमाणित FENEGOSIDA दर उपलब्ध हुन सकेन। Refresh गरेर पुनः जाँच गर्नुहोस्।';$('best').textContent='⚠️ प्रमाणित दर उपलब्ध छैन।';$('proof').innerHTML='';$('status').textContent='NOT VERIFIED';$('status').className='status err';
- }
-}
-$('copy').onclick=async()=>{if(!postText)return;try{await navigator.clipboard.writeText(postText);$('copy').textContent='✓ Copied';setTimeout(()=>$('copy').textContent='▣ पोस्ट Copy गर्नुहोस्',1500)}catch(e){alert('Copy असफल भयो। पोस्ट manually select गरेर copy गर्नुहोस्।')}};
-$('refresh').onclick=load;load();
+function setStat(id,value,cls,delta){const e=$(id);if(!e)return;e.className='stat '+(cls||'');e.querySelector('b').textContent=value;const d=e.querySelector('.delta');if(d)d.textContent=delta||'—';}
+function renderDashboard(r){const verified=r&&r.status==='verified'&&Number(r.goldTola)>0&&Number(r.silverTola)>0;const gold=Number(r&&r.goldTola||0),silver=Number(r&&r.silverTola||0),gy=Number(r&&r.goldYesterday||0),sy=Number(r&&r.silverYesterday||0);const gd=gold&&gy?gold-gy:0,sd=silver&&sy?silver-sy:0;const delta=(v)=>v===0?'No change':(v>0?'▲ +':'▼ ')+fmt(Math.abs(v))+' रु.';const age=r&&r.fetchedAt?Math.max(0,Date.now()-new Date(r.fetchedAt).getTime()):0;const ageText=age>0?(age<3600000?Math.floor(age/60000)+' min ago':Math.floor(age/3600000)+' hr ago'):'—';setStat('rateStat',verified?'✓ VERIFIED':'⚠ NOT VERIFIED',verified?'ok':'warn',ageText);setStat('dateStat',fmtDate(r&&r.rateDate),'',r&&Array.isArray(r.history)?r.history.length+' days stored':'verified snapshot');setStat('goldStat',gold?line(gold):'—','',delta(gd));setStat('silverStat',silver?line(silver):'—','',delta(sd));}
+function render(d){postText=String(d.text||'');$('preview').textContent=postText||'प्रमाणित पोस्ट उपलब्ध छैन।';$('best').innerHTML='🟡 <b>Best verified rate:</b> '+line(d.goldTola)+' प्रति तोला · '+fmtDate(d.rateDate);$('date').textContent='दर प्रकाशित: '+fmtDate(d.rateDate);$('fetched').textContent='डेटा जाँच: '+fmtTime(d.fetchedAt);$('source').textContent='स्रोत: '+(d.source||'FENEGOSIDA');$('proof').innerHTML='<span>✓ VERIFIED</span><span>📅 '+fmtDate(d.rateDate)+'</span>'+(d.tejabiStatus==='carried-forward'?'<span class="warnchip">🟠 तेजाबी: अन्तिम प्रमाणित दर</span>':'');$('status').textContent='✓ VERIFIED';$('status').className='status ok';$('copy').disabled=!postText;}
+function fallbackPost(r){const gc=Number(r.goldTola)-Number(r.goldYesterday||0),sc=Number(r.silverTola)-Number(r.silverYesterday||0);const sign=v=>v>0?'▲ +':v<0?'▼ ':'• ';return {...r,text:['🪙 आजको सुनचाँदीको मूल्य','📅 मिति: '+fmtDate(r.rateDate),'🟡 छापावाल सुन: '+line(r.goldTola)+' प्रति तोला','🟡 छापावाल सुन: '+line(r.gold10g)+' प्रति १० ग्राम',Number(r.tejabiTola)>0?'🟠 तेजाबी सुन: '+line(r.tejabiTola)+(r.tejabiStatus==='carried-forward'?' प्रति तोला (अन्तिम प्रमाणित दर)':' प्रति तोला'):'','⚪ चाँदी: '+line(r.silverTola)+' प्रति तोला','⚪ चाँदी: '+line(r.silver10g)+' प्रति १० ग्राम','📈 सुन: '+sign(gc)+fmt(Math.abs(gc))+' रुपैयाँ','📈 चाँदी: '+sign(sc)+fmt(Math.abs(sc))+' रुपैयाँ','🌐 https://laxmannepal.com.np/Gold-Price-In-Nepal/'].filter(Boolean).join('\n')};}
+async function load(){const eb=$('errorbox');eb.style.display='none';$('status').textContent='प्रमाणित दर जाँच हुँदैछ…';$('status').className='status';$('copy').disabled=true;try{let rate=null,post=null;try{rate=await json('../data/fenegosida.json');}catch(e){}try{post=await json('../data/whatsapp-latest.json');}catch(e){}if(!rate||rate.status!=='verified'||Number(rate.goldTola)<=0||Number(rate.silverTola)<=0)throw new Error('Verified rate snapshot unavailable');renderDashboard(rate);if(!post||post.status!=='verified'||!post.text||!post.rateDate)post=fallbackPost(rate);render(post);}catch(e){renderDashboard({});postText='';$('preview').textContent='प्रमाणित FENEGOSIDA दर उपलब्ध हुन सकेन। Refresh गरेर पुनः जाँच गर्नुहोस्।';$('best').textContent='⚠️ प्रमाणित दर उपलब्ध छैन।';$('proof').innerHTML='';$('status').textContent='NOT VERIFIED';$('status').className='status err';eb.textContent='⚠️ '+e.message;eb.style.display='block';}}
+$('copy').onclick=async()=>{if(!postText)return;try{await navigator.clipboard.writeText(postText);$('copy').textContent='✓ Copied';setTimeout(()=>$('copy').textContent='▣ पोस्ट Copy गर्नुहोस्',1500)}catch(e){alert('Copy असफल भयो।')}};$('refresh').onclick=load;load();
 </script>
-</body></html>
+</body>
+</html>
