@@ -740,7 +740,7 @@ let activeRange = 30;
             })).filter(x => x.date && x.gold > 0 && x.silver > 0).slice(-days);
             const money = n => Number(n).toLocaleString(currentLang === 'np' ? 'ne-NP' : 'en-US', {maximumFractionDigits:0});
             const avg = values => values.length ? values.reduce((a,b)=>a+b,0)/values.length : 0;
-            const stats = values => ({high:Math.max(...values),low:Math.min(...values),average:avg(values)});
+            const stats = values => values.length ? ({high:Math.max(...values),low:Math.min(...values),average:avg(values)}) : ({high:0,low:0,average:0});
             const change = values => values.length > 1 ? values[values.length-1]-values[0] : 0;
             const pct = values => values.length > 1 && values[0] ? change(values)/values[0]*100 : null;
             const put = (key,value) => { const el=id(key); if(el) el.textContent=value; };
