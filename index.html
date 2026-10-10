@@ -150,7 +150,22 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
 .toast{background:rgba(17,24,39,.94);box-shadow:0 15px 40px rgba(15,23,42,.22)}
 .dark .topbar{background:rgba(8,9,11,.86)}.dark body{background:radial-gradient(circle at 50% -10%,rgba(244,181,43,.12),transparent 35%),var(--bg)}
 @media(max-width:560px){.topbar{margin-left:-10px;margin-right:-10px;padding:0 10px;width:calc(100% + 20px)}.hero-price{text-shadow:none}.rate-card:hover,.panel:hover,.faq:hover,.seo-copy:hover{transform:none}}
-.network-badge{position:fixed;right:14px;bottom:14px;z-index:1200;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.94);color:#15803d;box-shadow:0 8px 25px rgba(15,23,42,.10);font-size:9px;font-weight:900;backdrop-filter:blur(10px)}.network-badge.offline{color:#b45309;background:#fffbeb}.network-badge.cached{color:#2563eb;background:#eff6ff}.dark .network-badge{background:rgba(17,19,22,.94)}.chart-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:11px;font-weight:800;pointer-events:none}.chart-empty.hidden{display:none}\n.today-date{display:flex;align-items:center;justify-content:center;gap:8px;min-height:38px;margin-top:8px;padding:8px 14px;border:1px solid rgba(183,121,8,.16);border-radius:999px;background:rgba(255,255,255,.72);box-shadow:0 8px 25px rgba(15,23,42,.04);color:var(--muted);font-size:11px;font-weight:800;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.today-date strong{color:var(--text)}.today-date .ad-date{font-weight:700;color:var(--muted)}.dark .today-date{background:rgba(17,19,22,.72)}@media(max-width:560px){.today-date{font-size:10px;margin-top:6px;gap:5px;white-space:nowrap;overflow:hidden}.today-date .ad-date{display:none}}
+.network-badge{position:fixed;right:14px;bottom:14px;z-index:1200;padding:7px 10px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.94);color:#15803d;box-shadow:0 8px 25px rgba(15,23,42,.10);font-size:9px;font-weight:900;backdrop-filter:blur(10px)}.network-badge.offline{color:#b45309;background:#fffbeb}.network-badge.cached{color:#2563eb;background:#eff6ff}.dark .network-badge{background:rgba(17,19,22,.94)}.chart-empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);font-size:11px;font-weight:800;pointer-events:none}.chart-empty.hidden{display:none}
+.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.analytics-card{min-width:0;padding:18px;border:1px solid var(--line);border-radius:18px;background:linear-gradient(145deg,#fff,#fffbeb);box-shadow:var(--shadow)}
+.analytics-card.silver-analytics{background:linear-gradient(145deg,#fff,#f1f5f9)}
+.analytics-label{font-size:10px;font-weight:900;letter-spacing:.06em;color:var(--muted)}
+.analytics-primary{font-size:clamp(23px,3vw,34px);font-weight:900;letter-spacing:-.04em;margin-top:9px;color:#15803d;font-variant-numeric:tabular-nums}
+.analytics-primary.negative{color:#dc2626}.analytics-primary.neutral{color:var(--muted)}
+.analytics-meta{font-size:11px;color:var(--muted);margin-top:3px}
+.analytics-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:17px;padding-top:13px;border-top:1px solid var(--line)}
+.analytics-stats span{min-width:0;font-size:9px;color:var(--muted);display:flex;flex-direction:column;gap:5px}
+.analytics-stats b{font-size:12px;color:var(--text);overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.analytics-bottom{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:10px}
+.analytics-mini{padding:14px;border:1px solid var(--line);border-radius:15px;background:var(--surface);display:flex;flex-direction:column;gap:5px;min-width:0}
+.analytics-mini span,.analytics-mini small{font-size:10px;color:var(--muted)}.analytics-mini b{font-size:18px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.analytics-mini small{line-height:1.5}
+.analytics-disclaimer{font-size:10px;line-height:1.7;color:var(--muted);margin:10px 2px 0}
+@media(max-width:560px){.analytics-grid{grid-template-columns:1fr}.analytics-card{padding:15px}.analytics-bottom{grid-template-columns:1fr 1fr}.analytics-mini:last-child{grid-column:1/-1}.analytics-stats b{font-size:11px}}\n.today-date{display:flex;align-items:center;justify-content:center;gap:8px;min-height:38px;margin-top:8px;padding:8px 14px;border:1px solid rgba(183,121,8,.16);border-radius:999px;background:rgba(255,255,255,.72);box-shadow:0 8px 25px rgba(15,23,42,.04);color:var(--muted);font-size:11px;font-weight:800;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}.today-date strong{color:var(--text)}.today-date .ad-date{font-weight:700;color:var(--muted)}.dark .today-date{background:rgba(17,19,22,.72)}@media(max-width:560px){.today-date{font-size:10px;margin-top:6px;gap:5px;white-space:nowrap;overflow:hidden}.today-date .ad-date{display:none}}
 
 /* WhatsApp semi-automatic publisher */
 .whatsapp-publisher{margin-top:22px;border:1px solid rgba(34,197,94,.22);border-radius:22px;padding:18px;background:linear-gradient(135deg,rgba(34,197,94,.07),transparent 55%),var(--surface);box-shadow:var(--shadow)}
@@ -214,11 +229,25 @@ body{background:radial-gradient(circle at 50% -15%,rgba(234,179,8,.13),transpare
 </section>
 
 <section id="history" class="section reveal">
- <div class="section-head"><div><h2>नेपाल सुन मूल्य प्रवृत्ति</h2><p>दैनिक प्रकाशित दरबाट trend बुझ्नुहोस्</p></div><div class="range-tabs"><button class="active">7D</button><button>30D</button><button>6M</button><button>1Y</button></div></div>
+ <div class="section-head"><div><h2>नेपाल सुन मूल्य प्रवृत्ति</h2><p>दैनिक प्रकाशित दरबाट trend बुझ्नुहोस्</p></div><div class="range-tabs" aria-label="Analytics time range"><button class="active" data-days="7">7D</button><button data-days="30">30D</button><button data-days="90">90D</button><button data-days="365">1Y</button></div></div>
  <div class="dashboard">
   <div class="panel glass"><div class="panel-title"><h3 id="goldChartTitle"><i class="fa-solid fa-chart-line" style="color:var(--gold)"></i> सुन मूल्य प्रवृत्ति</h3><span class="subtle">FENEGOSIDA history</span></div><div class="chart-container"><canvas id="goldChart"></canvas><div id="goldChartEmpty" class="chart-empty">इतिहास लोड हुँदैछ…</div></div></div>
   <div class="panel glass"><div class="panel-title"><h3 id="silverChartTitle"><i class="fa-solid fa-chart-line"></i> चाँदी मूल्य प्रवृत्ति</h3><span class="subtle">प्रति तोला</span></div><div class="chart-container"><canvas id="silverChart"></canvas><div id="silverChartEmpty" class="chart-empty">इतिहास लोड हुँदैछ…</div></div></div>
  </div>
+</section>
+
+<section id="marketAnalytics" class="section reveal">
+ <div class="section-head"><div><h2>Market Analytics · बजार विश्लेषण</h2><p id="analyticsCaption">चयन गरिएको अवधिको उपलब्ध दैनिक दरमा आधारित</p></div><span class="section-link" id="analyticsCoverage">इतिहास जाँच हुँदैछ…</span></div>
+ <div class="analytics-grid">
+  <article class="analytics-card"><div class="analytics-label">सुन · GOLD</div><div class="analytics-primary" id="analyticsGoldChange">—</div><div class="analytics-meta" id="analyticsGoldMeta">परिवर्तन</div><div class="analytics-stats"><span>High <b id="analyticsGoldHigh">—</b></span><span>Low <b id="analyticsGoldLow">—</b></span><span>Average <b id="analyticsGoldAvg">—</b></span></div></article>
+  <article class="analytics-card silver-analytics"><div class="analytics-label">चाँदी · SILVER</div><div class="analytics-primary" id="analyticsSilverChange">—</div><div class="analytics-meta" id="analyticsSilverMeta">परिवर्तन</div><div class="analytics-stats"><span>High <b id="analyticsSilverHigh">—</b></span><span>Low <b id="analyticsSilverLow">—</b></span><span>Average <b id="analyticsSilverAvg">—</b></span></div></article>
+ </div>
+ <div class="analytics-bottom">
+  <div class="analytics-mini"><span>Gold / Silver ratio</span><b id="analyticsRatio">—</b><small>सुनको दर ÷ चाँदीको दर</small></div>
+  <div class="analytics-mini"><span>दैनिक दर उपलब्ध</span><b id="analyticsDays">—</b><small id="analyticsPeriod">चयन गरिएको अवधि</small></div>
+  <div class="analytics-mini"><span>अवधिको उत्कृष्ट दिन</span><b id="analyticsBestDay">—</b><small id="analyticsBestMeta">सुनको सबैभन्दा ठूलो वृद्धि</small></div>
+ </div>
+ <p class="analytics-disclaimer">नोट: गणना साइटमा उपलब्ध प्रकाशित इतिहासमा आधारित हो। इतिहासमा कुनै दिनको दर नभएमा परिणाम पूर्ण बजार रेकर्ड नहुन सक्छ। यो भविष्यको मूल्यको ग्यारेन्टी वा लगानी सल्लाह होइन।</p>
 </section>
 
 <section class="section">
@@ -705,7 +734,38 @@ let activeRange = 30;
             };
         }
 
+        function renderMarketAnalytics(days = activeRange) {
+            const history = priceHistory.dates.map((date, i) => ({
+                date, gold:Number(priceHistory.gold[i]), silver:Number(priceHistory.silver[i])
+            })).filter(x => x.date && x.gold > 0 && x.silver > 0).slice(-days);
+            const money = n => Number(n).toLocaleString(currentLang === 'np' ? 'ne-NP' : 'en-US', {maximumFractionDigits:0});
+            const avg = values => values.length ? values.reduce((a,b)=>a+b,0)/values.length : 0;
+            const stats = values => ({high:Math.max(...values),low:Math.min(...values),average:avg(values)});
+            const change = values => values.length > 1 ? values[values.length-1]-values[0] : 0;
+            const pct = values => values.length > 1 && values[0] ? change(values)/values[0]*100 : null;
+            const put = (key,value) => { const el=id(key); if(el) el.textContent=value; };
+            const g=history.map(x=>x.gold), sl=history.map(x=>x.silver), gs=stats(g), ss=stats(sl), gc=change(g), sc=change(sl), gp=pct(g), sp=pct(sl);
+            const sign = v => v>0?'+':'';
+            const changeText = (v,p) => p===null?'थप इतिहास आवश्यक':sign(v)+money(v)+' ('+sign(p)+p.toFixed(2)+'%)';
+            const colorChange = (key,v,p) => { const el=id(key); if(!el)return; el.classList.toggle('negative',v<0);el.classList.toggle('neutral',p===null); };
+            put('analyticsCaption', 'पछिल्ला '+days+' दिनभित्र उपलब्ध '+history.length+' दैनिक दरको सारांश');
+            put('analyticsCoverage', history.length ? history[0].date+' — '+history[history.length-1].date : 'इतिहास उपलब्ध छैन');
+            put('analyticsGoldChange',changeText(gc,gp)); put('analyticsGoldMeta',history.length>1?'सुरुको दर: रु. '+money(g[0])+' · अन्तिम: रु. '+money(g[g.length-1]):'तुलनाका लागि थप इतिहास चाहिन्छ');
+            put('analyticsSilverChange',changeText(sc,sp)); put('analyticsSilverMeta',history.length>1?'सुरुको दर: रु. '+money(sl[0])+' · अन्तिम: रु. '+money(sl[sl.length-1]):'तुलनाका लागि थप इतिहास चाहिन्छ');
+            put('analyticsGoldHigh',gs.high?'रु. '+money(gs.high):'—'); put('analyticsGoldLow',gs.low?'रु. '+money(gs.low):'—'); put('analyticsGoldAvg',gs.average?'रु. '+money(gs.average):'—');
+            put('analyticsSilverHigh',ss.high?'रु. '+money(ss.high):'—'); put('analyticsSilverLow',ss.low?'रु. '+money(ss.low):'—'); put('analyticsSilverAvg',ss.average?'रु. '+money(ss.average):'—');
+            colorChange('analyticsGoldChange',gc,gp); colorChange('analyticsSilverChange',sc,sp);
+            const latest=history[history.length-1];
+            put('analyticsRatio',latest?(latest.gold/latest.silver).toFixed(2)+' : 1':'—');
+            put('analyticsDays',history.length+' / '+days); put('analyticsPeriod',history.length<days?'इतिहासमा '+(days-history.length)+' दिन कम':'अवधि पूरा');
+            let best=null;
+            for(let i=1;i<history.length;i++){const delta=history[i].gold-history[i-1].gold;if(!best||delta>best.delta)best={date:history[i].date,delta};}
+            put('analyticsBestDay',best?(best.delta>0?'+':'')+'रु. '+money(best.delta):'—');
+            put('analyticsBestMeta',best?best.date+' · सुनको दैनिक परिवर्तन':'तुलना गर्न कम्तीमा २ दिन चाहिन्छ');
+        }
+
         function refreshCharts() {
+            renderMarketAnalytics();
             if (!goldChartInstance || !silverChartInstance) return;
             const s = chartSlice();
             const hasData = s.gold.length > 0 && s.silver.length > 0;
@@ -759,7 +819,7 @@ let activeRange = 30;
                 btn.addEventListener('click', () => {
                     document.querySelectorAll('.range-tabs button').forEach(b=>b.classList.remove('active'));
                     btn.classList.add('active');
-                    const n = btn.textContent.trim()==='7D' ? 7 : btn.textContent.trim()==='30D' ? 30 : btn.textContent.trim()==='6M' ? 180 : 365;
+                    const n = Number(btn.dataset.days) || 7;
                     activeRange=n; refreshCharts();
                 });
             });
