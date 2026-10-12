@@ -797,7 +797,7 @@ let activeRange = 30;
         function renderHistoricalExplorer() {
             const rows = priceHistory.dates.map((date,i)=>({
                 date:String(date), gold:Number(priceHistory.gold[i]), silver:Number(priceHistory.silver[i])
-            })).filter(x=>/^\\d{4}-\\d{2}-\\d{2}$/.test(x.date)&&x.gold>0&&x.silver>0)
+            })).filter(x=>/^\d{4}-\d{2}-\d{2}$/.test(x.date)&&x.gold>0&&x.silver>0)
               .sort((a,b)=>a.date.localeCompare(b.date));
             const fromEl=id('historyFrom'), toEl=id('historyTo');
             if(!fromEl||!toEl)return;
@@ -819,8 +819,8 @@ let activeRange = 30;
             const delta=(end,start)=>end-start, pct=(end,start)=>start?((end-start)/start*100):0;
             const putDelta=(key,compareKey,field)=>{
                 const d=delta(last[field],first[field]), p=pct(last[field],first[field]), el=id(key);
-                put(key,(d>0?'+':'')+historyMoney(d)+' ('+(p>0?'+':'')+p.toFixed(2)+'%)');
-                put(compareKey,first.date+' → '+last.date+' · '+historyMoney(first[field])+' → '+historyMoney(last[field]));
+                put(key,explorerFilteredHistory.length<2?'—':(d>0?'+':'')+historyMoney(d)+' ('+(p>0?'+':'')+p.toFixed(2)+'%)');
+                put(compareKey,explorerFilteredHistory.length<2?'दुई फरक मिति आवश्यक':first.date+' → '+last.date+' · '+historyMoney(first[field])+' → '+historyMoney(last[field]));
                 if(el){el.classList.toggle('positive',d>0);el.classList.toggle('negative',d<0);}
             };
             putDelta('historyGoldDelta','historyGoldCompare','gold');
@@ -843,7 +843,7 @@ let activeRange = 30;
             const rows=[['Date','Gold NPR per tola','Silver NPR per tola','Gold daily change','Silver daily change']];
             const sorted=explorerFilteredHistory.slice().sort((a,b)=>a.date.localeCompare(b.date));
             sorted.forEach((x,i)=>{const p=sorted[i-1];rows.push([x.date,x.gold,x.silver,p?x.gold-p.gold:'',p?x.silver-p.silver:'']);});
-            const csv='\\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\\r\\n');
+            const csv='\uFEFF'+rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');
             const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
             const url=URL.createObjectURL(blob),a=document.createElement('a');
             a.href=url;a.download='nepal-gold-silver-history-'+(sorted[0]?.date||'data')+'-to-'+(sorted[sorted.length-1]?.date||'data')+'.csv';
