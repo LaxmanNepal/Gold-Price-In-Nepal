@@ -839,7 +839,7 @@ let activeRange = 30;
             }
         }
         function exportHistoricalCSV(){
-            if(!explorerFilteredHistory.length){showToast?.('CSV export गर्न इतिहास उपलब्ध छैन');return;}
+            if(!explorerFilteredHistory.length){alert('CSV export गर्न इतिहास उपलब्ध छैन।');return;}
             const rows=[['Date','Gold NPR per tola','Silver NPR per tola','Gold daily change','Silver daily change']];
             const sorted=explorerFilteredHistory.slice().sort((a,b)=>a.date.localeCompare(b.date));
             sorted.forEach((x,i)=>{const p=sorted[i-1];rows.push([x.date,x.gold,x.silver,p?x.gold-p.gold:'',p?x.silver-p.silver:'']);});
@@ -1141,6 +1141,7 @@ function initGoldPriceSite() {
     setupPurity('gold');
     loadTodayNepaliDate();
     initCharts();
+    initHistoricalExplorer();
     updateAllUI();
     loadStoredRates().finally(() => { updateNetworkBadge(); if(navigator.onLine) fetchLiveData(); });
     setInterval(fetchLiveData, 15 * 60 * 1000);
