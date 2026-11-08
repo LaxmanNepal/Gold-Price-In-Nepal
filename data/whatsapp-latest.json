@@ -1,19 +1,19 @@
 {
-  "rateDate": "2026-11-06",
+  "rateDate": "2026-11-08",
   "goldTola": 283000,
   "gold10g": 242625,
   "tejabiTola": 291800,
   "silverTola": 3810,
   "silver10g": 3266.5,
-  "goldYesterday": 288900,
-  "silverYesterday": 3920,
-  "publishedAt": "2026-11-06T04:12:41.714+00:00",
-  "fetchedAt": "2026-11-08T00:39:13.267Z",
+  "goldYesterday": 283000,
+  "silverYesterday": 3810,
+  "publishedAt": "2026-11-08T04:19:10.73+00:00",
+  "fetchedAt": "2026-11-08T07:24:02.332Z",
   "status": "verified",
   "source": "FENEGOSIDA",
   "sourceUrl": "https://api.fenegosida.org/api/website/v1/Dashboard/today",
   "tejabiStatus": "carried-forward",
   "selection": "verified-fenegosida-snapshot",
-  "generatedAt": "2026-11-08T00:39:14.386Z",
-  "text": "🪙 आजको सुनचाँदीको मूल्य\n📅 मिति: २२ कार्तिक २०८३, आइतबार\n🟡 छापावाल सुन: रु. २८३,००० प्रति तोला\n🟡 छापावाल सुन: रु. २४२,६२५ प्रति १० ग्राम\n🟠 तेजाबी सुन: रु. २९१,८०० प्रति तोला (अन्तिम प्रमाणित दर)\n⚪ चाँदी: रु. ३,८१० प्रति तोला\n⚪ चाँदी: रु. ३,२६६.५ प्रति १० ग्राम\n📈 सुन: ▼ ५,९०० रुपैयाँ\n📈 चाँदी: ▼ ११० रुपैयाँ\n🌐 https://laxmannepal.com.np/Gold-Price-In-Nepal/"
+  "generatedAt": "2026-11-08T07:24:03.423Z",
+  "text": "🪙 आजको सुनचाँदीको मूल्य\n📅 मिति: २२ कार्तिक २०८३, आइतबार\n🟡 छापावाल सुन: रु. २८३,००० प्रति तोला\n🟡 छापावाल सुन: रु. २४२,६२५ प्रति १० ग्राम\n🟠 तेजाबी सुन: रु. २९१,८०० प्रति तोला (अन्तिम प्रमाणित दर)\n⚪ चाँदी: रु. ३,८१० प्रति तोला\n⚪ चाँदी: रु. ३,२६६.५ प्रति १० ग्राम\n📈 सुन: स्थिर\n📈 चाँदी: स्थिर\n🌐 https://laxmannepal.com.np/Gold-Price-In-Nepal/"
 }
