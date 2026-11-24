@@ -1,18 +1,23 @@
 {
-  "goldTola": 247400,
-  "gold10g": 212105,
+  "goldTola": 247900,
+  "gold10g": 212535,
   "tejabiTola": 291800,
-  "silverTola": 3110,
-  "silver10g": 2666.5,
-  "goldYesterday": 242600,
-  "silverYesterday": 3065,
-  "rateDate": "2026-11-23",
-  "publishedAt": "2026-11-23T04:58:51.061+00:00",
-  "fetchedAt": "2026-11-24T00:54:12.004Z",
+  "silverTola": 3145,
+  "silver10g": 2696.5,
+  "goldYesterday": 247400,
+  "silverYesterday": 3110,
+  "rateDate": "2026-11-24",
+  "publishedAt": "2026-11-24T04:57:56.139+00:00",
+  "fetchedAt": "2026-11-24T10:57:53.071Z",
   "status": "verified",
   "source": "FENEGOSIDA",
   "sourceUrl": "https://api.fenegosida.org/api/website/v1/Dashboard/today",
   "history": [
+    {
+      "date": "2026-11-24",
+      "gold": 247900,
+      "silver": 3145
+    },
     {
       "date": "2026-11-23",
       "gold": 247400,
